@@ -16,20 +16,13 @@ This is the **ROKO Network documentation repository** - a collection of markdown
 - `products/` - Project Nexus and use cases
 - `resources/` - Glossary, FAQ, brand assets
 - `archive/` - Historical documents
-- `future-docs/` - Planned documentation (placeholder/stub content for features not yet implemented)
-  - `developers/` - SDKs, APIs, smart contracts
-  - `validators/` - Node setup, staking, monitoring
-  - `governance/` - DAO structure, proposals, treasury
-  - `security/` - Audits, bug bounty
-  - `tutorials/` - Step-by-step guides
-  - `use-cases/` - Industry applications
 
 ## Key Conventions
 
 - All documentation is in Markdown format
 - Documentation structure follows `PAGE_HIERARCHY_GUIDE.md` for GitBook navigation
-- `future-docs/` contains placeholder content for features not yet implemented
 - No build system - documentation is consumed directly by GitBook
+- `.future-docs/` is hidden and contains placeholder content for future features - ignore this directory
 
 ## Working with This Repository
 
