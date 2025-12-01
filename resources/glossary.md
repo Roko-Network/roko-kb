@@ -2,44 +2,72 @@
 
 ## ROKO Technical Terms
 
-### A-H
+### A-D
 
 **Atomic Clock**: Ultra-precise timekeeping device using atomic transitions, achieving nanosecond accuracy.
 
-**ChronoProof**: Cryptographic proof of temporal ordering in ROKO consensus.
+**BABE (Blind Assignment for Blockchain Extension)**: Substrate's block production mechanism that ROKO extends with temporal proofs.
 
-**Drift**: Time deviation between validator clocks, measured in nanoseconds.
+**Beacon Proof**: A K-of-N selection of time beacons included in a block or transaction to cryptographically prove its timestamp via median calculation.
 
-**Epoch**: Fixed time period in ROKO (100 blocks = 100 seconds).
+**Beacons Pallet**: Substrate pallet responsible for teaching validators how to produce and broadcast time beacons.
 
-**Hardware Timestamping**: Network card feature for precise packet timing.
+**Drift**: Time deviation between validator clocks. Launch tolerance is 2 seconds, targeting 500ms as network matures.
 
-### I-P
+**Drift Tolerance / Tolerance Window**: Configurable maximum time variance allowed between beacons for valid block/transaction proofs.
 
-**IEEE 1588**: Precision Time Protocol standard for network synchronization.
+### E-H
 
-**MEV (Maximal Extractable Value)**: Profit from transaction reordering, prevented by ROKO.
+**Epoch**: Fixed time period in ROKO consensus, inherited from BABE/GRANDPA.
 
-**NanoMoment**: One nanosecond unit in ROKO temporal system.
+**Epoch Randomness**: Random value included in time beacons for verification, derived from the current epoch.
 
-**OCP-TAP**: Open Compute Project Time Appliance specification.
+**Frontier Pallet**: Forked Substrate pallet providing EVM compatibility with temporal ordering support.
 
-**PTP (Precision Time Protocol)**: Network protocol for clock synchronization.
+**GRANDPA (GHOST-based Recursive ANcestor Deriving Prefix Agreement)**: Substrate's finality gadget used alongside BABE in ROKO.
 
-### Q-Z
+**Hardware Timestamping**: Network card feature for precise packet timing, required for validator time cards.
+
+### I-N
+
+**IEEE 1588**: Precision Time Protocol (PTP) standard for network synchronization.
+
+**MEV (Maximal Extractable Value)**: Profit extracted by reordering, inserting, or censoring transactions. ROKO's temporal ordering prevents MEV at the protocol level.
+
+**NanoMoment**: ROKO's high-precision timestamp format combining seconds, nanoseconds, and hardware attestation.
+
+### O-R
+
+**OCP-TAP**: Open Compute Project Time Appliance Project specification for datacenter-grade timing hardware.
+
+**PTP (Precision Time Protocol)**: Network protocol for sub-microsecond clock synchronization (IEEE 1588).
+
+### S-T
 
 **Selfient**: Self-executing smart contracts triggered by time conditions.
 
-**Temporal Consensus**: ROKO's time-based agreement mechanism.
+**Spread**: The difference between maximum and minimum beacon timestamps in a beacon proof, indicating time consensus quality.
 
-**TimeRPC**: ROKO's specialized RPC for temporal operations.
+**Temporal Consensus**: ROKO's time-based agreement mechanism built on top of BABE/GRANDPA using time beacons.
 
-**TPoS**: Time-weighted Proof of Stake consensus.
+**Temporal Ordering**: Transaction execution order determined by proven signing time rather than block inclusion order or validator preference.
 
-**Temporal Finality**: Immediate transaction finality based on timestamp.
+**Temporal Transaction (Type 3)**: Transaction type with embedded time beacon proof establishing cryptographically-verified signing time.
 
-**UTC**: Coordinated Universal Time, global time standard.
+**Time Beacon**: Signed timestamp broadcast by validators at regular intervals (150ms target at launch) containing validatorId, timestamp, sequence number, signature, and epoch randomness.
+
+**Time Blocks Pallet**: Substrate pallet that wraps BABE to introduce beacon proof requirements and timestamp verification for blocks.
+
+**Time Card**: OCP-TAP compliant hardware providing GPS-synchronized, cryptographically-attested timestamps.
+
+**TimeRPC**: ROKO's specialized RPC interface for temporal operations and beacon queries.
+
+**Temporal Transactions Pallet**: Substrate pallet introducing Type 3 transactions with temporal ordering enforcement.
+
+### U-Z
+
+**UTC**: Coordinated Universal Time, the global time standard that ROKO validators synchronize to.
 
 ---
 
-> **Learn the language**: Master ROKO terminology.
+> **Note**: Some terms like NanoMoment and TimeRPC represent higher-level abstractions. The underlying implementation uses Time Beacons and Substrate pallets as described in the technical architecture.

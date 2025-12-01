@@ -20,12 +20,13 @@ Here's the current page structure with visual hierarchy:
 │   │   ├── OCP-TAP Compliance
 │   │   ├── IEEE 1588 PTP Implementation
 │   │   └── Hardware Timestamping
-│   ├── ⚙️ Consensus Mechanism
-│   │   ├── NanoMoment Architecture
-│   │   ├── TimeRPC Authority
-│   │   └── MEV Prevention
-│   └── 🌐 Network Architecture
-│       └── Validator Requirements
+│   ├── ⏰ Time Beacons
+│   ├── ⚙️ Consensus Mechanism (BABE/GRANDPA)
+│   ├── 📝 Temporal Transactions
+│   ├── 🛡️ MEV Prevention
+│   ├── 🔷 NanoMoment Architecture
+│   ├── 🌐 Network Architecture
+│   └── ✅ Validator Requirements
 │
 ├── 📂 Technical Specifications
 │   ├── 📄 Whitepaper
@@ -41,6 +42,9 @@ Here's the current page structure with visual hierarchy:
 │   ├── 📑 Research Papers
 │   └── 🎨 Brand Assets
 │
+├── 📂 Articles
+│   └── 📰 Of Time and Stamps
+│
 └── 📂 Archive
     ├── 📜 Historical Documentation
     ├── 📈 Development History
@@ -52,3 +56,4 @@ Here's the current page structure with visual hierarchy:
 
 - Full planned hierarchy is preserved in `.future-docs/PAGE_HIERARCHY_GUIDE.md`
 - As new sections are ready, promote them from `.future-docs/` to root
+- Core Technology now reflects the pallet-based architecture (Beacons, Time Blocks, Temporal Transactions)
