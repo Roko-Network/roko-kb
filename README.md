@@ -2,7 +2,7 @@
 
 ## The Temporal Layer for Web3
 
-ROKO Network is revolutionary blockchain infrastructure delivering **nanosecond precision** timing through **OCP-TAP compliance** and **IEEE 1588 PTP-grade synchronization**. We're building the foundation for time-sensitive decentralized applications that were previously impossible.
+ROKO Network delivers **nanosecond precision** timing to blockchain through **OCP-TAP compliance** and **IEEE 1588 PTP-grade synchronization**. Time as a first-class feature - proven timestamps for blocks and transactions, not just block producer promises.
 
 ## Why ROKO?
 

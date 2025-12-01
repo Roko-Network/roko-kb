@@ -1,8 +1,8 @@
 # NanoMoment Architecture
 
-## The Foundation of Temporal Blockchain
+## The Timestamp Data Type
 
-NanoMoment is ROKO Network's revolutionary data type that represents time with nanosecond precision—a fundamental breakthrough enabling true temporal ordering in distributed systems.
+NanoMoment is ROKO's timestamp format - a 128-bit integer representing nanoseconds since Unix epoch. Large enough to outlast the universe, precise enough to order transactions within the same microsecond.
 
 ## What is a NanoMoment?
 

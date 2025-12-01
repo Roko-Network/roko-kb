@@ -1,49 +1,41 @@
 # Core Technology
 
-Explore the groundbreaking technology that powers ROKO Network's nanosecond-precision temporal blockchain.
+ROKO Network adds proven time to blockchain. Hardware-attested timestamps for blocks and transactions, built on datacenter-grade timing infrastructure.
 
 ## In This Section
 
+### [Time Beacons](./time-beacons.md)
+Validators broadcast signed timestamps. Blocks prove their time using beacon consensus.
+
+### [Consensus Mechanism](./consensus.md)
+BABE/GRANDPA with temporal proof requirements. Proven timestamps, not promises.
+
+### [Temporal Transactions](./temporal-transactions.md)
+Type 3 transactions with signing-time proofs. Execution order determined at signing, not inclusion.
+
 ### [Temporal Infrastructure](./temporal-infrastructure.md)
-Deep dive into ROKO's revolutionary temporal architecture, NanoMoment timestamps, and hardware-attested time proofs.
+OCP-TAP hardware, IEEE 1588 PTP, GPS synchronization. The timing stack under the blockchain.
 
-### [Consensus Mechanism](./consensus-mechanism.md)
-*Coming soon* - Learn about ROKO's temporal consensus algorithm and how validators achieve agreement with nanosecond precision.
+### [MEV Prevention](./mev-prevention.md)
+Temporal ordering removes reordering. No front-running when time is proven.
 
-### [TimeRPC Protocol](./timerpc-protocol.md)
-*Coming soon* - Understand the dual-signature time attestation protocol that guarantees temporal authenticity.
+### [NanoMoment Architecture](./nanomoment.md)
+128-bit nanosecond timestamps. The data structure behind temporal precision.
 
 ### [Network Architecture](./network-architecture.md)
-*Coming soon* - Explore the distributed architecture that enables global nanosecond synchronization.
+Distributed timing infrastructure and validator topology.
 
-## Key Innovations
-
-### ⏱️ Nanosecond Precision
-ROKO is the first blockchain to natively support nanosecond timestamps (u128), enabling use cases impossible on millisecond-precision chains.
-
-### 🔐 Hardware Attestation
-Every timestamp is cryptographically attested by hardware time cards (OCP TAP 2.0), ensuring temporal authenticity.
-
-### 🌐 Global Synchronization
-Using IEEE 1588 PTP and GPS atomic clocks, ROKO maintains sub-100ns synchronization across all validators worldwide.
-
-### ⚡ Temporal Ordering
-Transactions are ordered by hardware timestamps, not block inclusion, enabling true temporal fairness.
+### [Validator Requirements](./validator-requirements.md)
+Hardware and synchronization requirements for block production.
 
 ## Technical Specifications
 
 | Feature | Specification |
 |---------|--------------|
-| **Timestamp Precision** | 1 nanosecond (10^-9 seconds) |
+| **Timestamp Precision** | Microsecond (μs) in beacons |
 | **Time Data Type** | u128 NanoMoment |
 | **Synchronization Protocol** | IEEE 1588-2019 PTP |
 | **Hardware Support** | OCP TAP 2.0 Time Cards |
-| **Network Sync Accuracy** | < 100 nanoseconds |
-| **Validity Window** | 5 minutes |
+| **Drift Tolerance** | 2s at launch, 500ms target |
+| **Beacon Interval** | 150ms target |
 | **Block Time** | 2-3 seconds |
-
-## Learn More
-
-- 📖 [Read the Whitepaper](../resources/whitepaper.md)
-- 🔬 [View Benchmarks](../technical/benchmarks.md)
-- 🛠️ [Developer Guide](../developers/index.md)
