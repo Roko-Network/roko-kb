@@ -1,0 +1,11 @@
+{
+  "title": "Technical Specifications",
+  "order": [
+    "whitepaper",
+    "architecture"
+  ],
+  "sections": [
+    { "id": "whitepaper", "title": "Whitepaper" },
+    { "id": "architecture", "title": "Architecture" }
+  ]
+}

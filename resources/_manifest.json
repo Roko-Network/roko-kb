@@ -1,0 +1,15 @@
+{
+  "title": "Resources",
+  "order": [
+    "glossary",
+    "faq",
+    "research-papers",
+    "brand-assets"
+  ],
+  "sections": [
+    { "id": "glossary", "title": "Glossary" },
+    { "id": "faq", "title": "FAQ" },
+    { "id": "research-papers", "title": "Research Papers" },
+    { "id": "brand-assets", "title": "Brand Assets" }
+  ]
+}

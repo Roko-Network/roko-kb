@@ -1,0 +1,17 @@
+{
+  "title": "Archive",
+  "order": [
+    "historical",
+    "history",
+    "vision",
+    "basilisk",
+    "timerpc"
+  ],
+  "sections": [
+    { "id": "historical", "title": "Historical Documentation" },
+    { "id": "history", "title": "Development History" },
+    { "id": "vision", "title": "Original Vision" },
+    { "id": "basilisk", "title": "Project Basilisk" },
+    { "id": "timerpc", "title": "TimeRPC" }
+  ]
+}

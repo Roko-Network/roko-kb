@@ -1,0 +1,23 @@
+{
+  "title": "ROKO Network Documentation",
+  "order": [
+    "README",
+    "getting-started",
+    "core-technology",
+    "technical",
+    "products",
+    "resources",
+    "articles",
+    "archive"
+  ],
+  "exclude": [
+    "CLAUDE",
+    "PAGE_HIERARCHY_GUIDE"
+  ],
+  "sections": [
+    {
+      "id": "README",
+      "title": "Welcome to ROKO"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "title": "Core Technology",
+  "order": [
+    "index",
+    "temporal-infrastructure",
+    "ocp-tap-compliance",
+    "ieee-1588",
+    "hardware-timestamping",
+    "time-beacons",
+    "consensus",
+    "temporal-transactions",
+    "mev-prevention",
+    "nanomoment",
+    "network-architecture",
+    "validator-requirements"
+  ],
+  "sections": [
+    { "id": "index", "title": "Overview" },
+    { "id": "temporal-infrastructure", "title": "Temporal Infrastructure" },
+    { "id": "ocp-tap-compliance", "title": "OCP-TAP Compliance" },
+    { "id": "ieee-1588", "title": "IEEE 1588 PTP Implementation" },
+    { "id": "hardware-timestamping", "title": "Hardware Timestamping" },
+    { "id": "time-beacons", "title": "Time Beacons" },
+    { "id": "consensus", "title": "Consensus Mechanism" },
+    { "id": "temporal-transactions", "title": "Temporal Transactions" },
+    { "id": "mev-prevention", "title": "MEV Prevention" },
+    { "id": "nanomoment", "title": "NanoMoment Architecture" },
+    { "id": "network-architecture", "title": "Network Architecture" },
+    { "id": "validator-requirements", "title": "Validator Requirements" }
+  ]
+}
