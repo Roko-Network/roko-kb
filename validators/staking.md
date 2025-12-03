@@ -1,0 +1,3 @@
+# Staking Guide
+
+*Coming soon*

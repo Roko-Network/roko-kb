@@ -2,11 +2,13 @@
   "title": "Getting Started",
   "order": [
     "introduction",
+    "quick-start",
     "temporal-blockchain",
     "nanosecond-precision"
   ],
   "sections": [
     { "id": "introduction", "title": "Introduction" },
+    { "id": "quick-start", "title": "Quick Start Guide" },
     { "id": "temporal-blockchain", "title": "What is Temporal Blockchain?" },
     { "id": "nanosecond-precision", "title": "Why Nanosecond Precision Matters" }
   ]
