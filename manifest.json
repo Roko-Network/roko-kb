@@ -1,0 +1,228 @@
+{
+  "default": "welcome",
+  "sections": [
+    {
+      "id": "welcome",
+      "title": "Welcome to ROKO",
+      "summary": "The Temporal Layer for Web3 - nanosecond precision blockchain.",
+      "file": "welcome.md"
+    },
+    {
+      "id": "getting-started",
+      "title": "Getting Started",
+      "summary": "Introduction and onboarding guides for ROKO Network.",
+      "sections": [
+        {
+          "id": "getting-started-introduction",
+          "title": "Introduction",
+          "summary": "Overview of ROKO Network and its capabilities.",
+          "file": "getting-started-introduction.md"
+        },
+        {
+          "id": "getting-started-temporal-blockchain",
+          "title": "What is Temporal Blockchain?",
+          "summary": "Deep dive into temporal blockchain technology.",
+          "file": "getting-started-temporal-blockchain.md"
+        },
+        {
+          "id": "getting-started-nanosecond-precision",
+          "title": "Why Nanosecond Precision Matters",
+          "summary": "Understanding the importance of precise timing.",
+          "file": "getting-started-nanosecond-precision.md"
+        }
+      ]
+    },
+    {
+      "id": "core-technology",
+      "title": "Core Technology",
+      "summary": "Technical documentation on ROKO's temporal infrastructure.",
+      "sections": [
+        {
+          "id": "core-technology-overview",
+          "title": "Overview",
+          "summary": "Introduction to ROKO's core technology stack.",
+          "file": "core-technology-overview.md"
+        },
+        {
+          "id": "core-technology-temporal-infrastructure",
+          "title": "Temporal Infrastructure",
+          "summary": "Hardware and software timing infrastructure.",
+          "file": "core-technology-temporal-infrastructure.md"
+        },
+        {
+          "id": "core-technology-ocp-tap",
+          "title": "OCP-TAP Compliance",
+          "summary": "Open Compute Project Time Appliance compliance.",
+          "file": "core-technology-ocp-tap.md"
+        },
+        {
+          "id": "core-technology-ieee-1588",
+          "title": "IEEE 1588 PTP",
+          "summary": "Precision Time Protocol implementation.",
+          "file": "core-technology-ieee-1588.md"
+        },
+        {
+          "id": "core-technology-hardware-timestamping",
+          "title": "Hardware Timestamping",
+          "summary": "Hardware-attested timestamp generation.",
+          "file": "core-technology-hardware-timestamping.md"
+        },
+        {
+          "id": "core-technology-time-beacons",
+          "title": "Time Beacons",
+          "summary": "Decentralized time authority network.",
+          "file": "core-technology-time-beacons.md"
+        },
+        {
+          "id": "core-technology-consensus",
+          "title": "Consensus Mechanism",
+          "summary": "BABE/GRANDPA temporal consensus.",
+          "file": "core-technology-consensus.md"
+        },
+        {
+          "id": "core-technology-temporal-transactions",
+          "title": "Temporal Transactions",
+          "summary": "Time-ordered transaction processing.",
+          "file": "core-technology-temporal-transactions.md"
+        },
+        {
+          "id": "core-technology-mev-prevention",
+          "title": "MEV Prevention",
+          "summary": "How temporal ordering prevents MEV attacks.",
+          "file": "core-technology-mev-prevention.md"
+        },
+        {
+          "id": "core-technology-nanomoment",
+          "title": "NanoMoment Architecture",
+          "summary": "u128 nanosecond timestamp implementation.",
+          "file": "core-technology-nanomoment.md"
+        },
+        {
+          "id": "core-technology-network-architecture",
+          "title": "Network Architecture",
+          "summary": "Global validator network design.",
+          "file": "core-technology-network-architecture.md"
+        },
+        {
+          "id": "core-technology-validator-requirements",
+          "title": "Validator Requirements",
+          "summary": "Hardware and network requirements for validators.",
+          "file": "core-technology-validator-requirements.md"
+        }
+      ]
+    },
+    {
+      "id": "technical",
+      "title": "Technical Specifications",
+      "summary": "Whitepaper and architecture documentation.",
+      "sections": [
+        {
+          "id": "technical-whitepaper",
+          "title": "Whitepaper",
+          "summary": "ROKO Network technical whitepaper.",
+          "file": "technical-whitepaper.md"
+        },
+        {
+          "id": "technical-architecture",
+          "title": "Architecture",
+          "summary": "System architecture specifications.",
+          "file": "technical-architecture.md"
+        }
+      ]
+    },
+    {
+      "id": "products",
+      "title": "Products & Solutions",
+      "summary": "ROKO products and enterprise solutions.",
+      "sections": [
+        {
+          "id": "products-nexus",
+          "title": "Project Nexus",
+          "summary": "Temporal compute marketplace.",
+          "file": "products-nexus.md"
+        },
+        {
+          "id": "products-use-cases",
+          "title": "Use Cases",
+          "summary": "Industry applications and solutions.",
+          "file": "products-use-cases.md"
+        }
+      ]
+    },
+    {
+      "id": "resources",
+      "title": "Resources",
+      "summary": "Reference materials and assets.",
+      "sections": [
+        {
+          "id": "resources-glossary",
+          "title": "Glossary",
+          "summary": "ROKO Network terminology.",
+          "file": "resources-glossary.md"
+        },
+        {
+          "id": "resources-faq",
+          "title": "FAQ",
+          "summary": "Frequently asked questions.",
+          "file": "resources-faq.md"
+        },
+        {
+          "id": "resources-research-papers",
+          "title": "Research Papers",
+          "summary": "Academic and technical research.",
+          "file": "resources-research-papers.md"
+        },
+        {
+          "id": "resources-brand-assets",
+          "title": "Brand Assets",
+          "summary": "Logos, colors, and brand guidelines.",
+          "file": "resources-brand-assets.md"
+        }
+      ]
+    },
+    {
+      "id": "articles",
+      "title": "Articles",
+      "summary": "Blog posts and feature articles.",
+      "sections": [
+        {
+          "id": "articles-time-and-stamps",
+          "title": "Of Time and Stamps",
+          "summary": "Understanding temporal blockchain fundamentals.",
+          "file": "articles-time-and-stamps.md"
+        }
+      ]
+    },
+    {
+      "id": "archive",
+      "title": "Archive",
+      "summary": "Historical documentation and development history.",
+      "sections": [
+        {
+          "id": "archive-historical",
+          "title": "Historical Documentation",
+          "summary": "Legacy documentation archive.",
+          "file": "archive-historical.md"
+        },
+        {
+          "id": "archive-history",
+          "title": "Development History",
+          "summary": "Project development timeline.",
+          "file": "archive-history.md"
+        },
+        {
+          "id": "archive-vision",
+          "title": "Original Vision",
+          "summary": "Founding vision and goals.",
+          "file": "archive-vision.md"
+        },
+        {
+          "id": "archive-basilisk",
+          "title": "Project Basilisk",
+          "summary": "Historical project documentation.",
+          "file": "archive-basilisk.md"
+        }
+      ]
+    }
+  ]
+}
