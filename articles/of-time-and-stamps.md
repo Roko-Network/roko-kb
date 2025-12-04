@@ -106,33 +106,33 @@ The whole idea is that when we produce a block, the timestamp written in it must
 ```mermaid
 flowchart TB
     Epoch["BABE Epoch N"]
-    
-    VA["Validator A\nbabe1qf…"]
-    VB["Validator B\nbabe1zk…"]
-    
-    BeaconA["Beacon aₙ\ntimestamp: Ta\nseq: n\nsignature: σ_a"]
-    BeaconB["Beacon bₙ\ntimestamp: Tb\nseq: n\nsignature: σ_b"]
-    
-    CacheA["Local Beacon Cache A\n• Beacon aₙ\n• Beacon bₙ\n• Beacon cₙ"]
-    CacheB["Local Beacon Cache B\n• Beacon bₙ\n• Beacon aₙ\n• Beacon cₙ"]
-    
-    AuthorA["Block Author A\n• chooses bundle\n• injects proof"]
-    AuthorB["Block Author B\n• chooses bundle\n• injects proof"]
-    
-    BlockA["Block with Proof\n• aₙ, bₙ, cₙ\n• claimed median T*"]
-    BlockB["Block with Proof\n• bₙ, cₙ, dₙ\n• claimed median T*"]
-    
+
+    VA["Validator A<br/>babe1qf..."]
+    VB["Validator B<br/>babe1zk..."]
+
+    BeaconA["Beacon A<br/>timestamp: Ta<br/>seq: n, sig: σa"]
+    BeaconB["Beacon B<br/>timestamp: Tb<br/>seq: n, sig: σb"]
+
+    CacheA["Local Cache A<br/>Beacons: a, b, c"]
+    CacheB["Local Cache B<br/>Beacons: b, a, c"]
+
+    AuthorA["Block Author A<br/>chooses bundle<br/>injects proof"]
+    AuthorB["Block Author B<br/>chooses bundle<br/>injects proof"]
+
+    BlockA["Block with Proof<br/>beacons: a, b, c<br/>median time: T*"]
+    BlockB["Block with Proof<br/>beacons: b, c, d<br/>median time: T*"]
+
     Epoch ~~~ VA & VB
-    
-    VA -->|produces own beacon| BeaconA
-    VB -->|produces own beacon| BeaconB
+
+    VA -->|produces beacon| BeaconA
+    VB -->|produces beacon| BeaconB
     BeaconA -->|broadcasts| CacheA
     BeaconB -->|broadcasts| CacheB
-    CacheB -...->|receives| CacheA
-    CacheA -->|selects K best beacons| AuthorA
-    CacheB -->|selects K best beacons| AuthorB
-    AuthorA -->|includes BeaconProof| BlockA
-    AuthorB -->|includes BeaconProof| BlockB
+    CacheB -.->|receives| CacheA
+    CacheA -->|selects K beacons| AuthorA
+    CacheB -->|selects K beacons| AuthorB
+    AuthorA -->|includes proof| BlockA
+    AuthorB -->|includes proof| BlockB
 ```
 
 So there you go, a simplified example of what’s happening during block production.
