@@ -217,28 +217,25 @@ Normal transactions compete for gas; temporal transactions compete for time. But
 Address:   5G9v…XJwa
 Calldata:  0x…
 Nonce:     42
-```
 
-```box:Temporal Metadata
-beaconProofHash:    0xb377…f9aa
-medianTimestampUs:  1730123470123456  (≈ 2024-09-28 10:17:50.123Z)
-```
+Temporal Metadata:
+  beaconProofHash:    0xb377…f9aa
+  medianTimestampUs:  1730123470123456  (≈ 2024-09-28 10:17:50.123Z)
 
-```box:Embedded Time Beacon Proof (K = 3)
-┌──────────────────┬────────────────────┬─────────┬───────────┐
-│ Validator        │ Timestamp          │ Seq     │ Signature │
-├──────────────────┼────────────────────┼─────────┼───────────┤
-│ babe1qf…2k7h     │ 1730123469123456   │ 43      │ σ₁        │
-│ babe1zk…xp4m     │ 1730123470456123   │ 106     │ σ₂        │
-│ babe1mv…hnt9     │ 1730123470812345   │ 89      │ σ₃        │
-└──────────────────┴────────────────────┴─────────┴───────────┘
-```
+Embedded Time Beacon Proof (K = 3):
+  ┌──────────────────┬────────────────────┬─────────┬───────────┐
+  │ Validator        │ Timestamp          │ Seq     │ Signature │
+  ├──────────────────┼────────────────────┼─────────┼───────────┤
+  │ babe1qf…2k7h     │ 1730123469123456   │ 43      │ σ₁        │
+  │ babe1zk…xp4m     │ 1730123470456123   │ 106     │ σ₂        │
+  │ babe1mv…hnt9     │ 1730123470812345   │ 89      │ σ₃        │
+  └──────────────────┴────────────────────┴─────────┴───────────┘
 
-```box:Validation Flow
-1. Check user signature + nonce as usual
-2. Re-verify each beacon signature (σᵢ) with epoch randomness
-3. Ensure beacon timestamps fall within allowed spread/deviation
-4. Confirm medianTimestampUs ≤ transaction deadline and ordering rules
+Validation Flow:
+  1. Check user signature + nonce as usual
+  2. Re-verify each beacon signature (σᵢ) with epoch randomness
+  3. Ensure beacon timestamps fall within allowed spread/deviation
+  4. Confirm medianTimestampUs ≤ transaction deadline and ordering rules
 ```
 
 Of course, storage of the time proof must be optimized; it’s not necessary to store the beacons in the transaction itself. But for testing purposes this is already an interesting setup.
