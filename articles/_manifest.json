@@ -1,9 +1,9 @@
 {
   "title": "Articles",
   "order": [
-    "Roko Network - Of time and stamps"
+    "of-time-and-stamps"
   ],
   "sections": [
-    { "id": "Roko Network - Of time and stamps", "title": "Of Time and Stamps" }
+    { "id": "of-time-and-stamps", "title": "Of Time and Stamps" }
   ]
 }
