@@ -104,23 +104,24 @@ Now we have those beacons ready for collecting, but how do we use them? Do we ne
 The whole idea is that when we produce a block, the timestamp written in it must be **proven**. Thanks to the beacons we no longer need after‑the‑fact attestations; we have something else: the time consensus that is currently happening as we produce the block.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 50, 'rankSpacing': 60, 'padding': 20, 'wrappingWidth': 200}}}%%
 flowchart TB
-    Epoch["BABE Epoch N"]
+    Epoch[BABE Epoch N]
 
-    VA["Validator A<br/>babe1qf..."]
-    VB["Validator B<br/>babe1zk..."]
+    VA[Validator A babe1qf...]
+    VB[Validator B babe1zk...]
 
-    BeaconA["Beacon A<br/>timestamp: Ta<br/>seq: n, sig: σa"]
-    BeaconB["Beacon B<br/>timestamp: Tb<br/>seq: n, sig: σb"]
+    BeaconA[Beacon A - timestamp Ta - seq n - sig σa]
+    BeaconB[Beacon B - timestamp Tb - seq n - sig σb]
 
-    CacheA["Local Cache A<br/>Beacons: a, b, c"]
-    CacheB["Local Cache B<br/>Beacons: b, a, c"]
+    CacheA[Local Cache A - Beacons a b c]
+    CacheB[Local Cache B - Beacons b a c]
 
-    AuthorA["Block Author A<br/>chooses bundle<br/>injects proof"]
-    AuthorB["Block Author B<br/>chooses bundle<br/>injects proof"]
+    AuthorA[Block Author A - chooses bundle - injects beacon proof]
+    AuthorB[Block Author B - chooses bundle - injects beacon proof]
 
-    BlockA["Block with Proof<br/>beacons: a, b, c<br/>median time: T*"]
-    BlockB["Block with Proof<br/>beacons: b, c, d<br/>median time: T*"]
+    BlockA[Block with BeaconProof - beacons a b c - median time T*]
+    BlockB[Block with BeaconProof - beacons b c d - median time T*]
 
     Epoch ~~~ VA & VB
 
@@ -131,8 +132,8 @@ flowchart TB
     CacheB -.->|receives| CacheA
     CacheA -->|selects K beacons| AuthorA
     CacheB -->|selects K beacons| AuthorB
-    AuthorA -->|includes proof| BlockA
-    AuthorB -->|includes proof| BlockB
+    AuthorA -->|includes BeaconProof| BlockA
+    AuthorB -->|includes BeaconProof| BlockB
 ```
 
 So there you go, a simplified example of what’s happening during block production.
