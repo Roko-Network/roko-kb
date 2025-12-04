@@ -103,7 +103,7 @@ Now we have those beacons ready for collecting, but how do we use them? Do we ne
 
 The whole idea is that when we produce a block, the timestamp written in it must be **proven**. Thanks to the beacons we no longer need after‑the‑fact attestations; we have something else: the time consensus that is currently happening as we produce the block.
 
-```mermaid.js
+```mermaid
 flowchart TB
     Epoch["BABE Epoch N"]
     
