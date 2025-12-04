@@ -264,23 +264,38 @@ Essentially, temporal transactions can’t be front‑run, removing many attack 
 
 ### The Roko Network Template
 
-```text
-    +-------------------------------------------------------------------+
-    |                          ROKO NETWORK                             |
-    |                                                                   |
-    |  +----------------------+  +----------------------+  +-----------+|
-    |  |      Beacons         |  |     Time Blocks      |  | Frontier  ||
-    |  |  (Validator timing   |  |  (Ordered blocks     |  | (EVM/     ||
-    |  |   proofs entering    |  |   stamped by beacon  |  |  API edge)||
-    |  |   each slot)         |  |   proofs)            |  +-----------+|
-    |  +----------------------+  +----------------------+              |
-    |                                                                   |
-    |  +-------------------------------------------------------------+  |
-    |  |                 Temporal Transactions                       |  |
-    |  |  (Guaranteed temporal ordering of events)                   |  |
-    |  +-------------------------------------------------------------+  |
-    |                                                                   |
-    +-------------------------------------------------------------------+
+```html
+<table class="arch-diagram">
+  <caption>ROKO NETWORK</caption>
+  <tr>
+    <td>
+      <div class="component">
+        <div class="component-title">Beacons</div>
+        <div class="component-desc">Validator timing proofs entering each slot</div>
+      </div>
+    </td>
+    <td>
+      <div class="component">
+        <div class="component-title">Time Blocks</div>
+        <div class="component-desc">Ordered blocks stamped by beacon proofs</div>
+      </div>
+    </td>
+    <td>
+      <div class="component">
+        <div class="component-title">Frontier</div>
+        <div class="component-desc">EVM / API edge</div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3" class="full-width">
+      <div class="component">
+        <div class="component-title">Temporal Transactions</div>
+        <div class="component-desc">Guaranteed temporal ordering of events</div>
+      </div>
+    </td>
+  </tr>
+</table>
 ```
 
 We divided the Roko technology into three pallets:
