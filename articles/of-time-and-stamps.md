@@ -157,7 +157,7 @@ In simpler terms, the block producer collects beacon proofs and must keep a fres
 
 We end up with a block that looks somewhat like this:
 
-```mermaid.js
+```mermaid
 %%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 20, 'padding': 10}}}%%
 flowchart TB
     subgraph Block["Block #12,345"]
