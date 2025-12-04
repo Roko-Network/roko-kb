@@ -458,7 +458,7 @@ async function bridgeTime(targetChain) {
 ## Learn More
 
 - [Temporal Infrastructure →](./temporal-infrastructure.md)
-- [TimeRPC Protocol →](./timerpc.md)
+- [TimeRPC Protocol →](../archive/timerpc.md)
 - [Hardware Timestamping →](./hardware-timestamping.md)
 
 ---

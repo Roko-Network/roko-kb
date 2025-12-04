@@ -184,24 +184,22 @@ ROKO's flagship product, **Project Nexus**, demonstrates the power of temporal b
 
 ### Quick Links
 
-- **[Quick Start Guide](./quick-start.md)** - Get running in 5 minutes
 - **[Temporal Blockchain Explained](./temporal-blockchain.md)** - Deep dive into our technology
 - **[Why Nanosecond Precision Matters](./nanosecond-precision.md)** - Understanding the importance of time
-- **[Developer SDK](../developers/sdks.md)** - Start building today
 
 ### Choose Your Path
 
 #### 🚀 **I'm a Developer**
-Start with our [Quick Start Guide](./quick-start.md) to deploy your first temporal smart contract in minutes.
+Explore our temporal blockchain technology and start building time-sensitive applications.
 
 #### ⚡ **I'm a Validator**
-Learn about [hardware requirements](../validators/hardware.md) and [join the network](../validators/getting-started.md).
+Join our network of validators maintaining nanosecond precision across the globe.
 
 #### 💎 **I'm a Token Holder**
-Explore [governance participation](../governance/overview.md) and [staking opportunities](../validators/staking.md).
+Participate in governance and staking opportunities.
 
 #### 🏢 **I'm an Enterprise**
-Discover [white-label solutions](../products/use-cases.md) and [integration options](../products/nexus-integration.md).
+Discover [white-label solutions](../products/use-cases.md) for your business needs.
 
 ## Key Differentiators
 
@@ -230,6 +228,6 @@ Ready to build the future? Let's get started.
 
 **Nanosecond Precision. Infinite Possibilities.**
 
-[Get Started](./quick-start.md) | [Read Whitepaper](../technical/whitepaper.md) | [Join Discord](https://discord.gg/roko)
+[Read Whitepaper](../technical/whitepaper.md) | [Join Discord](https://discord.gg/roko)
 
 </div>

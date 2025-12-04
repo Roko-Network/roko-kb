@@ -1,3 +1,0 @@
-# Developer SDKs
-
-*Coming soon*

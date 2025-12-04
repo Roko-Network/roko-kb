@@ -1,3 +1,0 @@
-# TimeRPC
-
-*Coming soon*

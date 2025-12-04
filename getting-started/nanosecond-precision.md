@@ -293,6 +293,4 @@ Without nanosecond precision, blockchain remains a technology of compromises. Wi
 
 Ready to build with nanosecond precision?
 
-- [Quick Start Guide →](./quick-start.md)
 - [Understanding NanoMoments →](../core-technology/nanomoment.md)
-- [Hardware Requirements →](../validators/hardware.md)

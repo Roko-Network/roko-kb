@@ -2,12 +2,10 @@
   "title": "Products & Solutions",
   "order": [
     "project-nexus",
-    "use-cases",
-    "nexus-integration"
+    "use-cases"
   ],
   "sections": [
     { "id": "project-nexus", "title": "Project Nexus" },
-    { "id": "use-cases", "title": "Use Cases" },
-    { "id": "nexus-integration", "title": "Nexus Integration" }
+    { "id": "use-cases", "title": "Use Cases" }
   ]
 }
