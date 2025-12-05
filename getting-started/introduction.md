@@ -134,17 +134,21 @@ With nanosecond precision, ROKO unlocks applications impossible on other blockch
 
 ### Three-Layer Design
 
-```
-┌─────────────────────────────────────┐
-│     Application Layer               │
-│   (DApps, Smart Contracts)          │
-├─────────────────────────────────────┤
-│     Temporal Consensus Layer        │
-│   (NanoMoment, TimeRPC, Ordering)   │
-├─────────────────────────────────────┤
-│     Hardware Timing Layer           │
-│   (OCP-TAP, IEEE 1588, Attestation) │
-└─────────────────────────────────────┘
+```html
+<div class="layer-stack">
+  <div class="layer">
+    <div class="layer-title">Application Layer</div>
+    <div class="layer-desc">DApps, Smart Contracts</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Temporal Consensus Layer</div>
+    <div class="layer-desc">NanoMoment, TimeRPC, Ordering</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Hardware Timing Layer</div>
+    <div class="layer-desc">OCP-TAP, IEEE 1588, Attestation</div>
+  </div>
+</div>
 ```
 
 ### Global Validator Network
