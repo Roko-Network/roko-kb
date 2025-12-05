@@ -2,34 +2,40 @@
 
 ## Distributed Temporal Infrastructure
 
-ROKO Network's architecture is designed from the ground up to support nanosecond-precision temporal operations across a globally distributed network of validators, providers, and time authorities.
+Five layers. Hardware at the bottom providing nanosecond precision. P2P gossip spreading time proofs. Consensus ordering transactions by when they were signed. Services exposing temporal primitives. Applications building on proven time.
 
 ## Network Overview
 
-```
-┌─────────────────────────────────────────────────┐
-│                 Applications Layer              │
-│         (DApps, Smart Contracts, Nexus)         │
-├─────────────────────────────────────────────────┤
-│                  Service Layer                  │
-│      (TimeRPC, Oracle, Bridge, Gateway)         │
-├─────────────────────────────────────────────────┤
-│               Consensus Layer                   │
-│        (Temporal PoS, Block Production)         │
-├─────────────────────────────────────────────────┤
-│                Network Layer                    │
-│         (P2P, Gossip, Time Sync)               │
-├─────────────────────────────────────────────────┤
-│              Infrastructure Layer               │
-│      (Validators, Hardware, Storage)            │
-└─────────────────────────────────────────────────┘
+```html
+<div class="layer-stack">
+  <div class="layer">
+    <div class="layer-title">Applications Layer</div>
+    <div class="layer-detail">DApps • Smart Contracts • Nexus</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Service Layer</div>
+    <div class="layer-detail">TimeRPC • Oracle • Bridge • Gateway</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Consensus Layer</div>
+    <div class="layer-detail">Temporal PoS • Block Production • GRANDPA Finality</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Network Layer</div>
+    <div class="layer-detail">P2P Gossip • Beacon Propagation • Time Sync</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Infrastructure Layer</div>
+    <div class="layer-detail">Validators • OCP TAP Hardware • NVMe Storage</div>
+  </div>
+</div>
 ```
 
 ## Node Types
 
 ### Validator Nodes
 
-Primary consensus participants with full blockchain state:
+The backbone. Full state, time cards, staked tokens. 32,000 ROKO minimum stake keeps Sybil attacks expensive. 180-day lock period ensures skin in the game. Hardware requirements enforce temporal precision - no time card, no validation.
 
 ```yaml
 validator_node:
@@ -52,7 +58,7 @@ validator_node:
 
 ### Archive Nodes
 
-Full historical data storage:
+History keepers. Every block, every transaction, every temporal proof since genesis. 10TB minimum. Analytics, audits, chain indexing - archive nodes serve the queries validators won't bother with.
 
 ```yaml
 archive_node:
@@ -70,7 +76,7 @@ archive_node:
 
 ### Light Nodes
 
-Minimal verification nodes:
+Wallets and mobile apps. 50GB storage, header verification only. Submit transactions, check balances, trust the validator set for heavy lifting. Checkpoint sync gets you running in minutes, not days.
 
 ```yaml
 light_node:
@@ -86,25 +92,21 @@ light_node:
 
 ### Geographic Distribution
 
+Three regions. North America, Europe, Asia-Pacific. Each region runs primary validators with dedicated time sources, secondary nodes for redundancy. Cross-region links maintain global consensus. Light speed sets the floor on latency - 100ms across the Pacific is physics, not engineering.
+
 ```
-                    Global Time Sync Network
-    ┌──────────┐    ┌──────────┐    ┌──────────┐
-    │    NA     │────│    EU     │────│   APAC   │
-    │  Region   │    │  Region   │    │  Region  │
-    └──────────┘    └──────────┘    └──────────┘
-         │               │               │
-    ┌────┴────┐    ┌────┴────┐    ┌────┴────┐
-    │ Primary │    │ Primary │    │ Primary │
-    │  Nodes  │    │  Nodes  │    │  Nodes  │
-    └────┬────┘    └────┬────┘    └────┬────┘
-         │               │               │
-    ┌────┴────┐    ┌────┴────┐    ┌────┴────┐
-    │Secondary│    │Secondary│    │Secondary│
-    │  Nodes  │    │  Nodes  │    │  Nodes  │
-    └─────────┘    └─────────┘    └─────────┘
+Region          Primary Nodes       Secondary Nodes
+─────────────────────────────────────────────────────
+NA              GPS grandmasters    Archive, relay
+EU              GPS grandmasters    Archive, relay
+APAC            GPS grandmasters    Archive, relay
 ```
 
+Regional validators sync within 10ms. Cross-region gossip within 150ms. Block finality in 2-3 seconds regardless of where the transaction originated.
+
 ### P2P Network Protocol
+
+Gossip with latency awareness. Peers sorted by round-trip time. Blocks propagate to fastest peers first, ripple outward. Every message carries a NanoMoment - network latency becomes observable, measurable, optimizable.
 
 ```go
 type P2PNetwork struct {
@@ -135,6 +137,8 @@ func (n *P2PNetwork) BroadcastBlock(block *Block) {
 
 ### PTP Implementation
 
+IEEE 1588 Precision Time Protocol. GPS as time source. Sub-microsecond sync across the network. Domain 0, standard priority, hardware timestamping on every packet. Grandmasters anchor each region to UTC.
+
 ```c
 struct ptp_config {
     int domain_number;
@@ -164,6 +168,8 @@ int initialize_ptp_grandmaster() {
 
 ### Network Time Protocol
 
+Marzullo's algorithm for consensus on time. Sample multiple peers. Find the intersection of confidence intervals. Adjust local clock to match. Drift detected, drift corrected. Continuous synchronization, not periodic polling.
+
 ```python
 class NetworkTimeSync:
     def __init__(self):
@@ -192,6 +198,8 @@ class NetworkTimeSync:
 ## Consensus Network
 
 ### Block Propagation
+
+Three strategies. Flooding for critical announcements - every node gets it immediately. Gossip for normal blocks - random fanout of 8 peers, exponential spread. Structured routing for targeted delivery. Strategy selected per message type.
 
 ```rust
 pub struct BlockPropagation {
@@ -230,6 +238,8 @@ impl BlockPropagation {
 ```
 
 ### Transaction Pool
+
+Not a queue - a temporal index. Transactions sorted by NanoMoment, not gas price. Validity windows reject stale submissions. Priority queue for block assembly. Temporal uniqueness enforced - one transaction per nanosecond slot.
 
 ```javascript
 class TransactionPool {
@@ -282,6 +292,8 @@ class TransactionPool {
 
 ### DDoS Protection
 
+Rate limiting per IP. Suspicious activity tracking. Automatic blacklisting above threshold. Standard defense-in-depth. Nothing novel - proven patterns, reliable execution.
+
 ```python
 class DDoSProtection:
     def __init__(self):
@@ -308,6 +320,8 @@ class DDoSProtection:
 
 ### Sybil Attack Prevention
 
+Proof of stake as Sybil resistance. 32,000 ROKO to register a validator. 180-day lock. Want to spin up 1,000 fake validators? You need 32 million tokens locked for six months. Economics makes attacks expensive. Hardware requirements add friction - can't fake a time card.
+
 ```solidity
 contract SybilResistance {
     uint256 constant MIN_STAKE = 32000 * 10**18;
@@ -331,6 +345,8 @@ contract SybilResistance {
 ## Network Performance
 
 ### Bandwidth Optimization
+
+Compress everything. Prioritize by message type. Batch when possible. Block announcements get priority headers. Beacon gossip compresses well - repetitive structure. Bandwidth is money when you're running global infrastructure.
 
 ```go
 type BandwidthOptimizer struct {
@@ -362,6 +378,8 @@ func (b *BandwidthOptimizer) BatchMessages(messages []Message) []byte {
 
 ### Latency Reduction
 
+Dijkstra on latency weights. Cache optimal paths. Measure round-trip times continuously. Route around slow peers. LRU cache prevents recalculation. Milliseconds matter when you're ordering transactions by nanoseconds.
+
 ```rust
 pub struct LatencyOptimizer {
     peer_latencies: HashMap<NodeId, Duration>,
@@ -390,6 +408,8 @@ impl LatencyOptimizer {
 
 ### Network Health Dashboard
 
+Three categories. Network health: peer count, message throughput, bandwidth, latency percentiles. Consensus health: block time, finality, validator participation, fork frequency. Temporal health: drift from UTC, sync accuracy, attestation rates. All observable. All alertable.
+
 ```yaml
 metrics:
   network:
@@ -412,6 +432,8 @@ metrics:
 ```
 
 ### Alerting System
+
+Thresholds trigger alerts. Peer count drops below 100? HIGH alert. Time drift exceeds 1 microsecond? CRITICAL. Validator participation below 66%? Network is at risk. Automated monitoring, automated response. Operators get paged for the exceptions.
 
 ```python
 class NetworkAlerting:
@@ -447,6 +469,8 @@ class NetworkAlerting:
 
 ### Sharding Architecture
 
+Temporal sharding. Transactions assigned to shards by timestamp, not account. Deterministic assignment - `timestamp % shard_count`. Cross-shard transactions handled explicitly. Each shard maintains its own temporal ordering. Global ordering reconstructed at finality.
+
 ```javascript
 class ShardingManager {
     constructor(shardCount) {
@@ -480,6 +504,8 @@ class ShardingManager {
 
 ### State Channels
 
+Off-chain scaling with on-chain settlement. Open a channel, transact infinitely between two parties, close with final state. Channel opening records the NanoMoment. Disputes reference temporal ordering. State channels inherit ROKO's time guarantees even off-chain.
+
 ```solidity
 contract StateChannel {
     struct Channel {
@@ -512,11 +538,12 @@ contract StateChannel {
 
 ## Future Network Enhancements
 
-1. **Quantum-Safe Networking**: Post-quantum cryptography for network messages
-2. **Satellite Nodes**: Direct satellite connectivity for remote validators
-3. **5G Integration**: Ultra-low latency mobile node support
-4. **AI-Driven Optimization**: Machine learning for network routing
+Quantum-safe networking when RSA breaks. Satellite nodes for validators in remote locations - Starlink already enables this. 5G integration for mobile light nodes with sub-10ms latency. ML-driven routing optimization - let the network learn its own topology.
 
 ---
 
-> **Architecture Philosophy**: Every component of ROKO's network architecture is designed with temporal precision as the primary constraint, enabling unprecedented coordination in distributed systems.
+## See Also
+
+- [Temporal Infrastructure](./temporal-infrastructure.md)
+- [Consensus Mechanism](./consensus.md)
+- [Time Beacons](./time-beacons.md)
