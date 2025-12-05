@@ -8,17 +8,21 @@ ROKO adds proven time to blockchain. Three layers: hardware clocks at the bottom
 
 ## Architecture Overview
 
-```
-┌──────────────────────────────────────────────────────────┐
-│                   Application Layer                      │
-│         Temporal Smart Contracts & DApps                 │
-├──────────────────────────────────────────────────────────┤
-│                Temporal Consensus Layer                  │
-│    Time Beacons • Ordering • Attestation                │
-├──────────────────────────────────────────────────────────┤
-│                 Hardware Timing Layer                    │
-│    OCP-TAP • IEEE 1588 PTP • Atomic Clocks • GPS        │
-└──────────────────────────────────────────────────────────┘
+```html
+<div class="layer-stack">
+  <div class="layer">
+    <div class="layer-title">Application Layer</div>
+    <div class="layer-detail">Temporal Smart Contracts & DApps</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Temporal Consensus Layer</div>
+    <div class="layer-detail">Time Beacons • Ordering • Attestation</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Hardware Timing Layer</div>
+    <div class="layer-detail">OCP-TAP • IEEE 1588 PTP • Atomic Clocks • GPS</div>
+  </div>
+</div>
 ```
 
 Each layer:
@@ -48,13 +52,20 @@ Time Card Specifications:
 
 #### Hardware Requirements for Validators
 
-| Component | Specification | Purpose |
-|-----------|--------------|---------|
-| **Time Card** | OCP TAP 2.0+ | Hardware timestamp generation |
-| **NIC** | Intel X710/E810 | PTP hardware timestamping |
-| **CPU** | AVX2 support | Cryptographic operations |
-| **GPS Antenna** | Active, 30dB gain | Time source reception |
-| **Oscillator** | OCXO or better | Holdover stability |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Component</th><th>Specification</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Time Card</strong></td><td>OCP TAP 2.0+</td><td>Hardware timestamp generation</td></tr>
+    <tr><td><strong>NIC</strong></td><td>Intel X710/E810</td><td>PTP hardware timestamping</td></tr>
+    <tr><td><strong>CPU</strong></td><td>AVX2 support</td><td>Cryptographic operations</td></tr>
+    <tr><td><strong>GPS Antenna</strong></td><td>Active, 30dB gain</td><td>Time source reception</td></tr>
+    <tr><td><strong>Oscillator</strong></td><td>OCXO or better</td><td>Holdover stability</td></tr>
+  </tbody>
+</table>
+```
 
 ### IEEE 1588 PTP Implementation
 
@@ -130,12 +141,19 @@ class TemporalOrdering:
 
 ## Performance Characteristics
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| **Beacon Interval** | 150ms | Configurable |
-| **Drift Tolerance** | 2s launch, 500ms target | Tightens as network matures |
-| **Block Time** | 2-3 seconds | GRANDPA finality |
-| **Timestamp Precision** | Microseconds in beacons | NanoMoment format supports nanoseconds |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Metric</th><th>Value</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Beacon Interval</strong></td><td>150ms</td><td>Configurable</td></tr>
+    <tr><td><strong>Drift Tolerance</strong></td><td>2s launch, 500ms target</td><td>Tightens as network matures</td></tr>
+    <tr><td><strong>Block Time</strong></td><td>2-3 seconds</td><td>GRANDPA finality</td></tr>
+    <tr><td><strong>Timestamp Precision</strong></td><td>Microseconds in beacons</td><td>NanoMoment format supports nanoseconds</td></tr>
+  </tbody>
+</table>
+```
 
 ---
 
@@ -143,11 +161,18 @@ class TemporalOrdering:
 
 ### Attack Prevention
 
-| Attack | Prevention |
-|--------|------------|
-| **Time Manipulation** | Beacon proofs require multiple validator signatures |
-| **Front-running** | Temporal ordering - can't back-date beacon proofs |
-| **Replay** | Monotonic sequence numbers in beacons |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Attack</th><th>Prevention</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Time Manipulation</strong></td><td>Beacon proofs require multiple validator signatures</td></tr>
+    <tr><td><strong>Front-running</strong></td><td>Temporal ordering - can't back-date beacon proofs</td></tr>
+    <tr><td><strong>Replay</strong></td><td>Monotonic sequence numbers in beacons</td></tr>
+  </tbody>
+</table>
+```
 
 ### Slashing
 

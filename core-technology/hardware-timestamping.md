@@ -8,26 +8,25 @@ Hardware timestamping is the foundation of ROKO Network's temporal guarantees, p
 
 ### Time Card Components
 
-```
-┌─────────────────────────────────┐
-│     GPS/GNSS Receiver           │
-│     (Multi-constellation)       │
-└────────────┬────────────────────┘
-             │
-┌────────────▼────────────────────┐
-│     OCXO Oscillator             │
-│     (±0.1–0.5 ppb stability)    │
-└────────────┬────────────────────┘
-             │
-┌────────────▼────────────────────┐
-│     FPGA Timestamping           │
-│     (Hardware acceleration)     │
-└────────────┬────────────────────┘
-             │
-┌────────────▼────────────────────┐
-│     Secure Element              │
-│     (Cryptographic signing)     │
-└─────────────────────────────────┘
+```html
+<div class="layer-stack">
+  <div class="layer">
+    <div class="layer-title">GPS/GNSS Receiver</div>
+    <div class="layer-detail">Multi-constellation</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">OCXO Oscillator</div>
+    <div class="layer-detail">±0.1–0.5 ppb stability</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">FPGA Timestamping</div>
+    <div class="layer-detail">Hardware acceleration</div>
+  </div>
+  <div class="layer">
+    <div class="layer-title">Secure Element</div>
+    <div class="layer-detail">Cryptographic signing</div>
+  </div>
+</div>
 ```
 
 ## Implementation
@@ -47,10 +46,10 @@ int get_hardware_timestamp(struct hw_timestamp *ts) {
     ts->seconds = read_register(TIME_SECONDS_REG);
     ts->nanoseconds = read_register(TIME_NANOS_REG);
     ts->accuracy_ns = read_register(ACCURACY_REG);
-    
+
     // Get hardware signature
     generate_hw_signature(ts);
-    
+
     return 0;
 }
 ```
@@ -61,7 +60,7 @@ int get_hardware_timestamp(struct hw_timestamp *ts) {
 def create_time_proof(transaction):
     # Get hardware timestamp
     hw_time = TimeCard.get_timestamp()
-    
+
     # Create attestation
     attestation = {
         'timestamp': hw_time.nanoseconds,
@@ -69,7 +68,7 @@ def create_time_proof(transaction):
         'signature': TimeCard.sign(transaction.hash),
         'certificate': TimeCard.get_certificate()
     }
-    
+
     return attestation
 ```
 

@@ -114,14 +114,21 @@ def sandwich_attack_attempt(victim_tx):
 
 ### Protocol-Level Guarantees
 
-| Attack Type | Traditional Chains | ROKO Network |
-|------------|-------------------|--------------|
-| Front-running | Common | Impossible |
-| Back-running | Common | Time-ordered only |
-| Sandwich attacks | Common | Impossible |
-| Time-bandit attacks | Possible | Impossible |
-| Uncle-bandit attacks | Possible | No uncles |
-| Liquidation racing | Common | Fair temporal order |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Attack Type</th><th>Traditional Chains</th><th>ROKO Network</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Front-running</strong></td><td>Common</td><td>Impossible</td></tr>
+    <tr><td><strong>Back-running</strong></td><td>Common</td><td>Time-ordered only</td></tr>
+    <tr><td><strong>Sandwich attacks</strong></td><td>Common</td><td>Impossible</td></tr>
+    <tr><td><strong>Time-bandit attacks</strong></td><td>Possible</td><td>Impossible</td></tr>
+    <tr><td><strong>Uncle-bandit attacks</strong></td><td>Possible</td><td>No uncles</td></tr>
+    <tr><td><strong>Liquidation racing</strong></td><td>Common</td><td>Fair temporal order</td></tr>
+  </tbody>
+</table>
+```
 
 ## Fair Sequencing
 
@@ -333,13 +340,20 @@ class MEVMonitor:
 
 ## Comparison with MEV Solutions
 
-| Solution | Approach | Effectiveness | Trade-offs |
-|----------|----------|---------------|------------|
-| **ROKO** | Hardware timestamps | 100% elimination | Requires time cards |
-| **Flashbots** | Private mempool | Partial mitigation | Centralization |
-| **Threshold Encryption** | Hide transactions | Good protection | Complexity |
-| **Batch Auctions** | Time windows | Reduces MEV | Latency |
-| **Random Ordering** | Randomization | Some protection | Unpredictable |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Solution</th><th>Approach</th><th>Effectiveness</th><th>Trade-offs</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>ROKO</strong></td><td>Hardware timestamps</td><td>100% elimination</td><td>Requires time cards</td></tr>
+    <tr><td><strong>Flashbots</strong></td><td>Private mempool</td><td>Partial mitigation</td><td>Centralization</td></tr>
+    <tr><td><strong>Threshold Encryption</strong></td><td>Hide transactions</td><td>Good protection</td><td>Complexity</td></tr>
+    <tr><td><strong>Batch Auctions</strong></td><td>Time windows</td><td>Reduces MEV</td><td>Latency</td></tr>
+    <tr><td><strong>Random Ordering</strong></td><td>Randomization</td><td>Some protection</td><td>Unpredictable</td></tr>
+  </tbody>
+</table>
+```
 
 ## Future Considerations
 

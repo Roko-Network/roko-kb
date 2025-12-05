@@ -46,25 +46,25 @@ Other validators verify:
 
 ## Temporal Proof Structure
 
-```
-┌────────────── Block Header ──────────────┐
-│ Parent Hash                              │
-│ Block Number                             │
-│ State Root                               │
-│ Extrinsics Root                          │
-│                                          │
-│ ┌─────── Beacon Proof ───────┐           │
-│ │ Claimed Time: T            │           │
-│ │ Spread: max - min          │           │
-│ │ Median: canonical time     │           │
-│ │                            │           │
-│ │ Beacon 1: {validator, ts, sig}        │
-│ │ Beacon 2: {validator, ts, sig}        │
-│ │ Beacon 3: {validator, ts, sig}        │
-│ └────────────────────────────┘           │
-│                                          │
-│ BABE Seal (slot, authority, signature)   │
-└──────────────────────────────────────────┘
+```box:Block Header
+Parent Hash
+Block Number
+State Root
+Extrinsics Root
+
+─── Beacon Proof ───────────────────────────────────────────────────────────
+
+Claimed Time:   T
+Spread:         max - min
+Median:         canonical time
+
+• Beacon 1: {validator, ts, sig}
+• Beacon 2: {validator, ts, sig}
+• Beacon 3: {validator, ts, sig}
+
+─────────────────────────────────────────────────────────────────────────────
+
+BABE Seal (slot, authority, signature)
 ```
 
 ---
@@ -73,22 +73,36 @@ Other validators verify:
 
 ### Hardware
 
-| Component | Minimum | Purpose |
-|-----------|---------|---------|
-| **Time Card** | OCP TAP 2.0 | Hardware timestamp generation |
-| **GPS Antenna** | Active, 30dB gain | Time source |
-| **NIC** | PTP-capable (Intel X710/E810) | Hardware timestamping |
-| **CPU** | 8+ cores | Block production |
-| **RAM** | 16 GB+ | Beacon cache |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Component</th><th>Minimum</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Time Card</strong></td><td>OCP TAP 2.0</td><td>Hardware timestamp generation</td></tr>
+    <tr><td><strong>GPS Antenna</strong></td><td>Active, 30dB gain</td><td>Time source</td></tr>
+    <tr><td><strong>NIC</strong></td><td>PTP-capable (Intel X710/E810)</td><td>Hardware timestamping</td></tr>
+    <tr><td><strong>CPU</strong></td><td>8+ cores</td><td>Block production</td></tr>
+    <tr><td><strong>RAM</strong></td><td>16 GB+</td><td>Beacon cache</td></tr>
+  </tbody>
+</table>
+```
 
 ### Time Synchronization
 
 Validators must maintain synchronization within the network's drift tolerance:
 
-| Network Phase | Drift Tolerance |
-|---------------|-----------------|
-| Launch | 2 seconds |
-| Mature | 500ms target |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Network Phase</th><th>Drift Tolerance</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Launch</strong></td><td>2 seconds</td></tr>
+    <tr><td><strong>Mature</strong></td><td>500ms target</td></tr>
+  </tbody>
+</table>
+```
 
 ```bash
 # Check time sync status
@@ -158,12 +172,19 @@ Validators can be slashed for:
 
 ROKO's temporal features are implemented as modular Substrate pallets:
 
-| Pallet | Depends On | Function |
-|--------|------------|----------|
-| **Beacons** | - | Validator beacon production |
-| **Time Blocks** | Beacons | Beacon proofs in blocks |
-| **Temporal Transactions** | Beacons, Time Blocks | Type 3 transactions |
-| **Frontier** (forked) | All above | EVM with temporal ordering |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Pallet</th><th>Depends On</th><th>Function</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Beacons</strong></td><td>-</td><td>Validator beacon production</td></tr>
+    <tr><td><strong>Time Blocks</strong></td><td>Beacons</td><td>Beacon proofs in blocks</td></tr>
+    <tr><td><strong>Temporal Transactions</strong></td><td>Beacons, Time Blocks</td><td>Type 3 transactions</td></tr>
+    <tr><td><strong>Frontier</strong> (forked)</td><td>All above</td><td>EVM with temporal ordering</td></tr>
+  </tbody>
+</table>
+```
 
 This allows partial adoption:
 - Beacons only (cross-chain time source)

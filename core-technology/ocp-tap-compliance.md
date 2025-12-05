@@ -33,14 +33,21 @@ ocp_tap_compliance:
 
 ### Compliance Checklist
 
-| Requirement | ROKO Implementation | Status |
-|------------|-------------------|---------|
-| Hardware timestamping | OCP TAP 2.0 cards | ✅ Compliant |
-| PTP support | IEEE 1588-2019 | ✅ Compliant |
-| GNSS synchronization | Multi-constellation | ✅ Compliant |
-| Holdover capability | 24+ hours | ✅ Compliant |
-| Monitoring interface | Prometheus metrics | ✅ Compliant |
-| Security | Secure boot, attestation | ✅ Compliant |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Requirement</th><th>ROKO Implementation</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Hardware timestamping</td><td>OCP TAP 2.0 cards</td><td>✅ Compliant</td></tr>
+    <tr><td>PTP support</td><td>IEEE 1588-2019</td><td>✅ Compliant</td></tr>
+    <tr><td>GNSS synchronization</td><td>Multi-constellation</td><td>✅ Compliant</td></tr>
+    <tr><td>Holdover capability</td><td>24+ hours</td><td>✅ Compliant</td></tr>
+    <tr><td>Monitoring interface</td><td>Prometheus metrics</td><td>✅ Compliant</td></tr>
+    <tr><td>Security</td><td>Secure boot, attestation</td><td>✅ Compliant</td></tr>
+  </tbody>
+</table>
+```
 
 ## Technical Implementation
 

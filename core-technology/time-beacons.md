@@ -39,13 +39,20 @@ Each validator produces signed beacons at regular intervals:
 }
 ```
 
-| Field | Purpose |
-|-------|---------|
-| `validatorId` | Identifies the beacon producer |
-| `timestampUs` | Microsecond-precision timestamp |
-| `sequence` | Monotonic counter preventing replay |
-| `signature` | Validator's cryptographic signature |
-| `epochRandomness` | Epoch-derived value for verification |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Field</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>validatorId</code></td><td>Identifies the beacon producer</td></tr>
+    <tr><td><code>timestampUs</code></td><td>Microsecond-precision timestamp</td></tr>
+    <tr><td><code>sequence</code></td><td>Monotonic counter preventing replay</td></tr>
+    <tr><td><code>signature</code></td><td>Validator's cryptographic signature</td></tr>
+    <tr><td><code>epochRandomness</code></td><td>Epoch-derived value for verification</td></tr>
+  </tbody>
+</table>
+```
 
 ### Beacon Frequency
 
@@ -57,34 +64,37 @@ Each validator produces signed beacons at regular intervals:
 
 ## Beacon Flow
 
-```
-                       ┌────────────────────────────────┐
-                       │        BABE Epoch N            │
-                       └────────────────────────────────┘
+```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 50, 'rankSpacing': 60, 'padding': 20, 'wrappingWidth': 200}}}%%
+flowchart TB
+    Epoch[BABE Epoch N]
 
-        ┌──────────────┐                                     ┌──────────────┐
-        │  Validator A │                                     │  Validator B │
-        └─────┬────────┘                                     └─────┬────────┘
-              │                                                    │
-    produces own beacon                                    produces own beacon
-              │                                                    │
-              ▼                                                    ▼
-      ┌──────────────────┐                                ┌──────────────────┐
-      │ Beacon aₙ        │                                │ Beacon bₙ        │
-      │  timestamp: Ta   │                                │  timestamp: Tb   │
-      │  seq:      n     │                                │  seq:      n     │
-      │  signature: σ_a  │                                │  signature: σ_b  │
-      └────────┬─────────┘                                └────────┬─────────┘
-               │                                                   │
-               │ broadcasts                                        │ broadcasts
-    ───────────┼───────────────────────────────────────────────────┼───────────
-               │                                                   │
-        ┌──────┴────────────────────┐                   ┌──────────┴──────────┐
-        │ Local Beacon Cache (A)    │                   │ Local Beacon Cache (B)│
-        │  • Beacon aₙ              │                   │  • Beacon bₙ          │
-        │  • Beacon bₙ              │◄────receives──────┤  • Beacon aₙ          │
-        │  • Beacon cₙ              │                   │  • Beacon cₙ          │
-        └───────────────────────────┘                   └───────────────────────┘
+    VA[Validator A babe1qf...]
+    VB[Validator B babe1zk...]
+
+    BeaconA[Beacon A - timestamp Ta - seq n - sig σa]
+    BeaconB[Beacon B - timestamp Tb - seq n - sig σb]
+
+    CacheA[Local Cache A - Beacons a b c]
+    CacheB[Local Cache B - Beacons b a c]
+
+    AuthorA[Block Author A - chooses bundle - injects beacon proof]
+    AuthorB[Block Author B - chooses bundle - injects beacon proof]
+
+    BlockA[Block with BeaconProof - beacons a b c - median time T*]
+    BlockB[Block with BeaconProof - beacons b c d - median time T*]
+
+    Epoch ~~~ VA & VB
+
+    VA -->|produces beacon| BeaconA
+    VB -->|produces beacon| BeaconB
+    BeaconA -->|broadcasts| CacheA
+    BeaconB -->|broadcasts| CacheB
+    CacheB -.->|receives| CacheA
+    CacheA -->|selects K beacons| AuthorA
+    CacheB -->|selects K beacons| AuthorB
+    AuthorA -->|includes BeaconProof| BlockA
+    AuthorB -->|includes BeaconProof| BlockB
 ```
 
 Each validator:
@@ -99,22 +109,25 @@ Each validator:
 
 When producing a block, the validator includes a **Beacon Proof**:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Block #12,345                                               │
-│   Parent Hash:    0x4fd8…8c2a                               │
-│   Author:         babe1qf…2k7h                              │
-│                                                             │
-│   ┌────────────── Time Beacon Proof ────────────────┐       │
-│   │ Claimed Block Time: 2024-09-28 10:17:36.789 UTC │       │
-│   │ Spread (max-min): 42 ms                         │       │
-│   │ Median (canonical): 2024-09-28 10:17:36.791 UTC │       │
-│   │                                                 │       │
-│   │  • Beacon 1 (validator: babe1qf…2k7h)          │       │
-│   │  • Beacon 2 (validator: babe1zk…xp4m)          │       │
-│   │  • Beacon 3 (validator: babe1mv…hnt9)          │       │
-│   └─────────────────────────────────────────────────┘       │
-└─────────────────────────────────────────────────────────────┘
+```box:Block #12,345
+Parent Hash:      0x4fd8…8c2a
+Author:           babe1qf…2k7h
+State Root:       0xa7b1…932e
+Extrinsics Root:  0x33aa…fe45
+
+─── Time Beacon Proof ───────────────────────────────────────────────────────
+
+Claimed Block Time:   2024-09-28 10:17:36.789 UTC
+Spread max-min:       42 ms
+Median canonical:     2024-09-28 10:17:36.791 UTC
+
+┌─────────────┬──────────────────┬────────────────────┬──────────┬────────────────┐
+│ Beacon      │ Validator        │ Timestamp (µs)     │ Sequence │ Signature      │
+├─────────────┼──────────────────┼────────────────────┼──────────┼────────────────┤
+│ Beacon 1    │ babe1qf…2k7h     │ 1730123456789000   │ 42       │ 0x8afc…dbe1    │
+│ Beacon 2    │ babe1zk…xp4m     │ 1730123456798000   │ 105      │ 0xe4ab…9910    │
+│ Beacon 3    │ babe1mv…hnt9     │ 1730123456776000   │ 88       │ 0x91cd…0f2b    │
+└─────────────┴──────────────────┴────────────────────┴──────────┴────────────────┘
 ```
 
 The block timestamp must match the **median** of the included beacon timestamps.
@@ -133,11 +146,18 @@ The block timestamp must match the **median** of the included beacon timestamps.
 
 Blockchain relies on gossiping - messages take time to propagate. ROKO handles this with configurable drift tolerance:
 
-| Phase | Drift Tolerance | Notes |
-|-------|-----------------|-------|
-| **Launch** | 2 seconds | Similar to existing chains |
-| **Mature network** | 500ms target | With sufficient validator density |
-| **Aspirational** | Sub-100ms | With optimized networking |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Phase</th><th>Drift Tolerance</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Launch</strong></td><td>2 seconds</td><td>Similar to existing chains</td></tr>
+    <tr><td><strong>Mature network</strong></td><td>500ms target</td><td>With sufficient validator density</td></tr>
+    <tr><td><strong>Aspirational</strong></td><td>Sub-100ms</td><td>With optimized networking</td></tr>
+  </tbody>
+</table>
+```
 
 The tolerance window can be adjusted via governance as network conditions improve.
 
