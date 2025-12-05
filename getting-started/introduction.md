@@ -79,16 +79,26 @@ Unlike traditional blockchains where validators can reorder transactions:
 
 ## Technical Specifications
 
-| Specification | Value |
-|--------------|-------|
-| **Time Precision** | < 100 nanoseconds |
-| **Block Time** | 2-3 seconds |
-| **Finality** | Instant (single block) |
-| **Throughput** | 50,000+ TPS |
-| **Network Sync** | IEEE 1588 PTP |
-| **Hardware Standard** | OCP-TAP compliant |
-| **Timestamp Format** | u128 NanoMoment |
-| **Gas Costs** | < $0.01 per transaction |
+```html
+<table class="spec-table">
+  <thead>
+    <tr>
+      <th>Specification</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Time Precision</strong></td><td>&lt; 100 nanoseconds</td></tr>
+    <tr><td><strong>Block Time</strong></td><td>2-3 seconds</td></tr>
+    <tr><td><strong>Finality</strong></td><td>Instant (single block)</td></tr>
+    <tr><td><strong>Throughput</strong></td><td>50,000+ TPS</td></tr>
+    <tr><td><strong>Network Sync</strong></td><td>IEEE 1588 PTP</td></tr>
+    <tr><td><strong>Hardware Standard</strong></td><td>OCP-TAP compliant</td></tr>
+    <tr><td><strong>Timestamp Format</strong></td><td>u128 NanoMoment</td></tr>
+    <tr><td><strong>Gas Costs</strong></td><td>&lt; $0.01 per transaction</td></tr>
+  </tbody>
+</table>
+```
 
 ## Unique Capabilities
 
