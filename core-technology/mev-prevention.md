@@ -2,23 +2,25 @@
 
 ## Temporal Ordering Removes Reordering
 
-MEV (Maximal Extractable Value) exists because block producers choose transaction order. ROKO removes that choice - transactions execute in the order they were signed, proven by time beacons.
+MEV exists because block producers choose transaction order. ROKO removes that choice. Transactions execute in the order they were signed, proven by time beacons. The arbitrage window closes.
 
 ## Understanding MEV
 
-Traditional blockchains suffer from MEV extraction where validators can:
-- Reorder transactions for profit
-- Front-run user transactions  
-- Perform sandwich attacks
-- Extract value through arbitrage
+$1 billion annually. That's what gets extracted from users on major chains through:
+- Reordering transactions for profit
+- Front-running user transactions
+- Sandwich attacks
+- Arbitrage racing
 
-**Annual MEV extracted on major chains**: Over $1 billion
+The validators aren't broken. They're working exactly as designed. The design is the problem.
+
+---
 
 ## ROKO's MEV Solution
 
 ### Hardware-Enforced Ordering
 
-Think of it like a post office that stamps every letter with the exact nanosecond it was written—not when it arrived. No matter how the letters get shuffled in transit, they're always processed in the order they were originally sent. ROKO's hardware time cards act as that unforgeable postmark. When you sign a transaction, specialized timing hardware records the precise moment, and that timestamp becomes the transaction's place in line. No one—not validators, not bots, not anyone—can cut ahead.
+Timebeat cards stamp transactions at the nanosecond. Not when they arrive at the mempool - when they're signed. The timestamp is the position. Hardware-attested, cryptographically sealed. Validators can't reorder what they don't control.
 
 ```rust
 pub struct TemporalTransaction {
@@ -31,40 +33,42 @@ impl Block {
     pub fn add_transaction(&mut self, tx: TemporalTransaction) -> Result<()> {
         // Transactions MUST be ordered by NanoMoment
         // No reordering possible
-        
+
         let position = self.transactions
             .binary_search_by_key(&tx.nano_moment, |t| t.nano_moment)
             .unwrap_or_else(|pos| pos);
-            
+
         self.transactions.insert(position, tx);
         Ok(())
     }
 }
 ```
 
+---
+
 ## Technical Implementation
 
 ### Immutable Temporal Sequencing
 
-On traditional exchanges, the house can see your order before it executes and place their own order first. On ROKO, every order carries cryptographic proof of when it was created—proof that can't be forged or back-dated. The exchange must process orders in exact chronological sequence. If you clicked "buy" at 10:17:36.500, no one can insert an order at 10:17:36.499 after the fact. The timeline is locked.
+Every order carries proof of creation time. Can't be forged. Can't be back-dated. You clicked buy at 10:17:36.500? That's your slot. No one inserts at 10:17:36.499 after the fact. Timeline locked.
 
 ```solidity
 contract MEVProofExchange {
     using NanoMoment for uint128;
-    
+
     struct Order {
         uint128 timestamp;
         address trader;
         uint256 amount;
         bytes hardwareProof;
     }
-    
+
     // Orders stored in temporal order
     mapping(uint128 => Order) public ordersByTime;
-    
+
     function submitOrder(uint256 amount) external {
         uint128 orderTime = Time.nanoNow();
-        
+
         // Impossible to front-run - time is hardware-attested
         ordersByTime[orderTime] = Order({
             timestamp: orderTime,
@@ -72,20 +76,22 @@ contract MEVProofExchange {
             amount: amount,
             hardwareProof: Time.getProof()
         });
-        
+
         // Execute in exact temporal order
         executeOrdersUntil(orderTime);
     }
 }
 ```
 
+---
+
 ## Attack Vector Analysis
 
 ### Front-Running: ELIMINATED
 
-**What is front-running?** Imagine you're about to buy a rare item at an auction. Someone with insider access sees your bid coming, quickly places their own bid first, buys the item, then immediately sells it to you at a markup. You pay more; they pocket the difference. On blockchains, bots do this constantly—watching for large trades, then jumping ahead in line to profit from the price movement your trade will cause.
+Bots watch the mempool. See your trade. Submit their own with higher gas to cut the line. Profit from the price movement you caused. Standard operating procedure on Ethereum. MEV infrastructure.
 
-**Why ROKO stops it:** You can't jump ahead in a line that's ordered by when you actually got there. ROKO's hardware timestamps prove exactly when each transaction was signed. A bot seeing your transaction can't create an earlier timestamp—that would require traveling back in time.
+ROKO: the line is sorted by timestamp, not gas. Bot sees your transaction? Cool. It was signed at T. Bot's transaction gets signed at T+delta. Math doesn't care about gas prices.
 
 Traditional:
 ```
@@ -103,24 +109,26 @@ Result: Temporal ordering preserved, no front-running
 
 ### Sandwich Attacks: IMPOSSIBLE
 
-**What is a sandwich attack?** A predator sees your pending trade and places two orders around it—one before yours to move the price against you, and one after to profit from the movement. You get squeezed in the middle, paying a worse price while the attacker extracts value from both sides of your transaction.
+Front-slice: buy before victim. Back-slice: sell after. Victim gets squeezed. Attacker extracts from both ends. Requires inserting transactions around yours.
 
-**Why ROKO makes this impossible:** The attacker would need to create a transaction with an earlier timestamp than yours (for the front slice) and insert it between your transaction and others (for the back slice). Neither is possible. Timestamps are hardware-attested and can't be forged. The transaction sequence is determined the moment each transaction is signed, not when an attacker decides to strike.
+On ROKO? Can't insert before (timestamp already happened). Can't insert between (sequence is hardware-determined). The attack geometry doesn't exist.
 
 ```python
 def sandwich_attack_attempt(victim_tx):
     """This attack is impossible on ROKO"""
     victim_time = victim_tx.nano_moment
-    
+
     # Cannot create transaction before victim
     front_tx_time = victim_time - 1  # INVALID - can't forge past time
-    
+
     # Cannot insert between victim and next tx
     back_tx_time = victim_time + 1  # Will execute AFTER victim
-    
+
     # Attack fails - temporal ordering enforced
     return None
 ```
+
+---
 
 ## Zero-MEV Architecture
 
@@ -142,42 +150,46 @@ def sandwich_attack_attempt(victim_tx):
 </table>
 ```
 
+---
+
 ## Fair Sequencing
 
-### First-Seen-First-Processed
+### First-Signed-First-Processed
 
-Traditional blockchains work like a nightclub where the bouncer decides who gets in first—and can be bribed. ROKO works like a numbered ticket system at a deli counter. Your ticket number is assigned the moment you take it, cryptographically stamped, and everyone is served in exact numerical order. There's no VIP line, no cutting, and no amount of money changes when you get served.
+Timestamp at signing. Not at arrival. Not at inclusion. Your place in line is determined when you click, not when a validator decides to notice you.
 
 ```javascript
 class FairSequencer {
     constructor() {
         this.queue = new TemporalPriorityQueue();
     }
-    
+
     addTransaction(tx) {
         // Order determined by hardware timestamp
         // Not by reception time or validator preference
         this.queue.insert(tx, tx.nanoMoment);
     }
-    
+
     getNextBatch(count) {
         const batch = [];
-        
+
         while (batch.length < count && !this.queue.isEmpty()) {
             const tx = this.queue.extractMin(); // Earliest time first
             batch.push(tx);
         }
-        
+
         return batch;
     }
 }
 ```
 
+---
+
 ## Validator Incentive Alignment
 
 ### No MEV = Pure Staking Rewards
 
-Why do validators on other chains extract MEV? Because they can, and it's profitable. ROKO removes the temptation entirely. Validators can't reorder transactions for profit because they don't control the order—time does. Instead, validators earn through honest work: producing blocks, participating in consensus, and maintaining accurate time synchronization. This creates a cleaner economic model where validator income comes from securing the network, not exploiting its users.
+Validators on other chains extract MEV because they can. ROKO validators can't. They don't control order - time does. Income comes from block production, attestations, temporal accuracy bonuses. Securing the network, not exploiting users.
 
 ```solidity
 contract ValidatorRewards {
@@ -186,44 +198,46 @@ contract ValidatorRewards {
     // 2. Attestation rewards
     // 3. Time accuracy bonuses
     // NOT from transaction ordering manipulation
-    
+
     function calculateReward(address validator) public view returns (uint256) {
         uint256 baseReward = getBaseReward();
         uint256 attestationReward = getAttestationReward(validator);
         uint256 temporalBonus = getTemporalAccuracyBonus(validator);
-        
+
         // No MEV extraction possible
         return baseReward + attestationReward + temporalBonus;
     }
 }
 ```
 
+---
+
 ## DeFi Without MEV
 
 ### Automated Market Makers
 
-Decentralized exchanges on traditional blockchains are hunting grounds for MEV bots. Every large swap is an opportunity for exploitation. On ROKO, swaps happen in the order they were initiated—period. If two people submit swaps at nearly the same instant, the one who clicked first goes first. The price you see when you initiate a trade is the price you get, because no one can jump ahead and move the market against you.
+DEXs on traditional chains: hunting grounds. Every large swap is extraction opportunity. ROKO: swaps happen in signed order. Two swaps at nearly the same instant? First signed goes first. Price at initiation is price at execution. No one jumps the queue.
 
 ```solidity
 contract TemporalAMM {
     using NanoMoment for uint128;
-    
+
     function swap(
         address tokenIn,
         address tokenOut,
         uint256 amountIn
     ) external {
         uint128 swapTime = Time.nanoNow();
-        
+
         // All swaps at same nanosecond get same price
         uint256 price = getPriceAtTime(swapTime);
-        
+
         // No sandwich attacks possible
         uint256 amountOut = amountIn * price / PRECISION;
-        
+
         // Update price for next nanosecond
         updatePrice(swapTime + 1);
-        
+
         executeSwap(msg.sender, tokenIn, tokenOut, amountOut);
     }
 }
@@ -231,14 +245,14 @@ contract TemporalAMM {
 
 ### Fair Liquidations
 
-In DeFi lending, when a borrower's collateral drops below the required threshold, their position gets liquidated. On traditional chains, this triggers a feeding frenzy—bots racing to be first, paying astronomical gas fees, clogging the network. On ROKO, liquidations happen fairly. The first person to identify an underwater position and submit a liquidation transaction gets to execute it. No gas wars, no network congestion, no unfair advantages for those with faster connections or deeper pockets.
+Collateral drops. Position underwater. Traditional chains: gas war. Bots racing, fees spiking, network clogged. ROKO: first liquidator to sign the transaction executes it. Temporal order. No racing.
 
 ```python
 class LiquidationEngine:
     def check_position(self, position_id):
         position = self.positions[position_id]
         current_time = NanoMoment.now()
-        
+
         if position.health_factor < LIQUIDATION_THRESHOLD:
             # First liquidator at this nanosecond wins
             # No racing, no gas wars
@@ -248,16 +262,18 @@ class LiquidationEngine:
                 timestamp=current_time,
                 hardware_proof=Time.get_proof()
             )
-            
+
             # Process in temporal order
             self.liquidation_queue.add(liquidation)
 ```
+
+---
 
 ## Performance Benefits
 
 ### No Priority Gas Auctions
 
-On Ethereum, when there's a profitable MEV opportunity, gas prices spike as bots bid against each other for priority. Regular users get caught in the crossfire, paying inflated fees just to get a simple transaction through. ROKO eliminates this dynamic entirely. Since transaction order is determined by timestamp rather than gas price, there's no incentive to bid up fees. Gas prices stay consistent and predictable, making the network affordable for everyone.
+MEV opportunity on Ethereum: gas prices spike. Bots bid against each other. Regular users pay inflated fees. ROKO: order is timestamp, not gas. No bidding. Fees stay flat.
 
 Traditional chains:
 ```
@@ -275,11 +291,13 @@ No MEV competition
 Result: Predictable, low fees
 ```
 
+---
+
 ## Implementation Examples
 
 ### Decentralized Exchange
 
-Building a fair exchange becomes remarkably simple when the infrastructure guarantees fair ordering. Developers don't need to implement complex commit-reveal schemes, encrypted mempools, or other MEV mitigation workarounds. They simply build their exchange logic, and the protocol ensures every order is processed in the exact sequence it was placed. The code below shows how straightforward this becomes.
+No commit-reveal. No encrypted mempools. No MEV mitigation workarounds. Build exchange logic. Protocol handles ordering. Code stays simple.
 
 ```rust
 pub struct TemporalDEX {
@@ -290,63 +308,67 @@ impl TemporalDEX {
     pub fn place_order(&mut self, order: Order) -> Result<()> {
         // Get hardware-attested timestamp
         let timestamp = TimeCard::get_nano_moment()?;
-        
+
         // Verify temporal proof
         order.verify_time_proof()?;
-        
+
         // Insert in temporal order
         self.orders.insert(timestamp, order);
-        
+
         // Match orders chronologically
         self.match_orders()?;
-        
+
         Ok(())
     }
-    
+
     fn match_orders(&mut self) -> Result<()> {
         // Orders matched in exact temporal sequence
         // No possibility of manipulation
-        
+
         for (time, order) in self.orders.iter() {
             if let Some(match_) = self.find_match(&order) {
                 self.execute_trade(order, match_)?;
             }
         }
-        
+
         Ok(())
     }
 }
 ```
 
+---
+
 ## Monitoring & Verification
 
 ### MEV Detection (Should Always Be Zero)
 
-On other networks, researchers spend enormous effort tracking and measuring MEV extraction. On ROKO, monitoring serves a different purpose: confirming that the system is working as designed. If MEV detection ever finds anything, it would indicate a critical bug in the protocol—not a successful attack. The monitoring code below demonstrates how to verify that temporal ordering is being enforced correctly.
+On other chains, researchers track MEV. On ROKO, monitoring confirms the protocol works. Detection finds nothing because there's nothing to find. Non-zero MEV score = protocol bug, not successful attack.
 
 ```python
 class MEVMonitor:
     def analyze_block(self, block):
         """Verify no MEV extraction occurred"""
-        
+
         transactions = block.transactions
-        
+
         # Check temporal ordering
         for i in range(len(transactions) - 1):
             assert transactions[i].nano_moment < transactions[i+1].nano_moment
-        
+
         # Check for suspicious patterns
         mev_score = 0
-        
+
         # These should never happen:
         if self.detect_sandwich_pattern(transactions):
             mev_score += 100  # Critical alert
-            
+
         if self.detect_frontrun_pattern(transactions):
             mev_score += 100  # Critical alert
-            
+
         return mev_score  # Should always be 0
 ```
+
+---
 
 ## Economic Impact
 
@@ -363,6 +385,8 @@ class MEVMonitor:
 2. **Efficiency**: No resources wasted on MEV extraction
 3. **Simplicity**: No need for MEV mitigation tools
 4. **Growth**: Fair system attracts more users
+
+---
 
 ## Comparison with MEV Solutions
 
@@ -381,19 +405,21 @@ class MEVMonitor:
 </table>
 ```
 
+---
+
 ## Future Considerations
 
 ### Cross-Chain MEV
 
-As blockchain ecosystems become more interconnected, MEV extraction has expanded to exploit transactions moving between chains. An attacker might front-run a cross-chain swap or manipulate prices on one chain based on pending transactions on another. ROKO's temporal proofs can extend across chain boundaries—a transaction's timestamp on the origin chain can be verified and respected on the destination chain, maintaining fair ordering even in multi-chain scenarios.
+MEV goes multi-chain. Attackers front-run cross-chain swaps. Manipulate prices across ecosystems. ROKO temporal proofs extend across bridges - timestamp on origin chain verified and respected on destination. Fair ordering survives the hop.
 
 ```solidity
 contract CrossChainMEVPrevention {
     // Even cross-chain transactions are temporally ordered
-    
+
     function initiateCrossChainTx(uint256 targetChain) external {
         uint128 txTime = Time.nanoNow();
-        
+
         CrossChainMessage memory msg = CrossChainMessage({
             originTime: txTime,
             originChain: CHAIN_ID,
@@ -401,12 +427,14 @@ contract CrossChainMEVPrevention {
             temporalProof: Time.getProof(),
             sender: msg.sender
         });
-        
+
         // Target chain must respect temporal ordering
         bridge.send(msg);
     }
 }
 ```
+
+---
 
 ## Best Practices for Developers
 
@@ -419,4 +447,4 @@ contract CrossChainMEVPrevention {
 
 ---
 
-Temporal ordering changes the game: validators can't extract value from reordering because they don't control the order. Time does.
+Validators can't extract value from reordering because they don't control the order. Time does.
