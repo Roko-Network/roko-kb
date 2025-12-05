@@ -467,41 +467,6 @@ class NetworkAlerting:
 
 ## Scalability Solutions
 
-### Sharding Architecture
-
-Temporal sharding. Transactions assigned to shards by timestamp, not account. Deterministic assignment - `timestamp % shard_count`. Cross-shard transactions handled explicitly. Each shard maintains its own temporal ordering. Global ordering reconstructed at finality.
-
-```javascript
-class ShardingManager {
-    constructor(shardCount) {
-        this.shards = new Array(shardCount).fill(null).map((_, i) => ({
-            id: i,
-            validators: new Set(),
-            timeRange: this.calculateTimeRange(i, shardCount),
-            transactions: new Map()
-        }));
-    }
-    
-    assignTransaction(tx) {
-        // Assign based on temporal range
-        const shardId = this.getShardForTime(tx.timestamp);
-        const shard = this.shards[shardId];
-        
-        shard.transactions.set(tx.hash, tx);
-        
-        // Cross-shard if necessary
-        if (tx.crossShard) {
-            this.handleCrossShardTransaction(tx);
-        }
-    }
-    
-    getShardForTime(nanoMoment) {
-        // Deterministic shard assignment based on time
-        return Number(nanoMoment % BigInt(this.shards.length));
-    }
-}
-```
-
 ### State Channels
 
 Off-chain scaling with on-chain settlement. Open a channel, transact infinitely between two parties, close with final state. Channel opening records the NanoMoment. Disputes reference temporal ordering. State channels inherit ROKO's time guarantees even off-chain.
