@@ -233,15 +233,3 @@ What sets ROKO apart from every other blockchain:
 ROKO Network isn't just another blockchain – it's a fundamental reimagining of how distributed systems can coordinate with precision. By solving the temporal ordering problem, we're enabling applications that were previously impossible, from microsecond financial trading to global IoT synchronization.
 
 Ready to build the future? Let's get started.
-
----
-
-<div align="center">
-
-### The Temporal Layer for Web3
-
-**Nanosecond Precision. Infinite Possibilities.**
-
-[Read Whitepaper](../technical/whitepaper.md) | [Join Discord](https://discord.gg/roko)
-
-</div>
