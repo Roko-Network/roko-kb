@@ -142,25 +142,53 @@ In simpler terms, the block producer collects beacon proofs and must keep a fres
 
 We end up with a block that looks somewhat like this:
 
-```box:Block #12,345
-Parent Hash:      0x4fd8…8c2a
-Author:           babe1qf…2k7h
-State Root:       0xa7b1…932e
-Extrinsics Root:  0x33aa…fe45
+```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 20, 'padding': 10}}}%%
+flowchart TB
+    subgraph Block["Block #12,345"]
+        direction TB
 
-─── Time Beacon Proof ───────────────────────────────────────────────────────
+        BlockText["Parent Hash: 0x4fd8…8c2a
+        Author: babe1qf…2k7h
+        State Root: 0xa7b1…932e
+        Extrinsics Root: 0x33aa…fe45"]
 
-Claimed Block Time:   2024-09-28 10:17:36.789 UTC
-Spread max-min:       42 ms
-Median canonical:     2024-09-28 10:17:36.791 UTC
+        subgraph TBP["Time Beacon Proof"]
+            direction TB
 
-┌─────────────┬──────────────────┬────────────────────┬──────────┬────────────────┐
-│ Beacon      │ Validator        │ Timestamp (µs)     │ Sequence │ Signature      │
-├─────────────┼──────────────────┼────────────────────┼──────────┼────────────────┤
-│ Beacon 1    │ babe1qf…2k7h     │ 1730123456789000   │ 42       │ 0x8afc…dbe1    │
-│ Beacon 2    │ babe1zk…xp4m     │ 1730123456798000   │ 105      │ 0xe4ab…9910    │
-│ Beacon 3    │ babe1mv…hnt9     │ 1730123456776000   │ 88       │ 0x91cd…0f2b    │
-└─────────────┴──────────────────┴────────────────────┴──────────┴────────────────┘
+            Summary["Claimed Block Time: 2024-09-28 10:17:36.789 UTC
+            Spread max-min: 42 ms
+            Median canonical: 2024-09-28 10:17:36.791 UTC"]
+
+            B1["Beacon 1
+            validatorId: babe1qf…2k7h
+            timestampUs: 1730123456789000
+            sequence: 42
+            signature: 0x8afc…dbe1"]
+
+            B2["Beacon 2
+            validatorId: babe1zk…xp4m
+            timestampUs: 1730123456798000
+            sequence: 105
+            signature: 0xe4ab…9910"]
+
+            B3["Beacon 3
+            validatorId: babe1mv…hnt9
+            timestampUs: 1730123456776000
+            sequence: 88
+            signature: 0x91cd…0f2b"]
+
+            Summary ~~~ B1 ~~~ B2 ~~~ B3
+        end
+
+        BlockText ~~~ TBP
+    end
+
+    style BlockText text-align:left
+    style Summary text-align:left
+    style B1 text-align:left
+    style B2 text-align:left
+    style B3 text-align:left
 ```
 
 As the block is produced, there is an opportunity for slashing bad actors. As we collect fresh beacons, we detect if a validator failed to fall within the **tolerance window**. We can then simply include a slashing transaction with proof of drift. Slashing is not mandatory but exploratory at this stage. This leads us to the question of how time propagates in a network of nodes.
