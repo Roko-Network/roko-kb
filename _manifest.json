@@ -14,6 +14,9 @@
     "CLAUDE",
     "PAGE_HIERARCHY_GUIDE"
   ],
+  "bottomNavSections": [
+    "getting-started"
+  ],
   "sections": [
     {
       "id": "README",
