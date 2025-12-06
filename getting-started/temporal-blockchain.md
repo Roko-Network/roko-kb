@@ -109,14 +109,23 @@ Modified consensus incorporating time:
 
 ## Comparison with Traditional Blockchains
 
-| Feature | Traditional Blockchain | Temporal Blockchain |
-|---------|----------------------|-------------------|
-| **Time Precision** | Seconds/Minutes | Nanoseconds |
-| **Ordering** | Block sequence | Hardware timestamps |
-| **MEV Protection** | Application layer | Protocol level |
-| **Time Proof** | None | Cryptographic attestation |
-| **Synchronization** | Loose (~seconds) | Tight (<100ns) |
-| **Validity Period** | Indefinite | Time-bounded |
+Six differences that matter. Traditional chains measure time in seconds - ROKO in nanoseconds. Block sequence versus hardware timestamps. MEV bolted on at the app layer versus eliminated at the protocol. No time proof versus cryptographic attestation. Loose sync versus sub-100ns. Transactions that live forever versus time-bounded validity.
+
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Feature</th><th>Traditional Blockchain</th><th>Temporal Blockchain</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Time Precision</strong></td><td>Seconds/Minutes</td><td>Nanoseconds</td></tr>
+    <tr><td><strong>Ordering</strong></td><td>Block sequence</td><td>Hardware timestamps</td></tr>
+    <tr><td><strong>MEV Protection</strong></td><td>Application layer</td><td>Protocol level</td></tr>
+    <tr><td><strong>Time Proof</strong></td><td>None</td><td>Cryptographic attestation</td></tr>
+    <tr><td><strong>Synchronization</strong></td><td>Loose (~seconds)</td><td>Tight (<100ns)</td></tr>
+    <tr><td><strong>Validity Period</strong></td><td>Indefinite</td><td>Time-bounded</td></tr>
+  </tbody>
+</table>
+```
 
 ## Real-World Applications
 
