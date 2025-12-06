@@ -151,13 +151,20 @@ Tx3: NanoMoment(1704067200500000789) // Third
 
 ### Regulatory Compliance
 
-Financial regulations increasingly require precise audit trails:
+Financial regulators don't care about your decentralization story. MiFID II requires microsecond accuracy. CAT wants 50 microseconds. GDPR demands provable event ordering. Traditional blockchains can't comply. ROKO exceeds every requirement.
 
-| Regulation | Time Requirement | Traditional Blockchain | ROKO Network |
-|------------|-----------------|----------------------|--------------|
-| MiFID II | Microsecond accuracy | ❌ Cannot comply | ✅ Exceeds requirement |
-| CAT (Consolidated Audit Trail) | 50 microseconds | ❌ Cannot comply | ✅ Full compliance |
-| GDPR Event Ordering | Precise sequence | ⚠️ Best effort | ✅ Cryptographic proof |
+```html
+<table class="spec-table">
+  <thead>
+    <tr><th>Regulation</th><th>Time Requirement</th><th>Traditional Blockchain</th><th>ROKO Network</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>MiFID II</strong></td><td>Microsecond accuracy</td><td>Cannot comply</td><td>Exceeds requirement</td></tr>
+    <tr><td><strong>CAT</strong></td><td>50 microseconds</td><td>Cannot comply</td><td>Full compliance</td></tr>
+    <tr><td><strong>GDPR Event Ordering</strong></td><td>Precise sequence</td><td>Best effort</td><td>Cryptographic proof</td></tr>
+  </tbody>
+</table>
+```
 
 ## Scientific and Research Applications
 
