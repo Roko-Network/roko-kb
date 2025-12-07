@@ -1,10 +1,11 @@
 {
   "title": "Products & Solutions",
   "order": [
-    "use-cases"
+    "use-cases",
+    "project-rose"
   ],
   "sections": [
     { "id": "use-cases", "title": "Use Cases" },
-    { "title": "Project Rosé", "url": "https://rosé.selfient.xyz/" }
+    { "id": "project-rose", "title": "Project Rosé" }
   ]
 }
