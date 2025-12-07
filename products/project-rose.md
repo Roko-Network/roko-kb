@@ -1,8 +1,8 @@
 # Project Rosé
 
-Project Rosé is part of the Selfient Web3 ecosystem, extending the platform's no-code smart contract capabilities. Built on the same foundation as Selfient's decentralized escrow solution, Project Rosé enables users to create and execute smart contracts on the Polygon blockchain without coding knowledge.
+[Project Rosé](https://rosé.selfient.xyz/) is part of the [Selfient](https://selfient.xyz) Web3 ecosystem, extending the platform's no-code smart contract capabilities. Built on the same foundation as [Selfient's](https://selfient.xyz) decentralized escrow solution, [Project Rosé](https://rosé.selfient.xyz/) enables users to create and execute smart contracts on the Polygon blockchain without coding knowledge.
 
-The Selfient platform transforms traditional business agreements into immutable, enforceable contracts with features including:
+The [Selfient](https://selfient.xyz) platform transforms traditional business agreements into immutable, enforceable contracts with features including:
 
 - **No-code contract creation** using the SEA Wizard tool
 - **Decentralized escrow** that locks funds until agreement conditions are met
@@ -10,4 +10,4 @@ The Selfient platform transforms traditional business agreements into immutable,
 - **Multi-currency support** (USDC, wETH)
 - **Enterprise-grade security** with Hashlock audit certification
 
-<a href="https://rosé.selfient.xyz/" target="_blank" rel="noopener noreferrer" class="external-cta">Visit Project Rosé →</a>
+[Visit Project Rosé →](https://rosé.selfient.xyz/)
