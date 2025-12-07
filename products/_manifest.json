@@ -4,6 +4,7 @@
     "use-cases"
   ],
   "sections": [
-    { "id": "use-cases", "title": "Use Cases" }
+    { "id": "use-cases", "title": "Use Cases" },
+    { "title": "Project Rosé", "url": "https://rosé.selfient.xyz/" }
   ]
 }
