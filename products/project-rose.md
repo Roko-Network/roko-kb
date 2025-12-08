@@ -1,6 +1,6 @@
 # Project Rosé
 
-![Selfient](./assets/logos/selfient.svg)
+![Selfient](./assets/logos/selfient-dark.svg)
 
 [Project Rosé](https://rosé.selfient.xyz/) is part of the [Selfient](https://selfient.xyz) Web3 ecosystem, extending the platform's no-code smart contract capabilities. Built on the same foundation as [Selfient's](https://selfient.xyz) decentralized escrow solution, [Project Rosé](https://rosé.selfient.xyz/) enables users to create and execute smart contracts on the Polygon blockchain without coding knowledge.
 
