@@ -1,12 +1,14 @@
 {
   "title": "Resources",
   "order": [
+    "community",
     "glossary",
     "faq",
     "research-papers",
     "brand-assets"
   ],
   "sections": [
+    { "id": "community", "title": "Community" },
     { "id": "glossary", "title": "Glossary" },
     { "id": "faq", "title": "FAQ" },
     { "id": "research-papers", "title": "Research Papers" },
