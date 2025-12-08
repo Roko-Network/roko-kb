@@ -12,5 +12,16 @@
     "logoPath": "favicon.png",
     "showTagline": true,
     "showDate": true
+  },
+  "seo": {
+    "enabled": true,
+    "siteUrl": "https://docs.roko.network",
+    "generateSitemap": true,
+    "generateStaticPages": true,
+    "generateRobotsTxt": true,
+    "defaultChangeFreq": "weekly",
+    "structuredData": {
+      "organizationName": "ROKO Network"
+    }
   }
 }
