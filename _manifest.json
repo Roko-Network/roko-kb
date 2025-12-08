@@ -2,6 +2,7 @@
   "title": "ROKO Network Documentation",
   "order": [
     "README",
+    "signals",
     "getting-started",
     "core-technology",
     "technical",

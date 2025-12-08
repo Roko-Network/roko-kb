@@ -6,5 +6,11 @@
   "tagline": "The Temporal Layer for Web3",
   "copyright": "Roko Network",
   "accentColor": "#6366F1",
-  "surfaceColor": "#F7FAFC"
+  "surfaceColor": "#F7FAFC",
+  "export": {
+    "logo": "embed",
+    "logoPath": "favicon.png",
+    "showTagline": true,
+    "showDate": true
+  }
 }
