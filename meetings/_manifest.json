@@ -1,0 +1,12 @@
+{
+  "title": "Meetings",
+  "summary": "Development meeting transcripts, summaries, and related assets",
+  "sections": [
+    {
+      "id": "2025",
+      "title": "2025",
+      "summary": "Meeting logs from 2025",
+      "subsections": "2025/"
+    }
+  ]
+}

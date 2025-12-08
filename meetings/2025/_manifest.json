@@ -1,0 +1,12 @@
+{
+  "title": "2025 Meetings",
+  "summary": "Development meeting logs from 2025",
+  "sections": [
+    {
+      "id": "2025-12-04",
+      "title": "December 4, 2025",
+      "summary": "Validator platform, temporal transactions, wallet development, infrastructure updates",
+      "file": "2025-12-04.md"
+    }
+  ]
+}
