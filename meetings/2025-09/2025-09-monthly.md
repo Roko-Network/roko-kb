@@ -21,7 +21,7 @@ Funding opportunity under evaluation:
 
 ### Partner Integrations
 Multiple partnerships progressing:
-- **Self-ian:** Escrow contracts, token sale coordination
+- **Selfient:** Escrow contracts, token sale coordination
 - **Exa:** Governance and tokenomics collaboration
 - **NKN:** Timing data distribution alternatives
 - **Wolfram:** Mathematical verification potential
@@ -199,7 +199,7 @@ Identified and prioritized:
 2. **Timing Network:** Operational with TimeBeat integration
 3. **Testnet:** Running with temporal transaction processing
 4. **Architecture:** Pallet-based design with 2.5-hour AI rewrite
-5. **Partnerships:** Multiple active (Self-ian, Exa, NKN, Polkadot discussions)
+5. **Partnerships:** Multiple active (Selfient, Exa, NKN, Polkadot discussions)
 6. **Legal Structure:** Panama entity for Flywheel
 
 ### Key Learnings

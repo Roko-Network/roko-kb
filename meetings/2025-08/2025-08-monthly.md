@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-August 2025 focused on testnet stabilization, team expansion with developer candidate selection, and preparation for broader community engagement. The team addressed metadata persistence issues, advanced the Self-ian grant proposal, and made significant progress on the network explorer and website redesign.
+August 2025 focused on testnet stabilization, team expansion with developer candidate selection, and preparation for broader community engagement. The team addressed metadata persistence issues, advanced the Selfient grant proposal, and made significant progress on the network explorer and website redesign.
 
 ---
 
@@ -84,7 +84,7 @@ Final evaluation completed:
 
 ## Partnership Progress
 
-### Self-ian Grant Proposal
+### Selfient Grant Proposal
 Progress on escrow contract deployment:
 - Enterprise-grade escrow relies on precise timing
 - Ideal demonstration of timing network value
@@ -116,7 +116,7 @@ Planning initiated:
 |--------|--------|
 | Testnet | Stable, temporal transactions working |
 | Developer Selection | Complete |
-| Self-ian Proposal | Near submission |
+| Selfient Proposal | Near submission |
 | Website Redesign | Design phase |
 | Power Audit | Specification complete |
 
@@ -144,7 +144,7 @@ Planning initiated:
 
 ## Looking Ahead to September
 
-- Finalize Self-ian grant submission
+- Finalize Selfient grant submission
 - Launch community testnet access
 - Execute website redesign
 - Complete onboarding of new developer

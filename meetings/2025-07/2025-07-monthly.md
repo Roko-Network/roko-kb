@@ -130,9 +130,9 @@ Extensive use of AI tools:
 
 ## Partnership Progress
 
-### Self-ian Integration
+### Selfient Integration
 Joe finalizing two proposals:
-- Deploying Self-ian escrow contracts on Roko
+- Deploying Selfient escrow contracts on Roko
 - Coordinated token sale operations
 - Escrow ideal for timing services (relies on precise timing)
 
@@ -159,7 +159,7 @@ Joe finalizing two proposals:
 - Complete CM5 node setup
 - Expand team SSH access via Cloudflare
 - Continue testnet validation
-- Submit Self-ian proposals
+- Submit Selfient proposals
 - Begin community testnet engagement
 
 ---
@@ -169,7 +169,7 @@ Joe finalizing two proposals:
 | Team Member | Primary Focus |
 |-------------|---------------|
 | Anton | Architecture pivot, testnet stabilization |
-| Joe | Hardware setup, Self-ian proposals |
+| Joe | Hardware setup, Selfient proposals |
 | Connor | MEV bot development, agent registry |
 | Nick | Agent tooling (85 tools, 3,500 LOC) |
 | Team | AI-assisted development workflows |
