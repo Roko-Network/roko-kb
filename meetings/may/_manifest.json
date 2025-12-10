@@ -1,0 +1,46 @@
+{
+  "title": "May 2025 Meetings",
+  "summary": "Development meeting logs from May 2025",
+  "sections": [
+    {
+      "id": "2025-05-monthly",
+      "title": "May 2025 Monthly Summary",
+      "file": "2025-05-monthly.md"
+    },
+    {
+      "id": "2025-05-27",
+      "title": "May 27, 2025",
+      "file": "2025-05-27.md"
+    },
+    {
+      "id": "2025-05-22-roko",
+      "title": "May 22, 2025 - Roko Development",
+      "file": "2025-05-22-roko.md"
+    },
+    {
+      "id": "2025-05-22-carbon-dev",
+      "title": "May 22, 2025 - Carbon Development",
+      "file": "2025-05-22-carbon-dev.md"
+    },
+    {
+      "id": "2025-05-22-carbon",
+      "title": "May 22, 2025 - Carbon Credits Collaboration",
+      "file": "2025-05-22-carbon.md"
+    },
+    {
+      "id": "2025-05-20",
+      "title": "May 20, 2025",
+      "file": "2025-05-20.md"
+    },
+    {
+      "id": "2025-05-13",
+      "title": "May 13, 2025",
+      "file": "2025-05-13.md"
+    },
+    {
+      "id": "2025-05-06",
+      "title": "May 6, 2025",
+      "file": "2025-05-06.md"
+    }
+  ]
+}

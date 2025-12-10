@@ -1,0 +1,61 @@
+{
+  "title": "April 2025 Meetings",
+  "summary": "Development meeting logs from April 2025",
+  "sections": [
+    {
+      "id": "2025-04-monthly",
+      "title": "April 2025 Monthly Summary",
+      "file": "2025-04-monthly.md"
+    },
+    {
+      "id": "2025-04-29",
+      "title": "April 29, 2025",
+      "file": "2025-04-29.md"
+    },
+    {
+      "id": "2025-04-24-late",
+      "title": "April 24, 2025 (Late Session)",
+      "file": "2025-04-24-late.md"
+    },
+    {
+      "id": "2025-04-24-early",
+      "title": "April 24, 2025 (Early Session)",
+      "file": "2025-04-24-early.md"
+    },
+    {
+      "id": "2025-04-22",
+      "title": "April 22, 2025",
+      "file": "2025-04-22.md"
+    },
+    {
+      "id": "2025-04-17",
+      "title": "April 17, 2025",
+      "file": "2025-04-17.md"
+    },
+    {
+      "id": "2025-04-15",
+      "title": "April 15, 2025",
+      "file": "2025-04-15.md"
+    },
+    {
+      "id": "2025-04-10",
+      "title": "April 10, 2025",
+      "file": "2025-04-10.md"
+    },
+    {
+      "id": "2025-04-03-late",
+      "title": "April 3, 2025 (Late Session)",
+      "file": "2025-04-03-late.md"
+    },
+    {
+      "id": "2025-04-03-early",
+      "title": "April 3, 2025 (Early Session)",
+      "file": "2025-04-03-early.md"
+    },
+    {
+      "id": "2025-04-01",
+      "title": "April 1, 2025",
+      "file": "2025-04-01.md"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "title": "June 2025 Meetings",
+  "summary": "Development meeting logs from June 2025",
+  "sections": [
+    {
+      "id": "2025-06-monthly",
+      "title": "June 2025 Monthly Summary",
+      "file": "2025-06-monthly.md"
+    },
+    {
+      "id": "2025-06-26",
+      "title": "June 26, 2025",
+      "file": "2025-06-26.md"
+    },
+    {
+      "id": "2025-06-24",
+      "title": "June 24, 2025",
+      "file": "2025-06-24.md"
+    },
+    {
+      "id": "2025-06-17",
+      "title": "June 17, 2025",
+      "file": "2025-06-17.md"
+    },
+    {
+      "id": "2025-06-12",
+      "title": "June 12, 2025",
+      "file": "2025-06-12.md"
+    },
+    {
+      "id": "2025-06-10",
+      "title": "June 10, 2025",
+      "file": "2025-06-10.md"
+    },
+    {
+      "id": "2025-06-03",
+      "title": "June 3, 2025",
+      "file": "2025-06-03.md"
+    }
+  ]
+}

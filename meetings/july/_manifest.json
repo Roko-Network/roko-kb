@@ -1,0 +1,56 @@
+{
+  "title": "July 2025 Meetings",
+  "summary": "Development meeting logs from July 2025",
+  "sections": [
+    {
+      "id": "2025-07-monthly",
+      "title": "July 2025 Monthly Summary",
+      "file": "2025-07-monthly.md"
+    },
+    {
+      "id": "2025-07-31",
+      "title": "July 31, 2025",
+      "file": "2025-07-31.md"
+    },
+    {
+      "id": "2025-07-24",
+      "title": "July 24, 2025",
+      "file": "2025-07-24.md"
+    },
+    {
+      "id": "2025-07-22",
+      "title": "July 22, 2025",
+      "file": "2025-07-22.md"
+    },
+    {
+      "id": "2025-07-17",
+      "title": "July 17, 2025",
+      "file": "2025-07-17.md"
+    },
+    {
+      "id": "2025-07-15",
+      "title": "July 15, 2025",
+      "file": "2025-07-15.md"
+    },
+    {
+      "id": "2025-07-10",
+      "title": "July 10, 2025",
+      "file": "2025-07-10.md"
+    },
+    {
+      "id": "2025-07-08",
+      "title": "July 8, 2025",
+      "file": "2025-07-08.md"
+    },
+    {
+      "id": "2025-07-03",
+      "title": "July 3, 2025",
+      "file": "2025-07-03.md"
+    },
+    {
+      "id": "2025-07-01",
+      "title": "July 1, 2025",
+      "file": "2025-07-01.md"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "title": "August 2025 Meetings",
+  "summary": "Development meeting logs from August 2025",
+  "sections": [
+    {
+      "id": "2025-08-monthly",
+      "title": "August 2025 Monthly Summary",
+      "file": "2025-08-monthly.md"
+    },
+    {
+      "id": "2025-08-28",
+      "title": "August 28, 2025",
+      "file": "2025-08-28.md"
+    },
+    {
+      "id": "2025-08-26",
+      "title": "August 26, 2025",
+      "file": "2025-08-26.md"
+    },
+    {
+      "id": "2025-08-21",
+      "title": "August 21, 2025",
+      "file": "2025-08-21.md"
+    },
+    {
+      "id": "2025-08-19",
+      "title": "August 19, 2025",
+      "file": "2025-08-19.md"
+    },
+    {
+      "id": "2025-08-14",
+      "title": "August 14, 2025",
+      "file": "2025-08-14.md"
+    },
+    {
+      "id": "2025-08-12",
+      "title": "August 12, 2025",
+      "file": "2025-08-12.md"
+    },
+    {
+      "id": "2025-08-07",
+      "title": "August 7, 2025",
+      "file": "2025-08-07.md"
+    },
+    {
+      "id": "2025-08-05",
+      "title": "August 5, 2025",
+      "file": "2025-08-05.md"
+    }
+  ]
+}

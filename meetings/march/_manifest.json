@@ -1,0 +1,56 @@
+{
+  "title": "March 2025 Meetings",
+  "summary": "Development meeting logs from March 2025",
+  "sections": [
+    {
+      "id": "2025-03-monthly",
+      "title": "March 2025 Monthly Summary",
+      "file": "2025-03-monthly.md"
+    },
+    {
+      "id": "2025-03-25",
+      "title": "March 25, 2025",
+      "file": "2025-03-25.md"
+    },
+    {
+      "id": "2025-03-20",
+      "title": "March 20, 2025",
+      "file": "2025-03-20.md"
+    },
+    {
+      "id": "2025-03-14-zymbit",
+      "title": "March 14, 2025 - Zymbit Support Session",
+      "file": "2025-03-14-zymbit.md"
+    },
+    {
+      "id": "2025-03-13-roko",
+      "title": "March 13, 2025 - Roko Development",
+      "file": "2025-03-13-roko.md"
+    },
+    {
+      "id": "2025-03-13-devops",
+      "title": "March 13, 2025 - DevOps",
+      "file": "2025-03-13-devops.md"
+    },
+    {
+      "id": "2025-03-11-late",
+      "title": "March 11, 2025 (Late Session)",
+      "file": "2025-03-11-late.md"
+    },
+    {
+      "id": "2025-03-11-early",
+      "title": "March 11, 2025 (Early Session)",
+      "file": "2025-03-11-early.md"
+    },
+    {
+      "id": "2025-03-06",
+      "title": "March 6, 2025",
+      "file": "2025-03-06.md"
+    },
+    {
+      "id": "2025-03-04",
+      "title": "March 4, 2025",
+      "file": "2025-03-04.md"
+    }
+  ]
+}

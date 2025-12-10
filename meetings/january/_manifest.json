@@ -1,0 +1,61 @@
+{
+  "title": "January 2025 Meetings",
+  "summary": "Development meeting logs from January 2025",
+  "sections": [
+    {
+      "id": "2025-01-monthly",
+      "title": "January 2025 Monthly Summary",
+      "file": "2025-01-monthly.md"
+    },
+    {
+      "id": "2025-01-30",
+      "title": "January 30, 2025",
+      "file": "2025-01-30.md"
+    },
+    {
+      "id": "2025-01-28",
+      "title": "January 28, 2025",
+      "file": "2025-01-28.md"
+    },
+    {
+      "id": "2025-01-23",
+      "title": "January 23, 2025",
+      "file": "2025-01-23.md"
+    },
+    {
+      "id": "2025-01-21",
+      "title": "January 21, 2025",
+      "file": "2025-01-21.md"
+    },
+    {
+      "id": "2025-01-16-late",
+      "title": "January 16, 2025 (Late Session)",
+      "file": "2025-01-16-late.md"
+    },
+    {
+      "id": "2025-01-16-early",
+      "title": "January 16, 2025 (Early Session)",
+      "file": "2025-01-16-early.md"
+    },
+    {
+      "id": "2025-01-14",
+      "title": "January 14, 2025",
+      "file": "2025-01-14.md"
+    },
+    {
+      "id": "2025-01-09",
+      "title": "January 9, 2025",
+      "file": "2025-01-09.md"
+    },
+    {
+      "id": "2025-01-07",
+      "title": "January 7, 2025",
+      "file": "2025-01-07.md"
+    },
+    {
+      "id": "2025-01-02",
+      "title": "January 2, 2025",
+      "file": "2025-01-02.md"
+    }
+  ]
+}
