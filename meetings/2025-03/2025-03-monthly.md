@@ -6,14 +6,14 @@
 
 ## Executive Summary
 
-March 2025 was a breakthrough month with significant progress on the NPoS pallet, Zymbit hardware security integration, and the time validation mechanism for the Bittensor subnet. The team also received critical intelligence from Bittensor core developers about upcoming features that will impact subnet launch timing.
+March 2025 was a breakthrough month with significant progress on the NPoS pallet, a hardware security vendor hardware security integration, and the time validation mechanism for the Bittensor subnet. The team also received critical intelligence from Bittensor core developers about upcoming features that will impact subnet launch timing.
 
 ---
 
 ## Major Technical Achievements
 
 ### NPoS Pallet Integration
-Anton achieved significant progress on the Nominated Proof of Stake pallet:
+Stalker (Unforkable) achieved significant progress on the Nominated Proof of Stake pallet:
 - Rewrote staking process to use EVM memory instead of Substrate memory
 - Staking information now accessible to dApps and tooling
 - Most unit tests passing with high confidence in implementation
@@ -30,10 +30,10 @@ Brendon completed the proof of concept for time validation:
 - Decision: Focus on timing services only initially, defer AI/ML integration
 - Separates concerns between timing subnet and potential GPU orchestration wrapper
 
-### Zymbit Security Integration
-Two support sessions with Bob from Zymbit:
+### a hardware security vendor Security Integration
+Two support sessions with Bob from a hardware security vendor:
 - Bootware installation on SCM (Secure Compute Module) devices
-- LUKS key management using Zymbit hardware
+- LUKS key management using a hardware security vendor hardware
 - A/B partition strategy for safe updates
 - Image creation with private/public key pairs
 - Confirmed: Encrypted bootware runs without leaving dev mode
@@ -45,7 +45,7 @@ Two support sessions with Bob from Zymbit:
 ### Distributed Computing Architecture
 BigM presented secure CDN network vision:
 - Minis Forum mini PCs ($500-1,000 each)
-- Zymbit security modules + timing cards
+- a hardware security vendor security modules + timing cards
 - Bank-level security for distributed network
 - Capable of running 70B parameter models per node
 - Total developer network cost under $10,000
@@ -82,7 +82,7 @@ Critical updates from Slice's conversations with core developers:
 - Roko positioned to provide grants for network application developers
 
 ### Post-Quantum Cryptography Research
-- Discussion of Cosq chip vs Zymbit root of trust
+- Discussion of Cosq chip vs a hardware security vendor root of trust
 - Key generation combining multiple entropy sources:
   - Hardware RNG chips
   - Oscillators
@@ -98,7 +98,7 @@ Critical updates from Slice's conversations with core developers:
 |--------|--------|
 | NPoS Pallet | 95%+ unit tests passing |
 | Time Validation | POC complete |
-| Zymbit Integration | Two training sessions completed |
+| a hardware security vendor Integration | Two training sessions completed |
 | Mini PC Network | Architecture defined |
 | Bittensor Intel | Start button feature incoming |
 
@@ -126,7 +126,7 @@ Critical updates from Slice's conversations with core developers:
 - Resolve Rust dependency issues in NPoS integration
 - Complete time validation code implementation
 - Monitor Bittensor start button feature release
-- Set up additional Zymbit node via Cloudy Storm
+- Set up additional a hardware security vendor node via Cloudy Storm
 - Continue greenhouse partnership discussions
 
 ---
@@ -135,9 +135,9 @@ Critical updates from Slice's conversations with core developers:
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton | NPoS pallet, dependency resolution |
+| Stalker (Unforkable) | NPoS pallet, dependency resolution |
 | Brendon | Time validation implementation |
-| Joe | Zymbit configuration, greenhouse NDA |
+| Manitcor | a hardware security vendor configuration, greenhouse NDA |
 | BigM | Secure CDN architecture |
 | Slice | Bittensor ecosystem monitoring |
 | Team | AI tool adoption for development |

@@ -13,7 +13,7 @@ January 2025 marked a pivotal strategic shift for Roko Network. The team made th
 ## Major Decisions
 
 ### L1 vs L2 Resolution
-After comprehensive research by Anton and Sykm, the team decided on a **Substrate L1 blockchain** over an L2 solution. Key factors:
+After comprehensive research by Stalker (Unforkable) and Sykm, the team decided on a **Substrate L1 blockchain** over an L2 solution. Key factors:
 - Similar development timeline (~2 months for basic functionality)
 - Full control over gas fees and governance without parent chain dependencies
 - Substrate's modular pallet architecture enables future upgrades without chain restarts
@@ -22,8 +22,8 @@ After comprehensive research by Anton and Sykm, the team decided on a **Substrat
 
 ### Strategic Pivot to Achievable Goals
 The team pivoted from expensive infrastructure projects ($15M+ L1 build) to a leaner approach:
-- Wrap TimeBeat's existing cloud services into a Bittensor subnet
-- Leverage existing partnerships (Yuma, TimeBeat, NeverMind)
+- Wrap a timing hardware provider's existing cloud services into a Bittensor subnet
+- Leverage existing partnerships (Yuma, a timing hardware provider, NeverMind)
 - Focus on generating revenue through timing service fees
 
 ---
@@ -32,11 +32,11 @@ The team pivoted from expensive infrastructure projects ($15M+ L1 build) to a le
 
 ### Bittensor Subnet Design
 Brendon completed the combined timing + QA subnet mechanism design:
-- Miners provide precision timing via TimeBeat hardware
+- Miners provide precision timing via a timing hardware provider hardware
 - Miners answer questions about subnet capabilities using RAG pipelines
 - Validators evaluate timing accuracy (drift/skew) and QA response quality
 - 50/50 weighting between timing and QA performance
-- Hardware requirements: 8-16 core CPU, 32GB RAM, 100GB storage + TimeBeat cards
+- Hardware requirements: 8-16 core CPU, 32GB RAM, 100GB storage + a timing hardware provider cards
 
 ### Hydra Node Architecture
 Jesse and Chet designed the Hydra distributed compute system:
@@ -65,8 +65,8 @@ Sykm advanced Superchain bridging strategy:
 
 ## Partnerships & Ecosystem
 
-- **Yuma:** Will provide access to multiple Bittensor subnets without direct TAU staking
-- **TimeBeat:** Enterprise timing services ($38K/year) to be wrapped and resold
+- **Yuma:** Will provide access to multiple Bittensor subnets without direct TAO staking
+- **a timing hardware provider:** Enterprise timing services ($38K/year) to be wrapped and resold
 - **NeverMind:** Payment protocol integration for micropayments across subnets
 - **Time Appliances Project:** IEEE standard definition by March (weekly Wednesday governance calls)
 - **OSS Capital:** Initial interest expressed for potential investment
@@ -97,7 +97,7 @@ Team embracing AI-assisted development:
 |--------|--------|
 | L1 Decision | Substrate chosen over L2 |
 | Subnet Design | Mechanism document complete |
-| TAU Commitment | 12,000 TAU from whale investor |
+| TAO Commitment | 12,000 TAO from whale investor |
 | Hydra Architecture | Design phase complete |
 | Team Size | Core team + recruiting for Rust devs |
 
@@ -108,7 +108,7 @@ Team embracing AI-assisted development:
 - Formalize L1 development proposal with detailed timeline
 - Submit Superbridge integration application
 - Continue Hydra node prototype development
-- Begin subnet wrapper development for TimeBeat services
+- Begin subnet wrapper development for a timing hardware provider services
 - Advance A100 server deployment
 
 ---
@@ -117,9 +117,9 @@ Team embracing AI-assisted development:
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton/Sykm | L1 Substrate development proposal |
-| Joe | Timing network integration, AWS setup |
+| Stalker (Unforkable)/Sykm | L1 Substrate development proposal |
+| Manitcor | Timing network integration, AWS setup |
 | Brendon | Subnet mechanism refinement |
 | Jesse/Chet | Hydra node architecture |
-| Nick | Timeline management, TAP governance calls |
-| Alex | Partnerships, tokenomics coordination |
+| Big | Timeline management, TAP governance calls |
+| Maptet | Partnerships, tokenomics coordination |

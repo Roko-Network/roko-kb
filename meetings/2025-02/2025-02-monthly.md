@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-February 2025 focused on advancing the L1 blockchain development with particular emphasis on the staking system, validator economics, and timing network infrastructure. The team executed TAU DCA strategies across multiple Bittensor subnets and made progress on hardware specifications for community node operators.
+February 2025 focused on advancing the L1 blockchain development with particular emphasis on the staking system, validator economics, and timing network infrastructure. The team executed TAO DCA strategies across multiple Bittensor subnets and made progress on hardware specifications for community node operators.
 
 ---
 
@@ -14,7 +14,7 @@ February 2025 focused on advancing the L1 blockchain development with particular
 
 ### L1 Staking System Development
 - DeFi flywheel approval process defined
-- Dynamic TAU emission mechanics designed
+- Dynamic TAO emission mechanics designed
 - Multiple validator staking strategies evaluated:
   - Dollar-cost averaging into positions
   - All-in approach at launch
@@ -48,15 +48,15 @@ February 2025 focused on advancing the L1 blockchain development with particular
 
 ### P2P Network Setup
 - Mesh network configuration for timing synchronization
-- TimeBeat devices connecting to grandmaster clock
+- a timing hardware provider devices connecting to grandmaster clock
 - Industry-standard protocols (NTP/PTP) for validator synchronization
 
 ---
 
 ## Strategic Initiatives
 
-### TAU Position Building
-- Executed TAU DCA across 4 subnets
+### TAO Position Building
+- Executed TAO DCA across 4 subnets
 - Establishing stake in key subnets during L1 development
 - Informing Roko's own timing subnet design through research
 
@@ -93,7 +93,7 @@ February 2025 focused on advancing the L1 blockchain development with particular
 | Metric | Status |
 |--------|--------|
 | L1 Explorer | Development in progress |
-| TAU Positions | DCA executed across 4 subnets |
+| TAO Positions | DCA executed across 4 subnets |
 | Hardware Spec | Pi 5 + 1TB M.2 SSD minimum |
 | Time Cards | 12-13 units for distribution |
 | Cloud Costs | 75% reduction option identified |
@@ -123,8 +123,8 @@ February 2025 focused on advancing the L1 blockchain development with particular
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton | L1 explorer development, staking integration |
-| Joe | P2P network setup, time card distribution |
+| Stalker (Unforkable) | L1 explorer development, staking integration |
+| Manitcor | P2P network setup, time card distribution |
 | Brendon | Subnet mechanism research |
 | Sykm | Validator economics modeling |
 | Team | Hardware specification documentation |

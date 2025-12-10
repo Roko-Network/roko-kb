@@ -1,4 +1,4 @@
-# Zymbit Support Session #2 Summary
+# a hardware security vendor Support Session #2 Summary
 
 **Date:** March 14, 2025
 
@@ -6,7 +6,7 @@
 
 ## Bootware Installation and Setup
 
-Bob from Zymbit walked the team through bootware installation on SCM (Secure Compute Module) devices. The session covered downloading bootware via curl, installing with zbcli, and understanding the boot process. The system creates encrypted partitions using Zymbit hardware for LUKS key management.
+Bob from a hardware security vendor walked the team through bootware installation on SCM (Secure Compute Module) devices. The session covered downloading bootware via curl, installing with zbcli, and understanding the boot process. The system creates encrypted partitions using a hardware security vendor hardware for LUKS key management.
 
 ## Image Creation and Management
 
@@ -14,7 +14,7 @@ The team learned how to create full system images using the imager tool, which s
 
 ## Development vs Production Mode
 
-Joe confirmed encrypted bootware instances can run without flipping devices out of dev mode. This allows development and testing in a secure environment before production configurations.
+Manitcor confirmed encrypted bootware instances can run without flipping devices out of dev mode. This allows development and testing in a secure environment before production configurations.
 
 ---
 
@@ -23,7 +23,7 @@ Joe confirmed encrypted bootware instances can run without flipping devices out 
 | Owner | Task |
 |-------|------|
 | All developers | Complete bootware installation up to image creation |
-| Joe | Prepare questions about operational pipeline |
+| Manitcor | Prepare questions about operational pipeline |
 | Team | Schedule follow-up session for next week |
 
 ---

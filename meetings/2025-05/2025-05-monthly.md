@@ -6,13 +6,13 @@
 
 ## Executive Summary
 
-May 2025 delivered a major milestone with the successful Power Roco integration into the staking system. The team also explored carbon credit applications, refined slashing mechanics, and gained valuable insights into traditional banking systems that reinforced the timing network's value proposition.
+May 2025 delivered a major milestone with the successful Power Roko integration into the staking system. The team also explored carbon credit applications, refined slashing mechanics, and gained valuable insights into traditional banking systems that reinforced the timing network's value proposition.
 
 ---
 
 ## Major Achievements
 
-### Power Roco Integration Milestone
+### Power Roko Integration Milestone
 Significant step forward in L1 development:
 - Successfully integrated into staking system using Substrate framework
 - Represents completion of core staking functionality
@@ -29,26 +29,26 @@ Dynamic slashing system designed:
 
 ---
 
-## Carbon Credit Initiative
+## a carbon credits partner Credit Initiative
 
 ### Collaboration Calls (May 22)
 Three meetings dedicated to carbon credit exploration:
 
-**Carbon Credits Collaboration Call:**
+**carbon credits Collaboration Call:**
 - Precision timing for carbon credit verification
 - Timestamp verification for audit trails
 - Data provenance requirements identified
 
-**Carbon Development Discussion:**
-- Partnership discussions with Demia (7+ years in carbon credit systems)
-- Demia has Hedera Guardian integration
+**a carbon credits partner Development Discussion:**
+- Partnership discussions with a carbon verification partner (7+ years in carbon credit systems)
+- a carbon verification partner has Hedera Guardian integration
 - Decision: Leverage partners rather than rebuild verification systems
-- Gold Standard for voluntary markets
-- Verra for compliance markets
+- a voluntary carbon standard for voluntary markets
+- a carbon standard body for compliance markets
 
 ### Strategic Approach
 - Avoid rebuilding complex verification infrastructure
-- Partner with established players (Demia)
+- Partner with established players (a carbon verification partner)
 - Focus on timing service value-add to existing systems
 
 ---
@@ -107,9 +107,9 @@ Key insights gained:
 
 | Metric | Status |
 |--------|--------|
-| Power Roco Integration | Complete |
+| Power Roko Integration | Complete |
 | Slashing Mechanics | Designed and implementing |
-| Carbon Partnerships | Demia discussions active |
+| a carbon credits partner Partnerships | a carbon verification partner discussions active |
 | Token Appreciation | $2.3M increase |
 | Governance | Testing complete |
 
@@ -148,8 +148,8 @@ Team emphasized accelerated development:
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton | Staking system, slashing implementation |
-| Joe | Hardware deployment, TimeBeat integration |
-| Team | Carbon credit partnership exploration |
-| Alex | Regulatory roadmap, market positioning |
-| Nick | Banking integration research |
+| Stalker (Unforkable) | Staking system, slashing implementation |
+| Manitcor | Hardware deployment, a timing hardware provider integration |
+| Team | a carbon credits partner credit partnership exploration |
+| Maptet | Regulatory roadmap, market positioning |
+| Big | Banking integration research |

@@ -21,9 +21,9 @@ Funding opportunity under evaluation:
 
 ### Partner Integrations
 Multiple partnerships progressing:
-- **Selfient:** Escrow contracts, token sale coordination
+- **a Web3 escrow platform:** Escrow contracts, token sale coordination
 - **Exa:** Governance and tokenomics collaboration
-- **NKN:** Timing data distribution alternatives
+- **a peer-to-peer networking company:** Timing data distribution alternatives
 - **Wolfram:** Mathematical verification potential
 
 ---
@@ -184,10 +184,10 @@ Identified and prioritized:
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton | Mainnet preparation, consensus finalization |
-| Joe | Infrastructure scaling, partner integrations |
-| Alex | Polkadot discussions, funding strategy |
-| Nick | Community growth, developer outreach |
+| Stalker (Unforkable) | Mainnet preparation, consensus finalization |
+| Manitcor | Infrastructure scaling, partner integrations |
+| Maptet | Polkadot discussions, funding strategy |
+| Big | Community growth, developer outreach |
 | Team | Q4 execution, documentation |
 
 ---
@@ -196,10 +196,10 @@ Identified and prioritized:
 
 ### Major Accomplishments
 1. **L1 Decision & Build:** Substrate blockchain with temporal transactions
-2. **Timing Network:** Operational with TimeBeat integration
+2. **Timing Network:** Operational with a timing hardware provider integration
 3. **Testnet:** Running with temporal transaction processing
 4. **Architecture:** Pallet-based design with 2.5-hour AI rewrite
-5. **Partnerships:** Multiple active (Selfient, Exa, NKN, Polkadot discussions)
+5. **Partnerships:** Multiple active (a Web3 escrow platform, Exa, a peer-to-peer networking company, Polkadot discussions)
 6. **Legal Structure:** Panama entity for Flywheel
 
 ### Key Learnings

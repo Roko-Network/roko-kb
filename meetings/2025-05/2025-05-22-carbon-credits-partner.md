@@ -1,10 +1,10 @@
-# Carbon Credits Collaboration Call Summary
+# carbon credits Collaboration Call Summary
 
 **Date:** May 22, 2025
 
 ---
 
-## Carbon Credits Discussion
+## carbon credits Discussion
 
 Initial collaboration call discussing carbon credit applications for the Roko timing network. Precision timing could support carbon credit verification and tracking systems.
 
@@ -23,8 +23,8 @@ Discussion of technical requirements for carbon credit integration including dat
 | Owner | Task |
 |-------|------|
 | Team | Research carbon credit verification requirements |
-| Alex | Identify potential partners |
-| Joe | Assess technical integration options |
+| Maptet | Identify potential partners |
+| Manitcor | Assess technical integration options |
 
 ---
 

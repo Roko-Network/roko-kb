@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-April 2025 focused on consolidating development efforts around the L1 blockchain and timing network, with strategic deprioritization of other projects. The team made progress on Zymbit hardware security, subnet-L1 communication architecture, and began prototyping automated trading applications to demonstrate timing network value.
+April 2025 focused on consolidating development efforts around the L1 blockchain and timing network, with strategic deprioritization of other projects. The team made progress on a hardware security vendor hardware security, subnet-L1 communication architecture, and began prototyping automated trading applications to demonstrate timing network value.
 
 ---
 
@@ -30,7 +30,7 @@ Comprehensive planning for testnet launch:
 
 ## Technical Progress
 
-### Zymbit Hardware Setup
+### a hardware security vendor Hardware Setup
 - Private network architecture for timing synchronization
 - Mesh network design ensuring reliable time distribution
 - Security configurations established
@@ -59,7 +59,7 @@ Deep technical work on architecture:
 
 ## Reference Implementation Analysis
 
-### Hippos Subnet Study
+### a reference subnet Study
 - Analyzed as reference for own subnet design
 - Successful subnet patterns identified
 - Learnings applied to Roko subnet development
@@ -95,8 +95,8 @@ Comprehensive approach established:
 | Metric | Status |
 |--------|--------|
 | L1 Development | Primary focus established |
-| Zymbit Setup | Configuration complete |
-| Hippos Analysis | Reference patterns documented |
+| a hardware security vendor Setup | Configuration complete |
+| reference subnet analysis | Reference patterns documented |
 | Trading Bot | Prototype in development |
 | Testnet Prep | Planning phase |
 
@@ -139,8 +139,8 @@ Comprehensive approach established:
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton | L1 staking integration, EVM testing |
-| Joe | Zymbit configuration, TimeBeat integration |
+| Stalker (Unforkable) | L1 staking integration, EVM testing |
+| Manitcor | a hardware security vendor configuration, a timing hardware provider integration |
 | Connor | Trading bot prototype |
 | BigM | Security authentication services |
 | Team | Testnet preparation, documentation |

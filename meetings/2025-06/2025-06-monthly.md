@@ -6,14 +6,14 @@
 
 ## Executive Summary
 
-June 2025 marked the deployment of the initial testnet with 2 validators on AWS, achievement of full MetaMask integration in the explorer, and completion of the TimeBeat network configuration. The team also made significant progress on legal structures for Flywheel DeFi and achieved a 7x mathematical optimization breakthrough.
+June 2025 marked the deployment of the initial testnet with 2 validators on AWS, achievement of full MetaMask integration in the explorer, and completion of the a timing hardware provider network configuration. The team also made significant progress on legal structures for Flywheel DeFi and achieved a 7x mathematical optimization breakthrough.
 
 ---
 
 ## Major Milestones
 
 ### Testnet Deployment
-Anton deployed the first testnet:
+Stalker (Unforkable) deployed the first testnet:
 - 2-validator configuration (Alice & Bob) on AWS
 - Successful block production
 - Foundation for network expansion
@@ -26,7 +26,7 @@ Major explorer update delivered:
 - Interact with chain through familiar interfaces
 - Complete staking/rewards workflow implemented
 
-### TimeBeat Network Configuration
+### a timing hardware provider Network Configuration
 Three node types defined and configured:
 - Architecture supports different roles
 - Timing distribution nodes
@@ -119,7 +119,7 @@ Challenges addressed:
 |--------|--------|
 | Testnet Validators | 2 operational (target 8-10) |
 | MetaMask Integration | Complete |
-| TimeBeat Configuration | 3 node types defined |
+| a timing hardware provider Configuration | 3 node types defined |
 | Mathematical Optimization | 7x improvement achieved |
 | Panama Entity | Structure finalized |
 
@@ -149,8 +149,8 @@ Before public testnet:
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton | Testnet deployment, explorer improvements |
-| Joe | MS-01 configuration, hardware documentation |
+| Stalker (Unforkable) | Testnet deployment, explorer improvements |
+| Manitcor | MS-01 configuration, hardware documentation |
 | BigM | TSN NIC integration, TrustID system |
 | Team | MCP server development |
-| Alex | Legal entity finalization |
+| Maptet | Legal entity finalization |

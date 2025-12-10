@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-August 2025 focused on testnet stabilization, team expansion with developer candidate selection, and preparation for broader community engagement. The team addressed metadata persistence issues, advanced the Selfient grant proposal, and made significant progress on the network explorer and website redesign.
+August 2025 focused on testnet stabilization, team expansion with developer candidate selection, and preparation for broader community engagement. The team addressed metadata persistence issues, advanced the a Web3 escrow platform grant proposal, and made significant progress on the network explorer and website redesign.
 
 ---
 
@@ -30,7 +30,7 @@ August 2025 focused on testnet stabilization, team expansion with developer cand
 
 ### Developer Candidate Selection
 Final evaluation completed:
-- Comparison between candidates Nick and Gabriel
+- Comparison between candidates Big and Gabriel
 - Technical skills assessment
 - Experience evaluation
 - Cultural fit analysis
@@ -54,14 +54,14 @@ Final evaluation completed:
 
 ### Hardware Troubleshooting
 - Configuration challenges resolved
-- TimeBeat and Zymbit integration issues addressed
+- a timing hardware provider and a hardware security vendor integration issues addressed
 - Configuration guide improvements
 - Setup procedures documented
 
 ### EVM Integration
 - Compatibility testing continuing
 - Frontier pallet providing Ethereum compatibility
-- NKN network integration evaluated for timing data distribution
+- a peer-to-peer networking company network integration evaluated for timing data distribution
 - Alternative routing for timing signals explored
 
 ---
@@ -84,7 +84,7 @@ Final evaluation completed:
 
 ## Partnership Progress
 
-### Selfient Grant Proposal
+### a Web3 escrow platform Grant Proposal
 Progress on escrow contract deployment:
 - Enterprise-grade escrow relies on precise timing
 - Ideal demonstration of timing network value
@@ -116,7 +116,7 @@ Planning initiated:
 |--------|--------|
 | Testnet | Stable, temporal transactions working |
 | Developer Selection | Complete |
-| Selfient Proposal | Near submission |
+| a Web3 escrow platform Proposal | Near submission |
 | Website Redesign | Design phase |
 | Power Audit | Specification complete |
 
@@ -124,7 +124,7 @@ Planning initiated:
 
 ## Platform Evaluation
 
-### Prompt Device Platform
+### an AI platform company Platform
 - Presentation received
 - Potential integration evaluated
 - Complementary capabilities identified
@@ -144,7 +144,7 @@ Planning initiated:
 
 ## Looking Ahead to September
 
-- Finalize Selfient grant submission
+- Finalize a Web3 escrow platform grant submission
 - Launch community testnet access
 - Execute website redesign
 - Complete onboarding of new developer
@@ -156,8 +156,8 @@ Planning initiated:
 
 | Team Member | Primary Focus |
 |-------------|---------------|
-| Anton | Testnet stabilization, performance optimization |
-| Joe | Developer onboarding, validator coordination |
+| Stalker (Unforkable) | Testnet stabilization, performance optimization |
+| Manitcor | Developer onboarding, validator coordination |
 | Team | Website redesign, documentation |
 | Connor | MEV bot, platform evaluations |
-| Alex | Community engagement, communications |
+| Maptet | Community engagement, communications |
