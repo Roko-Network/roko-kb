@@ -1,66 +1,80 @@
 {
   "title": "Meetings",
   "summary": "Development meeting transcripts, summaries, and related assets",
+  "order": [
+    "2025-12",
+    "2025-11",
+    "2025-10",
+    "2025-09",
+    "2025-08",
+    "2025-07",
+    "2025-06",
+    "2025-05",
+    "2025-04",
+    "2025-03",
+    "2025-02",
+    "2025-01"
+  ],
   "sections": [
     {
       "id": "2025-12",
-      "title": "2025 December",
+      "title": "December 2025",
       "summary": "Meeting logs from December 2025",
-      "subsections": "2025-12/"
+      "collapsed": true
     },
     {
       "id": "2025-09",
-      "title": "2025 September",
+      "title": "September 2025",
       "summary": "Meeting logs from September 2025",
-      "subsections": "2025-09/"
+      "collapsed": true
     },
     {
       "id": "2025-08",
-      "title": "2025 August",
+      "title": "August 2025",
       "summary": "Meeting logs from August 2025",
-      "subsections": "2025-08/"
+      "collapsed": true
     },
     {
       "id": "2025-07",
-      "title": "2025 July",
+      "title": "July 2025",
       "summary": "Meeting logs from July 2025",
-      "subsections": "2025-07/"
+      "collapsed": true
     },
     {
       "id": "2025-06",
-      "title": "2025 June",
+      "title": "June 2025",
       "summary": "Meeting logs from June 2025",
-      "subsections": "2025-06/"
+      "collapsed": true
     },
     {
       "id": "2025-05",
-      "title": "2025 May",
+      "title": "May 2025",
       "summary": "Meeting logs from May 2025",
-      "subsections": "2025-05/"
+      "collapsed": true
     },
     {
       "id": "2025-04",
-      "title": "2025 April",
+      "title": "April 2025",
       "summary": "Meeting logs from April 2025",
-      "subsections": "2025-04/"
+      "collapsed": true
     },
     {
       "id": "2025-03",
-      "title": "2025 March",
+      "title": "March 2025",
       "summary": "Meeting logs from March 2025",
-      "subsections": "2025-03/"
+      "collapsed": true
     },
     {
       "id": "2025-02",
-      "title": "2025 February",
+      "title": "February 2025",
       "summary": "Meeting logs from February 2025",
-      "subsections": "2025-02/"
+      "collapsed": true
     },
     {
       "id": "2025-01",
-      "title": "2025 January",
+      "title": "January 2025",
       "summary": "Meeting logs from January 2025",
-      "subsections": "2025-01/"
+      "collapsed": true
     }
   ]
 }

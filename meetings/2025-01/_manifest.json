@@ -1,6 +1,19 @@
 {
   "title": "January 2025 Meetings",
   "summary": "Development meeting logs from January 2025",
+  "order": [
+    "2025-01-monthly",
+    "2025-01-30",
+    "2025-01-28",
+    "2025-01-23",
+    "2025-01-21",
+    "2025-01-16-late",
+    "2025-01-16-early",
+    "2025-01-14",
+    "2025-01-09",
+    "2025-01-07",
+    "2025-01-02"
+  ],
   "sections": [
     {
       "id": "2025-01-monthly",
