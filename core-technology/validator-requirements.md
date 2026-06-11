@@ -1,90 +1,79 @@
 # Validator Requirements
 
-## Technical and Economic Requirements
+What you actually need to run a Roko validator: ordinary server hardware, a Rust build (or a pre-built binary/image), a time source the node can classify, and a pwROKO bond. No time card is required, and the network is in pre-public-launch testnet — joining the live testnet validator set is currently coordinated with the team. <!-- fact:OPS-30 -->
 
-Running a ROKO validator isn't just spinning up a node. Time cards. ECC memory. GPS antennas. Staked tokens. Hardware enforces temporal precision. Economics enforce honest behavior.
+## Build requirements
 
----
+The node builds with Rust 1.80.0 (pinned by `rust-toolchain.toml`, with the `wasm32-unknown-unknown` target) plus `build-essential`, `protobuf-compiler`, `clang`, and `llvm-dev` on Ubuntu/Debian. <!-- fact:OPS-02 -->
 
-## Hardware Requirements
-
-### Minimum Specifications
-
-Bare minimum to participate. 8 cores process transactions. ECC RAM catches bit flips before they corrupt state. NVMe handles the I/O. 100 Mbps keeps you connected. The time card is non-negotiable - no OCP TAP, no validation.
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Component</th><th>Requirement</th><th>Purpose</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>CPU</strong></td><td>8 cores, 3.0 GHz</td><td>Transaction processing</td></tr>
-    <tr><td><strong>RAM</strong></td><td>16 GB ECC</td><td>State management</td></tr>
-    <tr><td><strong>Storage</strong></td><td>500 GB NVMe SSD</td><td>Blockchain data</td></tr>
-    <tr><td><strong>Network</strong></td><td>100 Mbps symmetric</td><td>P2P communication</td></tr>
-    <tr><td><strong>Time Card</strong></td><td>OCP TAP 2.0</td><td>Hardware timestamping</td></tr>
-  </tbody>
-</table>
+```bash
+# One runtime feature is mandatory: testnet OR mainnet
+cargo build --release --features testnet -j2
 ```
 
-### Recommended Specifications
+The build needs a minimum of 8 GB RAM and 50 GB free disk; the `-j2` flag limits parallel compilation because Substrate builds exhaust memory on machines with less than 32 GB RAM — drop it on larger machines for faster builds. <!-- fact:OPS-04,OPS-03 -->
 
-Production-grade setup. 16 cores handle load spikes. 32 GB RAM keeps hot state in memory. RAID storage survives drive failures. Gigabit networking reduces propagation delay. GPS antenna gives you stratum-0 time source - not dependent on network peers for temporal accuracy.
+## Runtime hardware
 
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Component</th><th>Requirement</th><th>Benefit</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>CPU</strong></td><td>16+ cores, 3.5 GHz</td><td>Higher throughput</td></tr>
-    <tr><td><strong>RAM</strong></td><td>32 GB ECC</td><td>Better performance</td></tr>
-    <tr><td><strong>Storage</strong></td><td>2 TB NVMe RAID</td><td>Future growth</td></tr>
-    <tr><td><strong>Network</strong></td><td>1 Gbps dedicated</td><td>Lower latency</td></tr>
-    <tr><td><strong>Time Card</strong></td><td>OCP TAP 2.0 + GPS</td><td>Stratum-0 accuracy</td></tr>
-  </tbody>
-</table>
-```
+Production validator guidance from the deployment guide:
 
----
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| CPU | 4 cores | 8 cores |
+| RAM | 16 GB | 32 GB (high-traffic) |
+| Storage | 500 GB SSD | 1 TB |
+| Network | 100 Mbps | — |
 
-## Economic Requirements
+<!-- fact:OPS-22 -->
 
-### Staking
+The network even runs a real Raspberry Pi CM5 validator on the testnet (with a GNSS module and Timebeat for timing), so the floor is genuinely modest. <!-- fact:OPS-26 -->
 
-32,000 ROKO minimum. Lock it for 180 days. This isn't a deposit - it's collateral. Misbehave and lose up to half. The stake makes attacks expensive. The lock period prevents hit-and-run.
+## Time source
 
-```
-Minimum Stake:    32,000 ROKO
-Lock Period:      180 days
-Slashing Risk:    Up to 50% for malicious behavior
-```
+Validators self-classify their time source — Timebeat PTP daemon, chrony, GNSS/PPS, or NIC hardware timestamping — and announce a measured root distance to UTC. GNSS/PPS hardware earns **Anchor** tier; the modes are `Auto` (default), `MockAnchor` (testnet), and `SystemOnly`. <!-- fact:CC-16 -->
 
-### Expected Returns
+| Tier | Root distance | Source | Hardware cost |
+|------|--------------|--------|---------------|
+| Anchor | < 1 µs | GNSS/PPS-disciplined clock | ~$30–300 GNSS receiver |
+| Standard | < 10 µs | NTP via chrony | none |
+| Minimal | > 10 µs | System clock | none |
 
-Block rewards plus performance bonuses. Hit your uptime targets, get the base 8-10%. Maintain tight time sync, earn the accuracy bonus. Top performers clear 15% APY. Underperformers get slashed.
+<!-- fact:OPS-23,OPS-24 -->
 
-```
-Annual Return = Base Rewards + Performance Bonus + Time Accuracy Bonus
-              = 8-10%        + 0-3%              + 0-2%
-              = 8-15% APY
-```
+No timing hardware is required to participate on testnet: `--timesync-time-source mock-anchor` bypasses detection (development/testnet only). <!-- fact:OPS-25 -->
 
----
+Time quality is recorded on-chain per validator, with time-sync offences defined (slash fractions: excessive offset 0%, persistent drift 1%, low reputation 1%, contradictory offsets 5%) — but offence **enforcement is currently disabled in both compiled runtimes**, so violations are detected and scored without slashing. <!-- fact:CC-14,CC-15 -->
 
-## Operational Requirements
+## Bonding and economics
 
-Four numbers matter:
+Staking is denominated in **pwROKO**, not native ROKO, in both runtimes; the genesis pattern bonds 50 ROKO worth of pwROKO per validator. <!-- fact:CC-25 -->
 
-- **Uptime**: 99.5% minimum. Miss blocks, miss rewards.
-- **Time Accuracy**: ±100 nanoseconds. Drift beyond tolerance, get slashed.
-- **Software Updates**: 24-hour window. Security patches wait for no one.
-- **Monitoring**: 24/7 recommended. Problems at 3 AM are still problems.
+pwROKO mechanics in brief: `lock(amount)` reserves your native ROKO 1:1 and mints pwROKO; unlocking is a two-step flow — `unlock_request` starts a cooldown, then `complete_unlock` releases the backing ROKO. pwROKO itself is non-transferable: it can only be minted by locking and burned by unlocking. <!-- fact:PAL-06,PAL-07 -->
 
----
+The unlock cooldown is governance-adjustable: 14 days at mainnet parameters, a 10-block placeholder on testnet. <!-- fact:TOK-20 -->
 
-## See Also
+Staking rewards follow the standard Substrate reward curve as configured: min inflation 2.5%, max inflation 10%, ideal stake 50%. These are runtime parameters, not an APY promise — the network is pre-launch and the rewards model remains under active design. <!-- fact:TOK-23 -->
 
-- [OCP-TAP Compliance](./ocp-tap-compliance.md)
-- [Hardware Timestamping](./hardware-timestamping.md)
-- [Consensus Mechanism](./consensus.md)
+## Joining the network
+
+The honest current path, in order:
+
+1. **Run a dev node** — `roko-node --dev --alice --database auto` gives you a single-validator chain with pre-funded accounts. <!-- fact:OPS-30 -->
+2. **Run a local 3-validator time mesh** — `./run-e2e-local.sh --keep` starts Alice/Bob/Charlie on ports 9944–9946 with a fresh chain spec, using mock-anchor time. <!-- fact:OPS-09 -->
+3. **Join the live testnet validator set** — currently **admin-coordinated**: the documented registration flow requires the testnet sudo key to fund the account with 200 ROKO, lock 50 ROKO into pwROKO, bond, set session keys, and signal validate intent. Active status takes effect the next staking era (~5 minutes on testnet). You cannot self-register today; contact the team. <!-- fact:OPS-27 -->
+
+For single-validator and local setups, two flags matter: `--timesync-no-enforce` (a lone node has no peers to converge with) and `--db-storage-threshold 0` (avoids storage-monitor crashes on low-disk systems). <!-- fact:OPS-08 -->
+
+## Operations
+
+- **Monitoring:** Prometheus metrics on port 9615 include time-source type, root distance, and mesh convergence state; an in-repo Prometheus + Grafana + AlertManager stack ships under `docker/monitoring/`. <!-- fact:OPS-28 -->
+- **Mesh health:** check `temporal_getMeshState` and `system_health` over RPC. <!-- fact:OPS-29 -->
+- **Security basics:** `--rpc-methods safe` in production, reverse-proxy TLS in front of 9944, firewall everything except P2P (30333) and proxied RPC.
+
+For context on chain timing: the current testnet runtime runs 2-second blocks (6 seconds is the stated production-testnet target, per the in-code M-19 note), and the mainnet runtime is compiled at 3 seconds. <!-- fact:CC-05,CC-04 -->
+
+## See also
+
+- [Hardware Timestamping](./hardware-timestamping.md) — time-source detection in depth
+- [OCP-TAP](./ocp-tap-compliance.md) — open time-hardware options for Anchor tier
+- [Consensus Mechanism](./consensus.md) — how time quality feeds consensus

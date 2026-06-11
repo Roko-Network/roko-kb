@@ -1,210 +1,45 @@
 # Consensus Mechanism
 
-## BABE/GRANDPA with Temporal Proofs
+Roko does not replace consensus with something exotic. Block production is BABE and finality is GRANDPA — the same battle-tested Substrate machinery securing Polkadot — with Proof of Accurate Time (PoAT) layered on as a **consensus modifier**: a validator time mesh whose measurements land on-chain and feed back into how the network treats its validators. <!-- fact:CC-02,PAL-29,CC-32 -->
 
-ROKO Network extends Substrate's proven **BABE/GRANDPA** consensus with temporal proof requirements. Rather than replacing consensus, ROKO adds time beacon verification to block validity rules.
+## BABE + GRANDPA
 
----
+- **BABE** assigns block-production slots. Genesis epoch config allows primary and secondary plain slots with a primary-slot probability of 1/4. <!-- fact:CC-03 -->
+- **GRANDPA** provides provable finality. The session key set also includes ImOnline, AuthorityDiscovery, Mixnet, BEEFY, and a Roko-specific Temporal key. <!-- fact:CC-02 -->
+- Epochs are 50 blocks on the testnet (~100 s at 2 s blocks, with 3 sessions per era) and 60 minutes of blocks on the mainnet runtime. <!-- fact:CC-12 -->
 
-## Overview
+Block times in the compiled runtimes: the testnet development chain runs **2-second blocks** today, with an in-code note (M-19) that the production testnet target is 6 seconds; the mainnet runtime is built for **3-second blocks**. <!-- fact:CC-05,CC-04 -->
 
-ROKO's approach:
-- **BABE**: Handles block production and slot assignment (standard Substrate)
-- **GRANDPA**: Provides finality (standard Substrate)
-- **Time Beacons**: Add temporal proof requirements to blocks
+## PoAT: Time as a Consensus Input
 
-This modular design means:
-- Battle-tested consensus mechanisms remain unchanged
-- Temporal features layer on top via Substrate pallets
-- Other chains can adopt beacon technology independently
+PoAT — Proof of Accurate Time — works as a pipeline from physical clocks to on-chain consequences:
 
----
+1. **The time mesh measures.** Validators run the PTP+Squared mesh (`/roko/timesync/1` over libp2p), probing each other's clocks, scoring peers with Welch's t-test reputation, and converging on a mesh consensus time. See [Temporal Infrastructure](./temporal-infrastructure.md). <!-- fact:CC-13 -->
+2. **An inherent puts it on-chain.** Each block carries a time-mesh state snapshot consumed by `pallet-timesync`, which stores per-block and per-validator time quality as a fixed-point score (0–10,000) and records health checkpoints every 100 blocks. <!-- fact:CC-14 -->
+3. **Quality feeds back into consensus.** The design, as documented in the project README, is that time quality influences block-production eligibility, finality votes, and rewards — making accurate time a condition of full participation rather than a courtesy. <!-- fact:CC-32 -->
 
-## How It Works
+Validators also self-classify their time source (GNSS/PPS hardware, a Timebeat PTP daemon, chrony, or plain system clock) into Anchor, Standard, or Minimal tiers, with a measured root-distance-to-UTC in nanoseconds. <!-- fact:CC-16 -->
 
-### Block Production with Temporal Proofs
+## Offences and Slashing — Current Status
 
-When a validator is assigned a slot by BABE:
+`pallet-timesync` defines a `TimeSyncOffence` integrated with the standard offences pallet, with slash fractions of 0% for excessive offset, 1% for persistent drift, 1% for low reputation, and 5% for contradictory offsets. <!-- fact:CC-14 -->
 
-1. **Collect transactions** from mempool
-2. **Gather fresh beacons** from local cache
-3. **Select K beacons** for the proof (K-of-N selection)
-4. **Calculate median timestamp** from selected beacons
-5. **Assemble block** with beacon proof in header
-6. **Sign and broadcast** block to network
+**Disclosure: enforcement is currently disabled.** Both compiled runtimes set `EnforcementEnabled = false` — time-quality violations are detected and recorded, but nothing is slashed. Drift bounds are configured (5 ms block-mesh drift, 10 s cross-validator drift) and offence reporting is wired up, so flipping enforcement on is a runtime configuration change, not new machinery. Until that happens, PoAT's penalties are observational. <!-- fact:CC-15,PAL-28 -->
 
-### Block Validation
+## Temporal Rules at Block Import
 
-Other validators verify:
-1. Standard BABE validity checks
-2. Each beacon signature in the proof
-3. Beacons are within drift tolerance window
-4. Block timestamp matches beacon median
-5. Temporal ordering of transactions (if Type 3)
-
----
-
-## Temporal Proof Structure
-
-```box:Block Header
-Parent Hash
-Block Number
-State Root
-Extrinsics Root
-
-─── Beacon Proof ───────────────────────────────────────────────────────────
-
-Claimed Time:   T
-Spread:         max - min
-Median:         canonical time
-
-• Beacon 1: {validator, ts, sig}
-• Beacon 2: {validator, ts, sig}
-• Beacon 3: {validator, ts, sig}
-
-─────────────────────────────────────────────────────────────────────────────
-
-BABE Seal (slot, authority, signature)
-```
-
----
-
-## Validator Requirements
-
-### Hardware
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Component</th><th>Minimum</th><th>Purpose</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Time Card</strong></td><td>OCP TAP 2.0</td><td>Hardware timestamp generation</td></tr>
-    <tr><td><strong>GPS Antenna</strong></td><td>Active, 30dB gain</td><td>Time source</td></tr>
-    <tr><td><strong>NIC</strong></td><td>PTP-capable (Intel X710/E810)</td><td>Hardware timestamping</td></tr>
-    <tr><td><strong>CPU</strong></td><td>8+ cores</td><td>Block production</td></tr>
-    <tr><td><strong>RAM</strong></td><td>16 GB+</td><td>Beacon cache</td></tr>
-  </tbody>
-</table>
-```
-
-### Time Synchronization
-
-Validators must maintain synchronization within the network's drift tolerance:
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Network Phase</th><th>Drift Tolerance</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Launch</strong></td><td>2 seconds</td></tr>
-    <tr><td><strong>Mature</strong></td><td>500ms target</td></tr>
-  </tbody>
-</table>
-```
-
-```bash
-# Check time sync status
-roko validator time-status
-
-# Example output:
-# Time Sync Status
-# ================
-# Local Time:     1730123456789000 μs
-# Network Median: 1730123456790000 μs
-# Drift:          +1ms ✓
-# Beacon Rate:    150ms
-# Cache Size:     47 beacons
-```
-
----
-
-## Finality
-
-GRANDPA provides finality as normal. Once a block is finalized:
-- Its beacon proof is immutable
-- Temporal ordering of transactions is locked
-- No reordering possible
-
-Finality time: **2-3 seconds** (inherited from GRANDPA configuration)
-
----
-
-## Fork Resolution
-
-If forks occur, resolution uses:
-
-1. **GRANDPA votes** (primary - standard Substrate)
-2. **Temporal precedence** (tiebreaker - earlier median wins)
-3. **Stake weight** (final tiebreaker)
-
-```
-Fork A: median timestamp 10:17:36.789
-Fork B: median timestamp 10:17:36.792
-
-→ Fork A has temporal precedence (if GRANDPA votes equal)
-```
-
----
+One temporal rule is already enforced at the consensus level: every transaction gets an ECDSA-signed temporal receipt at pool admission, and **block import rejects blocks that omit a receipted transaction past its inclusion deadline** (15 seconds by default, enforcement on by default). Honest validators will not build on a block that silently dropped a receipted transaction. See [Temporal Transactions](./temporal-transactions.md). <!-- fact:CC-17 -->
 
 ## Staking
 
-Standard Substrate staking with temporal performance bonuses:
+Staking is denominated in **pwROKO** — wrapped ROKO minted by locking the native token 1:1 — in both runtimes, using the standard Substrate staking pallet with multi-phase validator election and a bags-list voter list. The reward curve targets 2.5–10% inflation with an ideal stake of 50%. <!-- fact:CC-25,PAL-32,PAL-14 -->
 
-### Rewards
+## Testnet Governance Caveat
 
-Validators earn from:
-1. **Block production** - Standard BABE rewards
-2. **Attestations** - GRANDPA participation
-3. **Temporal accuracy** - Bonus for maintaining sync
-
-### Slashing
-
-Validators can be slashed for:
-- **Double signing** (standard)
-- **Excessive drift** - Beacons consistently outside tolerance
-- **Beacon manipulation** - Invalid signatures or timestamps
-
----
-
-## Pallet Architecture
-
-ROKO's temporal features are implemented as modular Substrate pallets:
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Pallet</th><th>Depends On</th><th>Function</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Beacons</strong></td><td>-</td><td>Validator beacon production</td></tr>
-    <tr><td><strong>Time Blocks</strong></td><td>Beacons</td><td>Beacon proofs in blocks</td></tr>
-    <tr><td><strong>Temporal Transactions</strong></td><td>Beacons, Time Blocks</td><td>Type 3 transactions</td></tr>
-    <tr><td><strong>Frontier</strong> (forked)</td><td>All above</td><td>EVM with temporal ordering</td></tr>
-  </tbody>
-</table>
-```
-
-This allows partial adoption:
-- Beacons only (cross-chain time source)
-- Beacons + Time Blocks (proven block timestamps)
-- Full stack (temporal ordering)
-
----
-
-## Current Limitations
-
-Active research areas:
-
-1. **Gossip propagation** - Honest block producers may miss transactions due to network delays
-2. **Beacon back-dating** - Preventing stale beacon reuse in transaction proofs
-3. **Storage optimization** - Reducing beacon proof overhead
-
----
+The runtimes include `pallet-sudo` with full root permissions, alongside the council/democracy governance stack. This is normal for a pre-launch network and worth knowing: testnet chain state can be modified by the sudo key. <!-- fact:PAL-05,PAL-15 -->
 
 ## See Also
 
-- [Time Beacons](./time-beacons.md) - Detailed beacon architecture
-- [Temporal Transactions](./temporal-transactions.md) - Type 3 transactions
-- [MEV Prevention](./mev-prevention.md) - How temporal ordering prevents MEV
+- [Temporal Infrastructure](./temporal-infrastructure.md) — how the time mesh works
+- [Temporal Transactions](./temporal-transactions.md) — receipts and inclusion enforcement
+- [Validator Requirements](./validator-requirements.md) — time-source tiers and hardware

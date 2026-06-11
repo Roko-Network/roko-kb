@@ -1,217 +1,69 @@
 # Temporal Infrastructure
 
-## The Timing Stack
+Roko's clock is not an appliance you buy — it is a protocol the validators run. The **PTP+Squared time mesh** is a native Rust peer-to-peer time-synchronization layer built into the node, measuring clock offsets between validators and converging on a single network time that consensus can hold validators to. <!-- fact:CC-13 -->
 
-ROKO adds proven time to blockchain. Three layers: hardware clocks at the bottom, beacon consensus in the middle, temporal transactions at the top.
+The stack has four layers: libp2p networking at the bottom, the PTP+Squared time mesh above it, BABE+GRANDPA+PoAT consensus on top of that, and applications at the top. <!-- fact:DOC-01 -->
 
----
+## The PTP+Squared Mesh
 
-## Architecture Overview
+The mesh runs over the libp2p notification protocol **`/roko/timesync/1`**, exchanging SCALE-encoded `Probe`, `ProbeResponse`, and `AnnounceV4` messages. Its moving parts: <!-- fact:CC-13 -->
 
-```html
-<div class="layer-stack">
-  <div class="layer">
-    <div class="layer-title">Application Layer</div>
-    <div class="layer-detail">Temporal Smart Contracts & DApps</div>
-  </div>
-  <div class="layer">
-    <div class="layer-title">Temporal Consensus Layer</div>
-    <div class="layer-detail">Time Beacons • Ordering • Attestation</div>
-  </div>
-  <div class="layer">
-    <div class="layer-title">Hardware Timing Layer</div>
-    <div class="layer-detail">OCP-TAP • IEEE 1588 PTP • Atomic Clocks • GPS</div>
-  </div>
-</div>
-```
+- **Lucky-packet offset estimation** — validators continuously probe peers and estimate clock offsets from the lowest-latency exchanges.
+- **Welch's t-test reputation scoring** — peers whose reported time is statistically inconsistent lose reputation; the mesh is built to distrust bad clocks, not just average them.
+- **Convergence detection** — the mesh tracks whether the network has agreed on a consensus time (`Initializing → Converging → Converged`).
+- **Path-cost source selection and seat management** — each node selects which peers to trust as time sources and manages mesh membership.
 
-Each layer:
+<!-- fact:CC-13,EVM-09 -->
 
-1. **Hardware Timing Layer**: Physical time sources and synchronization
-2. **Temporal Consensus Layer**: Beacon production and block timestamp proofs
-3. **Application Layer**: Temporal transactions and smart contracts
+The PTP+Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
 
----
+The mesh's output is **mesh consensus time**: your local clock plus a consensus offset, agreed across validators. It reaches the runtime as a block inherent consumed by `pallet-timesync`, which stores per-validator time quality on-chain (fixed-point 0–10,000) and records health checkpoints every 100 blocks. <!-- fact:CC-14 -->
 
-## Hardware Timing Layer
+## Time-Source Self-Classification
 
-### OCP-TAP Compliance
+Validators don't all need atomic-grade hardware — they need to be *honest about what they have*. Each validator detects and classifies its own time source, reporting a measured root-distance-to-UTC in nanoseconds: <!-- fact:CC-16 -->
 
-ROKO validators run **Open Compute Project Time Appliance** hardware:
+| Source | Typical tier |
+|---|---|
+| GNSS receiver with PPS, hardware-disciplined | **Anchor** |
+| Timebeat PTP daemon | Standard/Anchor depending on root distance |
+| chrony (NTP) | **Standard** |
+| Plain system clock | **Minimal** |
 
-#### Time Card Specifications
-```yaml
-Time Card Specifications:
-  - Manufacturer: OCP-compliant vendors
-  - GPS/GNSS: Multi-constellation (GPS, Galileo, BeiDou)
-  - Oscillator: OCXO with <1ppb stability
-  - Interfaces: PCIe Gen3 x1
-  - Accuracy: <100ns to UTC
-  - Holdover: 24 hours at <1μs drift
-```
+<!-- fact:CC-16 -->
 
-#### Hardware Requirements for Validators
+Repo deployment guidance describes the tiers as roughly: Anchor < 1 µs root distance (GNSS/PPS-disciplined), Standard < 10 µs (NTP via chrony), Minimal above that — with a production network wanting at least 2–3 anchor validators. <!-- fact:OPS-23 -->
 
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Component</th><th>Specification</th><th>Purpose</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Time Card</strong></td><td>OCP TAP 2.0+</td><td>Hardware timestamp generation</td></tr>
-    <tr><td><strong>NIC</strong></td><td>Intel X710/E810</td><td>PTP hardware timestamping</td></tr>
-    <tr><td><strong>CPU</strong></td><td>AVX2 support</td><td>Cryptographic operations</td></tr>
-    <tr><td><strong>GPS Antenna</strong></td><td>Active, 30dB gain</td><td>Time source reception</td></tr>
-    <tr><td><strong>Oscillator</strong></td><td>OCXO or better</td><td>Holdover stability</td></tr>
-  </tbody>
-</table>
-```
+Detection modes are `Auto` (inspect `chronyc tracking`, scan `/dev/pps*`, check NIC hardware timestamping via `ethtool -T`), `MockAnchor` (testnet/development only — claims a perfect source, bypassing detection), and `SystemOnly` (assume a 10 ms root distance). <!-- fact:CC-16,OPS-24,OPS-25 -->
 
-### IEEE 1588 PTP Implementation
+A real reference deployment exists: a Raspberry Pi CM5 validator runs on the testnet using a u-blox GNSS module with Timebeat and chrony, per the repo's runbooks. <!-- fact:OPS-26 -->
 
-ROKO uses **Precision Time Protocol v2.1** for network synchronization:
+## Observing the Mesh
 
-#### PTP Configuration
-```ini
-# ROKO PTP Profile
-[global]
-domainNumber              44    # ROKO domain
-slaveOnly                 0     # Can be grandmaster
-priority1                 128   # Standard priority
-clockClass                6     # GPS-locked
-clockAccuracy            0x21   # <100ns
-network_transport        L2
-delay_mechanism          E2E    # End-to-end
-time_stamping            hardware
-```
-
-#### Synchronization Hierarchy
-
-```
-                    GPS/GNSS Satellites
-                           ↓
-                    Stratum 0 (Atomic)
-                           ↓
-        ┌──────────────────┼──────────────────┐
-        ↓                  ↓                  ↓
-  Grandmaster 1      Grandmaster 2      Grandmaster 3
-  (Region: US)       (Region: EU)        (Region: Asia)
-        ↓                  ↓                  ↓
-   Validators          Validators          Validators
-```
-
-### Time Source Redundancy
-
-Validators maintain multiple time sources:
-
-1. **Primary**: GPS/GNSS with multi-constellation
-2. **Secondary**: Network Time Security (NTS)
-3. **Tertiary**: IEEE 1588 PTP from peers
-4. **Backup**: Local OCXO holdover
-
----
-
-## Temporal Consensus Layer
-
-### Time Beacons
-
-Validators broadcast signed timestamps at 150ms intervals. See [Time Beacons](./time-beacons.md) for details.
-
-### Block Timestamp Proofs
-
-Blocks include beacon proofs - K-of-N beacon selection proving the block's timestamp via median calculation.
-
-### Temporal Ordering
-
-Transactions with beacon proofs execute in signing-time order:
-
-```python
-class TemporalOrdering:
-    def order_transactions(self, tx_pool):
-        # Verify beacon proofs
-        valid_txs = [tx for tx in tx_pool if self.verify_beacon_proof(tx)]
-
-        # Sort by proven signing time
-        valid_txs.sort(key=lambda x: x.median_timestamp)
-
-        return valid_txs
-```
-
----
-
-## Performance Characteristics
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Metric</th><th>Value</th><th>Notes</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Beacon Interval</strong></td><td>150ms</td><td>Configurable</td></tr>
-    <tr><td><strong>Drift Tolerance</strong></td><td>2s launch, 500ms target</td><td>Tightens as network matures</td></tr>
-    <tr><td><strong>Block Time</strong></td><td>2-3 seconds</td><td>GRANDPA finality</td></tr>
-    <tr><td><strong>Timestamp Precision</strong></td><td>Microseconds in beacons</td><td>NanoMoment format supports nanoseconds</td></tr>
-  </tbody>
-</table>
-```
-
----
-
-## Security
-
-### Attack Prevention
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Attack</th><th>Prevention</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Time Manipulation</strong></td><td>Beacon proofs require multiple validator signatures</td></tr>
-    <tr><td><strong>Front-running</strong></td><td>Temporal ordering - can't back-date beacon proofs</td></tr>
-    <tr><td><strong>Replay</strong></td><td>Monotonic sequence numbers in beacons</td></tr>
-  </tbody>
-</table>
-```
-
-### Slashing
-
-Validators can be slashed for:
-- Beacons consistently outside drift tolerance
-- Invalid beacon signatures
-- Producing blocks without valid beacon proofs
-
----
-
-## Integration
-
-### For Validators
+The mesh is fully inspectable over JSON-RPC (standard port 9944): <!-- fact:CC-20 -->
 
 ```bash
-# Install time card drivers
-sudo apt-get install ocp-timecard-driver
-
-# Configure PTP
-sudo ptp4l -i eth0 -f /etc/ptp/roko.conf
-
-# Verify synchronization
-roko time verify
+curl -s -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"temporal_getConsensusTime","params":[]}' \
+  http://localhost:9944
 ```
 
-### For Developers
+`temporal_getConsensusTime` returns `consensusTimeNs` (u128 as string), `timeQuality` (0–10,000), `convergenceState`, `peerCount`, and `consensusOffsetNs`. `temporal_getMeshState` and `temporal_getValidatorTimeQuality` expose mesh internals and per-validator quality. <!-- fact:EVM-09,CC-20,OPS-29 -->
 
-```javascript
-// Get proven timestamp
-const timestamp = await roko.time.now();
+Prometheus metrics (default port 9615) include `timesync_time_source_type`, `timesync_local_root_distance_nanoseconds`, and `timesync_convergence_state`; a full Prometheus/Grafana monitoring stack ships in-repo. <!-- fact:OPS-28 -->
 
-// Verify temporal proof
-const isValid = await roko.time.verify(tx.timestamp, tx.proof);
-```
+## Operator Controls
 
----
+Timesync behavior is tunable from the CLI: `--timesync-time-source (auto|mock-anchor|system-only)`, `--timesync-no-enforce`, `--timesync-strict`, `--timesync-probe-interval-ms`, `--timesync-rate-limit`, and `--timesync-min-sources`. <!-- fact:OPS-07 -->
+
+One sharp edge worth knowing: a **single-validator or local dev node must run `--timesync-no-enforce`** — with no peers to converge with, the mesh cannot reach consensus. <!-- fact:OPS-08 -->
+
+## Enforcement Status
+
+On-chain consequences for bad time are defined but currently dormant: `pallet-timesync` ships `TimeSyncOffence` with configured slash fractions, but enforcement is disabled (`EnforcementEnabled = false`) in both compiled runtimes during the testnet phase. Quality is measured and recorded; slashing waits. <!-- fact:CC-14,CC-15 -->
 
 ## See Also
 
-- [Time Beacons](./time-beacons.md) - Beacon architecture details
-- [Consensus Mechanism](./consensus.md) - BABE/GRANDPA integration
-- [Temporal Transactions](./temporal-transactions.md) - Type 3 transactions
+- [Consensus Mechanism](./consensus.md) — how mesh quality feeds consensus
+- [Validator Requirements](./validator-requirements.md) — hardware per tier
+- [NanoMoment](./nanomoment.md) — the timestamp type the mesh produces
