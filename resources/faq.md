@@ -1,111 +1,77 @@
 # FAQ
 
-## Frequently Asked Questions
+Real answers to the questions builders actually ask. Roko's testnet is live and approaching its public launch — some answers below carry honest dev-stage caveats, marked where they matter.
 
 ---
 
-### General
+### Is Roko EVM compatible?
 
-**What is ROKO?**
+Yes — your existing Ethereum tooling works unmodified. Roko ships Frontier (Substrate's Ethereum-compatibility layer), serving the standard `eth_*`, `net_*`, and `web3_*` RPC namespaces alongside Substrate RPCs on a single JSON-RPC port (default 9944, HTTP and WebSocket). <!-- fact:EVM-06,EVM-07 -->
 
-A blockchain where time is a first-class primitive. Hardware-attested timestamps at nanosecond precision. Transactions ordered by when they were signed, not when validators feel like processing them. MEV eliminated at the protocol level.
+Accounts are Ethereum-native 20-byte addresses with no translation layer — your Substrate account *is* your EVM address. `block.timestamp` in Solidity stays the standard seconds-level value; nanosecond temporal data lives in the `temporal_*` RPCs and the temporal precompile, so nothing about your existing contracts breaks. <!-- fact:EVM-21,EVM-25 -->
 
-**How is ROKO different from other blockchains?**
+To connect MetaMask:
 
-Most chains let block producers decide transaction order. That's MEV - $1 billion extracted annually from users through front-running and sandwich attacks. ROKO removes that power. Time cards stamp transactions at signing. Order is determined by physics, not economics.
+```
+Network name:    Roko Testnet
+RPC URL:         http://<your-node-host>:9944
+Chain ID:        442
+Currency symbol: ROKO (18 decimals)
+```
+<!-- fact:EVM-28 -->
 
-**When can I use it?**
+### What's the chain ID?
 
-Testnet launches Q1 2025. Mainnet targeted for summer 2025. Join the testnet to run a validator, build applications, or just explore temporal transactions.
+**442** for the testnet, set at genesis across all testnet chain specs. The mainnet chain ID is **TBD** — it has not been assigned yet. <!-- fact:CC-06,EVM-04 -->
 
----
+### What's the block time?
 
-### Technology
+The current testnet runs **2-second blocks**. The production-testnet target is **6 seconds** (the 2s value is an explicitly flagged development setting, tracked in-code as M-19), and the mainnet runtime is compiled at **3 seconds**. <!-- fact:CC-05,CC-04 -->
 
-**What is a NanoMoment?**
+### How do I get testnet tokens?
 
-A 128-bit timestamp. Nanoseconds since Unix epoch. Precise enough to order two transactions signed a billionth of a second apart. Large enough to keep counting until the heat death of the universe.
+Through the testnet faucet, which is part of the roko-admin dashboard documented in the node repo. It dispenses 100 ROKO per request by default, with a per-address cooldown and rate limiting; broad public access opens with the public testnet launch. <!-- fact:TOK-29,OPS-11,OPS-27 -->
 
-**How does temporal consensus work?**
+### Is there a mainnet?
 
-Validators run OCP TAP time cards synchronized via IEEE 1588 PTP and GPS. Every 150ms they broadcast signed time beacons. Blocks include beacon proofs - cryptographic evidence of when they were produced. Transactions carry their own beacon proofs from signing time.
+No. The testnet is the live network today, and it's approaching its public launch. A mainnet runtime exists in code (3-second blocks), but no production mainnet genesis exists and the mainnet chain ID is still TBD — anything claiming otherwise isn't from us. <!-- fact:CC-07,CC-04,EVM-04 -->
 
-**What hardware do validators need?**
+### How is Roko's time different from a time oracle?
 
-OCP TAP 2.0 time card. GPS antenna. 16+ CPU cores. 32GB ECC RAM. 2TB NVMe. Standard server hardware plus precision timing equipment. The time card is the differentiator.
+An oracle is a third party you trust to post the time on-chain. On Roko, time *is* a consensus product: validators run a peer-to-peer time mesh that measures clock offsets between peers, scores reputation, and converges on a mesh consensus time. <!-- fact:CC-13 -->
 
-**What's a time beacon?**
+You query it directly — `temporal_getConsensusTime` returns nanosecond consensus time plus a time-quality score, convergence state, and peer count — and smart contracts on testnet can read it natively via the temporal precompile at `0x...0600` (`getConsensusTime()`, `getWatermark()`, `getTransactionTimestamp(bytes32)`). No external feed, no oracle subscription. <!-- fact:CC-20,CC-21,CC-23 -->
 
-A signed timestamp broadcast by validators every 150ms. Contains the validator's current time, sequence number, and epoch randomness. Wallets collect beacons when signing transactions to prove when the signature happened.
+### What about MEV and front-running?
 
----
+Roko doesn't make vague MEV promises — it changes two specific, provable things about ordering:
 
-### MEV & Trading
+1. **Ordering is fixed at receipt by a deterministic rule.** A timestamping queue (on by default) assigns each transaction a canonical nanosecond timestamp when it arrives at the pool; higher-fee transactions get earlier canonical timestamps. Fees still set priority — transparently, at the protocol level — but the block producer doesn't get to reorder around you, and per-block temporal ordering is enforced by the runtime at finalization. <!-- fact:CC-19,CC-18 -->
 
-**How does ROKO prevent front-running?**
+2. **Silent censorship is rejected at consensus.** Every transaction gets an ECDSA-signed temporal receipt at pool admission. A block that omits a receipted transaction past its inclusion deadline (15 seconds by default, enforcement on by default) is rejected at block import. The deadline is an inclusion guarantee, not a speed claim. <!-- fact:CC-17 -->
 
-You sign a transaction at time T. That timestamp is hardware-attested and embedded in the transaction. An attacker sees your transaction and wants to front-run. They sign at T+delta. Their transaction executes after yours. Always. Math doesn't care about gas prices.
+This applies to Ethereum-submitted transactions too — wallets don't need any extra fields. <!-- fact:EVM-31 -->
 
-**What about sandwich attacks?**
+### Can I run a validator?
 
-Impossible. Sandwich requires inserting transactions before and after yours. Can't insert before - that timestamp already happened. Can't forge earlier beacon proofs - would need to compromise multiple validators. The attack geometry doesn't exist.
+You can run nodes today, and there's a real validator path:
 
-**Does this help DeFi?**
+- **Build and run from source.** Pin Rust 1.80.0 and build with `cargo build --release --features testnet`. A single dev node runs with `roko-node --dev --alice --database auto`, and `./run-e2e-local.sh --keep` spins up a full 3-validator local testnet with a live time mesh. <!-- fact:OPS-02,OPS-03,OPS-30,OPS-09 -->
+- **Bring a time source — or don't, yet.** Validators self-classify their time source: GNSS/PPS hardware earns the Anchor tier, while chrony/NTP and system clocks land in Standard/Minimal. For testnet experimentation without timing hardware, `--timesync-time-source mock-anchor` works (development/testnet only). <!-- fact:CC-16,OPS-25 -->
+- **Joining the live testnet validator set is currently registration-gated.** Pre-public-launch, new validators are added through a gated registration flow rather than open self-registration. If you want in, get in touch through the official channels. <!-- fact:OPS-27 -->
 
-DEXs become fair. Two swaps at the same price execute in signing order. Liquidations go to whoever detected the condition first, not whoever bribed the most gas. AMMs stop being hunting grounds.
+### How decentralized is the testnet right now?
 
----
+Honestly: it's a pre-public-launch testnet, and it looks like one. The sudo pallet is present in both runtimes (full root governance during development), validator registration is sudo-gated, and time-quality slashing is implemented but currently disabled — violations are detected and recorded, not punished. These are deliberate dev-stage settings, disclosed here because you should know them before you build. <!-- fact:PAL-05,OPS-27,CC-15 -->
 
-### Validators & Staking
+### How do I stay updated?
 
-**How much do I need to stake?**
-
-32,000 ROKO minimum. Locked for 180 days. This is collateral - misbehave and lose up to 50%.
-
-**What are the returns?**
-
-8-15% APY depending on performance. Base rewards for block production. Bonuses for uptime and temporal accuracy. Slashing for drift or downtime.
-
-**Can I run a validator at home?**
-
-Technically yes. Practically challenging. You need a clear GPS sky view for the antenna. Stable power and network. 99.5% uptime requirement. Most validators run in datacenters.
+Documentation lives at docs.roko.network; announcements go out via the official channels. Testnet access opens up as the public launch lands.
 
 ---
 
-### Development
-
-**Is ROKO EVM compatible?**
-
-Yes. Forked Frontier pallet brings temporal ordering to Solidity contracts. Deploy existing contracts, get MEV protection for free. Access temporal primitives through precompiles.
-
-**How do I build on ROKO?**
-
-Standard Substrate/EVM development. Additional temporal APIs for time-sensitive applications. Wallets need beacon subscription for Type 3 temporal transactions. SDKs coming for major languages.
-
-**What's the block time?**
-
-2-3 seconds to finality via GRANDPA. Beacon interval is 150ms. Transactions ordered within blocks by their signing NanoMoment.
-
----
-
-### Network & Timeline
-
-**When is testnet?**
-
-Q1 2025. Public testnet with faucet tokens. Run validators, deploy contracts, test temporal features.
-
-**When is mainnet?**
-
-Summer 2025 target. Dependent on testnet performance and security audits.
-
-**How do I stay updated?**
-
-Documentation at docs.roko.network. Announcements via official channels. Testnet access opens to early validators first.
-
----
-
-## See Also
+## See also
 
 - [Introduction](../getting-started/introduction.md)
-- [Temporal Blockchain](../getting-started/temporal-blockchain.md)
+- [Glossary](glossary.md)
 - [Validator Requirements](../core-technology/validator-requirements.md)
