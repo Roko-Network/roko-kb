@@ -11,7 +11,10 @@
   ],
   "exclude": [
     "CLAUDE",
-    "PAGE_HIERARCHY_GUIDE"
+    "PAGE_HIERARCHY_GUIDE",
+    "_facts",
+    "archive",
+    "meetings"
   ],
   "sections": [
     {
