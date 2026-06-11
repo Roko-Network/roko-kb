@@ -1,10 +1,10 @@
 # Temporal Infrastructure
 
-Roko's clock is not an appliance you buy — it is a protocol the validators run. The **PTP+Squared time mesh** is a native Rust peer-to-peer time-synchronization layer built into the node, measuring clock offsets between validators and converging on a single network time that consensus can hold validators to. <!-- fact:CC-13 -->
+Roko's clock is not an appliance you buy — it is a protocol the validators run. The **PTP Squared time mesh** is a native Rust peer-to-peer time-synchronization layer built into the node, measuring clock offsets between validators and converging on a single network time that consensus can hold validators to. <!-- fact:CC-13 -->
 
-The stack has four layers: libp2p networking at the bottom, the PTP+Squared time mesh above it, BABE+GRANDPA+PoAT consensus on top of that, and applications at the top. <!-- fact:DOC-01 -->
+The stack has four layers: libp2p networking at the bottom, the PTP Squared time mesh above it, BABE+GRANDPA+PoAT consensus on top of that, and applications at the top. <!-- fact:DOC-01 -->
 
-## The PTP+Squared Mesh
+## The PTP Squared Mesh
 
 The mesh runs over the libp2p notification protocol **`/roko/timesync/1`**, exchanging SCALE-encoded `Probe`, `ProbeResponse`, and `AnnounceV4` messages. Its moving parts: <!-- fact:CC-13 -->
 
@@ -15,7 +15,7 @@ The mesh runs over the libp2p notification protocol **`/roko/timesync/1`**, exch
 
 <!-- fact:CC-13,EVM-09 -->
 
-The PTP+Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
+The PTP Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
 
 The mesh's output is **mesh consensus time**: your local clock plus a consensus offset, agreed across validators. It reaches the runtime as a block inherent consumed by `pallet-timesync`, which stores per-validator time quality on-chain (fixed-point 0–10,000) and records health checkpoints every 100 blocks. <!-- fact:CC-14 -->
 

@@ -18,7 +18,7 @@ A production network needs at least 2–3 Anchor validators for the time consens
 
 ## The mesh is the beacon network
 
-Instead of dedicated beacon broadcasters, validators run the **PTP+Squared time mesh** natively over libp2p protocol `/roko/timesync/1`: peers exchange SCALE-encoded probes, estimate offsets via lucky-packet selection, score each other's reputation with Welch's t-test, detect convergence, and select sources by path cost. The output is a single **mesh consensus time** the network agrees on. <!-- fact:CC-13 --> The PTP+Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
+Instead of dedicated beacon broadcasters, validators run the **PTP Squared time mesh** natively over libp2p protocol `/roko/timesync/1`: peers exchange SCALE-encoded probes, estimate offsets via lucky-packet selection, score each other's reputation with Welch's t-test, detect convergence, and select sources by path cost. The output is a single **mesh consensus time** the network agrees on. <!-- fact:CC-13 --> The PTP Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
 
 Mesh state reaches the chain through a block inherent consumed by `pallet-timesync`, which stores per-block and per-validator time quality on-chain (fixed-point 0–10,000), records health checkpoints every 100 blocks, and defines time-sync offences with slash fractions (persistent drift 1%, low reputation 1%, contradictory offsets 5%). <!-- fact:CC-14 -->
 

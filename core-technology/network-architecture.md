@@ -1,6 +1,6 @@
 # Network Architecture
 
-Roko is a Substrate chain with a native time-synchronization layer. The node is a single binary, the RPC surface is a single port, and the architecture stacks four layers: a libp2p network, the PTP+Squared validator time mesh, BABE + GRANDPA consensus modified by Proof of Accurate Time (PoAT), and the application layer (EVM + Substrate pallets). <!-- fact:DOC-01 -->
+Roko is a Substrate chain with a native time-synchronization layer. The node is a single binary, the RPC surface is a single port, and the architecture stacks four layers: a libp2p network, the PTP Squared validator time mesh, BABE + GRANDPA consensus modified by Proof of Accurate Time (PoAT), and the application layer (EVM + Substrate pallets). <!-- fact:DOC-01 -->
 
 ## The stack
 
@@ -10,7 +10,7 @@ The chain is built on Polkadot SDK `release-polkadot-v1.13.0` with Frontier EVM 
 |---|---|
 | Applications | EVM contracts, Substrate pallets, precompiles |
 | Consensus | BABE block production + GRANDPA finality, PoAT temporal layer |
-| Time mesh | PTP+Squared over libp2p protocol `/roko/timesync/1` |
+| Time mesh | PTP Squared over libp2p protocol `/roko/timesync/1` |
 | Network | libp2p P2P transport |
 
 Consensus is BABE for block production plus GRANDPA for finality; the session key set also carries ImOnline, AuthorityDiscovery, BEEFY, and a dedicated Temporal key. <!-- fact:CC-02 -->

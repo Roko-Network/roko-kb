@@ -4,7 +4,7 @@ Guidance for agents working in this repository.
 
 ## What this repo is
 
-Public documentation for **docs.roko.network** — GitBook-style markdown, no build system. ROKO Network is a Substrate (Polkadot SDK 1.13) + Frontier **EVM Layer 1** whose differentiator is **Proof of Accurate Time (PoAT)**: a physics-anchored consensus modifier (PTP+Squared validator time mesh, temporal receipts, fee-priority canonical ordering, `temporal_*` RPC namespace).
+Public documentation for **docs.roko.network** — GitBook-style markdown, no build system. ROKO Network is a Substrate (Polkadot SDK 1.13) + Frontier **EVM Layer 1** whose differentiator is **Proof of Accurate Time (PoAT)**: a physics-anchored consensus modifier (PTP Squared validator time mesh, temporal receipts, fee-priority canonical ordering, `temporal_*` RPC namespace).
 
 ## Truth discipline (non-negotiable)
 

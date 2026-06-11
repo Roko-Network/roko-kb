@@ -22,9 +22,9 @@ The architecture has four layers: libp2p networking, the validator time mesh, th
 
 ### 1. The time mesh
 
-Validators run "PTP+Squared" — a native Rust peer-to-peer time-sync layer over the `/roko/timesync/1` libp2p protocol. It estimates clock offsets between peers using lucky-packet sampling, scores peer reputation with Welch's t-test, detects convergence, and selects time sources by path cost. The output is a single **mesh consensus time** backed by multi-validator agreement. <!-- fact:CC-13 -->
+Validators run "PTP Squared" — a native Rust peer-to-peer time-sync layer over the `/roko/timesync/1` libp2p protocol. It estimates clock offsets between peers using lucky-packet sampling, scores peer reputation with Welch's t-test, detects convergence, and selects time sources by path cost. The output is a single **mesh consensus time** backed by multi-validator agreement. <!-- fact:CC-13 -->
 
-The PTP+Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
+The PTP Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
 
 ### 2. Time quality, on-chain
 

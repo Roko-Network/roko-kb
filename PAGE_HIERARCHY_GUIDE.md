@@ -7,8 +7,6 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 │
 ├── 🏠 Welcome to ROKO (README.md)
 │
-├── 📣 Signals (announcements, reverse-chronological)
-│
 ├── 📂 Getting Started
 │   ├── Introduction
 │   ├── What is a Temporal Blockchain?
@@ -17,7 +15,7 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 │
 ├── 📂 Core Technology
 │   ├── Overview
-│   ├── Temporal Infrastructure (PTP+Squared mesh)
+│   ├── Temporal Infrastructure (PTP Squared mesh)
 │   ├── OCP-TAP and Open Time Hardware
 │   ├── IEEE 1588 PTP
 │   ├── Hardware Timestamping
@@ -43,6 +41,6 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 └── (end of public nav)
 ```
 
-Hidden from nav: `CLAUDE.md`, `PAGE_HIERARCHY_GUIDE.md` (root `_manifest.json` exclude), `_facts/` (registry), `.public/` (legal pages served separately), **`meetings/` and `archive/`** (pulled from public nav 2026-06-11 on legal review — internal record stays in repo; counsel-supervised return only).
+Hidden from nav: `CLAUDE.md`, `PAGE_HIERARCHY_GUIDE.md` (root `_manifest.json` exclude), `_facts/` (registry), `.public/` (legal pages served separately), **`meetings/`, `archive/`, and `signals/`** (pulled from public nav 2026-06-11; signals retired with the launch-announcement removal — internal record stays in repo; counsel-supervised return only).
 
 Removed by owner decision (2026-06-11): Project Rosé (`products/project-rose.md`) — excluded from the public KB; era materials live in the private archive.

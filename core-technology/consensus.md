@@ -14,7 +14,7 @@ Block times in the compiled runtimes: the testnet development chain runs **2-sec
 
 PoAT — Proof of Accurate Time — works as a pipeline from physical clocks to on-chain consequences:
 
-1. **The time mesh measures.** Validators run the PTP+Squared mesh (`/roko/timesync/1` over libp2p), probing each other's clocks, scoring peers with Welch's t-test reputation, and converging on a mesh consensus time. See [Temporal Infrastructure](./temporal-infrastructure.md). <!-- fact:CC-13 -->
+1. **The time mesh measures.** Validators run the PTP Squared mesh (`/roko/timesync/1` over libp2p), probing each other's clocks, scoring peers with Welch's t-test reputation, and converging on a mesh consensus time. See [Temporal Infrastructure](./temporal-infrastructure.md). <!-- fact:CC-13 -->
 2. **An inherent puts it on-chain.** Each block carries a time-mesh state snapshot consumed by `pallet-timesync`, which stores per-block and per-validator time quality as a fixed-point score (0–10,000) and records health checkpoints every 100 blocks. <!-- fact:CC-14 -->
 3. **Quality feeds back into consensus.** The design, as documented in the project README, is that time quality influences block-production eligibility and rewards — making accurate time a condition of full participation rather than a courtesy. (The README also envisions weighting finality votes by time quality; no runtime evidence implements that yet.) <!-- fact:CC-32,CC-15 -->
 
@@ -36,7 +36,7 @@ Staking is denominated in **pwROKO** — wrapped ROKO minted by locking the nati
 
 ## Testnet Governance Caveat
 
-The runtimes include `pallet-sudo` with full root permissions, alongside the council/democracy governance stack. This is normal for a pre-launch network and worth knowing: testnet chain state can be modified by the sudo key. <!-- fact:PAL-05,PAL-15 -->
+The runtimes include `pallet-sudo` with full root permissions, alongside the council/democracy governance stack. This is normal for a network at this stage and worth knowing: testnet chain state can be modified by the sudo key. <!-- fact:PAL-05,PAL-15 -->
 
 ## See Also
 

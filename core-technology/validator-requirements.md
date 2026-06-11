@@ -1,6 +1,6 @@
 # Validator Requirements
 
-What you actually need to run a Roko validator: ordinary server hardware, a Rust build (or a pre-built binary/image), a time source the node can classify, and a pwROKO bond. No time card is required, and the network is in pre-public-launch testnet — joining the live testnet validator set is currently coordinated with the team. <!-- fact:OPS-30 -->
+What you actually need to run a Roko validator: ordinary server hardware, a Rust build (or a pre-built binary/image), a time source the node can classify, and a pwROKO bond. No time card is required — joining the live testnet validator set is currently coordinated with the team. <!-- fact:OPS-30 -->
 
 ## Build requirements
 
@@ -52,7 +52,7 @@ pwROKO mechanics in brief: `lock(amount)` reserves your native ROKO 1:1 and mint
 
 The unlock cooldown is governance-adjustable: 14 days at mainnet parameters, a 10-block placeholder on testnet. <!-- fact:TOK-20 -->
 
-Staking rewards follow the standard Substrate reward curve as configured: min inflation 2.5%, max inflation 10%, ideal stake 50%. These are runtime parameters, not an APY promise — the network is pre-launch and the rewards model remains under active design. <!-- fact:TOK-23 -->
+Staking rewards follow the standard Substrate reward curve as configured: min inflation 2.5%, max inflation 10%, ideal stake 50%. These are runtime parameters, not an APY promise — the rewards model remains under active design. <!-- fact:TOK-23 -->
 
 ## Joining the network
 

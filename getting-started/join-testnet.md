@@ -1,8 +1,8 @@
 # Join the Testnet
 
-This page gets you from zero to a deployed contract on the ROKO testnet, and points node operators at the right entry points. One caveat up front: the endpoints below are the current **testnet-v2 infrastructure** — pre-public-launch, subject to change or reset. <!-- fact:OPS-12 -->
+This page gets you from zero to a deployed contract on the ROKO testnet, and points node operators at the right entry points. One caveat up front: the endpoints below are the current **testnet-v2 infrastructure** — subject to change or reset as the network evolves. <!-- fact:OPS-12 -->
 
-> **Pre-launch on-ramp.** Before the public launch, faucet grants and explorer access are handled by the team. The deterministic path is Discord: join [discord.gg/roko](https://discord.gg/roko) and post your address, and someone will fund you and point you at the explorer. The faucet opens publicly at launch. <!-- fact:OPS-27,TOK-29 -->
+> **Testnet on-ramp.** Faucet grants and explorer access are currently handled by the team. The deterministic path is Discord: join [discord.gg/roko](https://discord.gg/roko) and post your address, and someone will fund you and point you at the explorer. <!-- fact:OPS-27,TOK-29 -->
 
 ## 1. Connect MetaMask
 
@@ -25,11 +25,11 @@ A mainnet chain ID is not yet assigned — if something claims to be "ROKO mainn
 
 ## 2. Get testnet ROKO
 
-Testnet ROKO is distributed through a faucet in the network's admin service: default 100 ROKO per request, hard-capped, with a per-address cooldown and IP rate limiting. Pre-public-launch, faucet grants go through the team rather than an open endpoint: join [discord.gg/roko](https://discord.gg/roko) and post your address to get funded. The faucet opens publicly at launch. <!-- fact:TOK-29,OPS-27 -->
+Testnet ROKO is distributed through a faucet in the network's admin service: default 100 ROKO per request, hard-capped, with a per-address cooldown and IP rate limiting. Faucet grants currently go through the team rather than an open endpoint: join [discord.gg/roko](https://discord.gg/roko) and post your address to get funded. <!-- fact:TOK-29,OPS-27 -->
 
 ## 3. Watch your transactions
 
-A Blockscout-based block explorer (with a Substrate sidecar API) runs against the testnet; its public endpoint will be announced at launch. <!-- fact:OPS-14 -->
+A Blockscout-based block explorer (with a Substrate sidecar API) runs against the testnet; its public endpoint has not been published yet. <!-- fact:OPS-14 -->
 
 For temporal data the explorer doesn't show, query the node directly — `temporal_getTransactionTimestamp` accepts either a Substrate extrinsic hash or a native Ethereum transaction hash. <!-- fact:EVM-10 -->
 
@@ -105,7 +105,7 @@ curl -s -X POST https://roko-testnetv2.ntfork.com \
 
 The `temporal_*` RPC namespace is served on the same JSON-RPC port as the `eth_*` methods, so the precompile read and the RPC read hit the same node and resolve to the same consensus clock. <!-- fact:EVM-07 -->
 
-**What you'll see today.** Querying the live testnet right now returns a small mesh (~3 peers), possibly running `mock-anchor`, with `consensusOffsetNs` at 0. That's plumbing under test, not an accuracy claim — `mock-anchor` claims a perfect time source for development. Anchor-tier physics arrives as GNSS-disciplined validators join at public launch. <!-- fact:OPS-25 -->
+**What you'll see today.** Querying the live testnet right now returns a small mesh (~3 peers), possibly running `mock-anchor`, with `consensusOffsetNs` at 0. That's plumbing under test, not an accuracy claim — `mock-anchor` claims a perfect time source for development. Anchor-tier physics arrives as GNSS-disciplined validators join the mesh. <!-- fact:OPS-25 -->
 
 ## 6. Run a node
 

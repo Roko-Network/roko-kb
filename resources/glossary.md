@@ -9,8 +9,8 @@ The terms you'll meet in Roko's docs, RPCs, and code — each with a plain-Engli
 **Proof of Accurate Time (PoAT)** — *time, measured by consensus.*
 A physics-anchored consensus modifier layered on top of BABE and GRANDPA. It is designed so that a validator's time quality influences block-production eligibility and rewards; today the mesh measures and records per-validator time quality on-chain, while consensus-consequence enforcement is being enabled in stages. <!-- fact:PAL-29,CC-32,CC-14,CC-15 -->
 
-**Time mesh (PTP+Squared)** — *the network's shared clock.*
-Roko's native peer-to-peer time-synchronization layer, running over the `/roko/timesync/1` libp2p protocol. It estimates inter-validator clock offsets, scores each peer's reputation, detects convergence, and produces a single mesh consensus time. The PTP+Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:CC-13,DOC-27 -->
+**Time mesh (PTP Squared)** — *the network's shared clock.*
+Roko's native peer-to-peer time-synchronization layer, running over the `/roko/timesync/1` libp2p protocol. It estimates inter-validator clock offsets, scores each peer's reputation, detects convergence, and produces a single mesh consensus time. The PTP Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:CC-13,DOC-27 -->
 
 **Mesh consensus time** — *the time the whole network agrees on.*
 The time value backed by multi-validator agreement. Mesh state reaches the runtime each block, where per-validator time quality is stored on-chain. <!-- fact:CC-14 -->

@@ -7,7 +7,7 @@ This section explains how that works, layer by layer: the time mesh under the ch
 ## In This Section
 
 ### [Temporal Infrastructure](./temporal-infrastructure.md)
-The PTP+Squared validator time mesh: how nodes probe each other over libp2p, score peers statistically, converge on a shared clock, and classify their own time sources into quality tiers. <!-- fact:CC-13,CC-16 -->
+The PTP Squared validator time mesh: how nodes probe each other over libp2p, score peers statistically, converge on a shared clock, and classify their own time sources into quality tiers. <!-- fact:CC-13,CC-16 -->
 
 ### [Consensus Mechanism](./consensus.md)
 BABE block production and GRANDPA finality, with Proof of Accurate Time (PoAT) as a consensus *modifier*: on-chain time-quality tracking that is designed to influence validator eligibility and rewards. <!-- fact:CC-02,CC-32 -->
@@ -38,4 +38,4 @@ The u128 nanosecond timestamp type used across receipts, block metadata, RPCs, a
 
 ## Current Status
 
-The network is in pre-public-launch testnet. A mainnet runtime exists in the codebase, but no production mainnet genesis has been cut and the mainnet EVM chain ID is not yet assigned. Time-quality offences are detected and recorded on-chain, but slashing enforcement is currently disabled in both compiled runtimes — a deliberate testnet posture you should know about before relying on enforcement guarantees. <!-- fact:CC-07,EVM-04,CC-15 -->
+The network is in a gated testnet phase. A mainnet runtime exists in the codebase, but no production mainnet genesis has been cut and the mainnet EVM chain ID is not yet assigned. Time-quality offences are detected and recorded on-chain, but slashing enforcement is currently disabled in both compiled runtimes — a deliberate testnet posture you should know about before relying on enforcement guarantees. <!-- fact:CC-07,EVM-04,CC-15 -->

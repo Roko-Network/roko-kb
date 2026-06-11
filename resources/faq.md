@@ -1,6 +1,6 @@
 # FAQ
 
-Real answers to the questions builders actually ask. Roko's testnet is live and approaching its public launch — some answers below carry honest dev-stage caveats, marked where they matter.
+Real answers to the questions builders actually ask. Roko's testnet is live with gated access — some answers below carry honest dev-stage caveats, marked where they matter.
 
 ---
 
@@ -31,11 +31,11 @@ The current testnet runs **2-second blocks**. The production-testnet target is *
 
 ### How do I get testnet tokens?
 
-Pre-public-launch, the deterministic path is Discord: join [discord.gg/roko](https://discord.gg/roko) and post your address, and the team will fund you. The underlying faucet dispenses 100 ROKO per request by default, with a per-address cooldown and rate limiting; it opens to broad public access with the public testnet launch. <!-- fact:TOK-29,OPS-27 -->
+Currently, the deterministic path is Discord: join [discord.gg/roko](https://discord.gg/roko) and post your address, and the team will fund you. The underlying faucet dispenses 100 ROKO per request by default, with a per-address cooldown and rate limiting; it opens to broad public access with the public testnet launch. <!-- fact:TOK-29,OPS-27 -->
 
 ### Is there a mainnet?
 
-No. The testnet is the live network today, and it's approaching its public launch. A mainnet runtime exists in code (3-second blocks), but no production mainnet genesis exists and the mainnet chain ID is still TBD — anything claiming otherwise isn't from us. <!-- fact:CC-07,CC-04,EVM-04 -->
+No. The testnet is the live network today. A mainnet runtime exists in code (3-second blocks), but no production mainnet genesis exists and the mainnet chain ID is still TBD — anything claiming otherwise isn't from us. <!-- fact:CC-07,CC-04,EVM-04 -->
 
 ### How is Roko's time different from a time oracle?
 
@@ -59,11 +59,11 @@ You can run nodes today, and there's a real validator path:
 
 - **Build and run from source.** Pin Rust 1.80.0 and build with `cargo build --release --features testnet`. A single dev node runs with `roko-node --dev --alice --database auto`, and `./run-e2e-local.sh --keep` spins up a full 3-validator local testnet with a live time mesh. <!-- fact:OPS-02,OPS-03,OPS-30,OPS-09 -->
 - **Bring a time source — or don't, yet.** Validators self-classify their time source: GNSS/PPS hardware earns the Anchor tier, while chrony/NTP and system clocks land in Standard/Minimal. For testnet experimentation without timing hardware, `--timesync-time-source mock-anchor` works (development/testnet only). <!-- fact:CC-16,OPS-25 -->
-- **Joining the live testnet validator set is currently registration-gated.** Pre-public-launch, new validators are added through a gated registration flow rather than open self-registration. If you want in, get in touch through the official channels. <!-- fact:OPS-27 -->
+- **Joining the live testnet validator set is currently registration-gated.** Currently, new validators are added through a gated registration flow rather than open self-registration. If you want in, get in touch through the official channels. <!-- fact:OPS-27 -->
 
 ### How decentralized is the testnet right now?
 
-Honestly: it's a pre-public-launch testnet, and it looks like one. The sudo pallet is present in both runtimes (full root governance during development), validator registration is sudo-gated, and time-quality slashing is implemented but currently disabled — violations are detected and recorded, not punished. These are deliberate dev-stage settings, disclosed here because you should know them before you build. <!-- fact:PAL-05,OPS-27,CC-15 -->
+Honestly: it's a gated development testnet, and it looks like one. The sudo pallet is present in both runtimes (full root governance during development), validator registration is sudo-gated, and time-quality slashing is implemented but currently disabled — violations are detected and recorded, not punished. These are deliberate dev-stage settings, disclosed here because you should know them before you build. <!-- fact:PAL-05,OPS-27,CC-15 -->
 
 ### Did ROKO do an ICO or token sale?
 
@@ -81,7 +81,7 @@ All four are verifiable on Etherscan.
 
 ### How do I stay updated?
 
-Documentation lives at docs.roko.network; announcements go out via the official channels. Testnet access opens up as the public launch lands.
+Documentation lives at docs.roko.network; announcements go out via the official channels. Testnet access broadens as the network opens up.
 
 ---
 

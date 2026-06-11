@@ -46,4 +46,4 @@ Everything here builds with unmodified Ethereum tooling: 20-byte accounts, stand
 
 ## A note on what these claims mean
 
-Nanosecond figures here are *resolution* — the granularity of the canonical timestamp format — not an accuracy guarantee for any individual clock. The 15-second receipt deadline is an inclusion-enforcement bound, not transaction latency. The network is pre-public-launch; verify behavior against a live node before depending on it. <!-- fact:CC-18,CC-17,CC-05 -->
+Nanosecond figures here are *resolution* — the granularity of the canonical timestamp format — not an accuracy guarantee for any individual clock. The 15-second receipt deadline is an inclusion-enforcement bound, not transaction latency. The network is in a gated testnet phase; verify behavior against a live node before depending on it. <!-- fact:CC-18,CC-17,CC-05 -->
