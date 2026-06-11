@@ -3,11 +3,13 @@
   "order": [
     "introduction",
     "temporal-blockchain",
-    "nanosecond-precision"
+    "nanosecond-precision",
+    "join-testnet"
   ],
   "sections": [
     { "id": "introduction", "title": "Introduction" },
     { "id": "temporal-blockchain", "title": "What is Temporal Blockchain?" },
-    { "id": "nanosecond-precision", "title": "Why Nanosecond Precision Matters" }
+    { "id": "nanosecond-precision", "title": "Nanosecond Precision: Resolution vs. Accuracy" },
+    { "id": "join-testnet", "title": "Join the Testnet" }
   ]
 }
