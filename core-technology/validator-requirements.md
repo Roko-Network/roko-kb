@@ -1,4 +1,4 @@
-# Validator Requirements
+# Validators
 
 What you actually need to run a Roko validator: ordinary server hardware, a Rust build (or a pre-built binary/image), a time source the node can classify, and a pwROKO bond. No time card is required — joining the live testnet validator set is currently coordinated with the team. <!-- fact:OPS-30 -->
 

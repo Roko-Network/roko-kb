@@ -25,7 +25,7 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 │   ├── Transaction Ordering & Censorship Resistance
 │   ├── NanoMoment
 │   ├── Network Architecture
-│   └── Validator Requirements
+│   └── Validators
 │
 ├── 📂 Products & Solutions
 │   └── Use Cases
