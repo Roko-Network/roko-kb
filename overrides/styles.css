@@ -1,6 +1,4 @@
-/* ════ ROKO brand fonts (self-hosted, SIL OFL 1.1 — see fonts/LICENSES.txt) ════
-   Typography topology per brand kit: Rajdhani = display headings;
-   JetBrains Mono = code + UI voice; body = HK Guise system-fallback stack. */
+/* ════ ROKO brand fonts (self-hosted, SIL OFL 1.1 — see fonts/LICENSES.txt) ════ */
 @font-face { font-family: 'Rajdhani'; src: url('fonts/Rajdhani-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Rajdhani'; src: url('fonts/Rajdhani-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Rajdhani'; src: url('fonts/Rajdhani-SemiBold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
@@ -2010,5 +2008,99 @@ pre.highlighted code {
 }
 
 
-/* ════ ROKO typography topology (brand kit: display headings in Rajdhani) ════ */
-h1, h2, h3, .brand-mark { font-family: 'Rajdhani', var(--font-body); letter-spacing: 0.01em; }
+/* ═══════════════════ ROKO design system layer ═══════════════════
+   Palette: roko-marketing src/styles/tokens.ts (official brand tokens)
+   Motifs per Figma topology: dark-first, teal=live/active, monospace voice,
+   notched (clipped-corner) borders. Light mode = brand light-surface grays. */
+
+:root {
+  --accent-hover: #00ffcc;        /* tokens.accentHover */
+  --accent-2: #BAC0CC;            /* tokens.primary — blue-gray */
+  --roko-success: #10b981; --roko-warning: #f59e0b; --roko-error: #ef4444; --roko-info: #3b82f6;
+  --code-bg: rgba(255, 255, 255, 0.05);
+  --code-border: rgba(0, 212, 170, 0.15);
+  --sidebar-bg: #0a0a0a;          /* tokens.background.secondary */
+  --hover-bg: rgba(0, 212, 170, 0.07);
+  --table-border: rgba(186, 192, 204, 0.2);   /* tokens.border.primary */
+  --table-header-bg: rgba(186, 192, 204, 0.08);
+  --grad-accent: linear-gradient(135deg, #00d4aa 0%, #00ffcc 100%);
+  --grad-temporal: linear-gradient(135deg, rgba(0, 212, 170, 0.10) 0%, rgba(186, 192, 204, 0.05) 100%);
+}
+
+html.light {
+  color-scheme: light;
+  --surface: #F4F6FA;             /* brand light-surface blue-gray family */
+  --ink: #181818;                 /* tokens.dark */
+  --muted: #5A6170;
+  --accent: #00806B;              /* darkened teal for AA contrast on light */
+  --accent-hover: #009e84;
+  --grid-line: rgba(24, 24, 24, 0.10);
+  --highlight-bg: rgba(0, 128, 107, 0.10);
+  --highlight-border: rgba(0, 128, 107, 0.40);
+  --code-bg: rgba(24, 24, 24, 0.05);
+  --code-border: rgba(0, 128, 107, 0.18);
+  --sidebar-bg: #EDEFF4;          /* tokens.tertiary family */
+  --hover-bg: rgba(0, 128, 107, 0.07);
+  --table-border: rgba(24, 24, 24, 0.15);
+  --table-header-bg: rgba(186, 192, 204, 0.25);
+  --grad-temporal: linear-gradient(135deg, rgba(0, 128, 107, 0.08) 0%, rgba(186, 192, 204, 0.12) 100%);
+}
+
+/* Re-anchor hardcoded surfaces on variables so light mode flips them */
+.sidebar { background: var(--sidebar-bg); }
+#app pre, #app code, .doc-content pre, .doc-content code { background: var(--code-bg); border-color: var(--code-border); }
+#app table th, .doc-content table th { background: var(--table-header-bg); }
+#app table, #app table td, #app table th, .doc-content table, .doc-content td, .doc-content th { border-color: var(--table-border); }
+
+/* ── Brand mark: ROKO + Network in the same display family ── */
+.brand-mark { font-family: 'Rajdhani', var(--font-body); font-weight: 700; letter-spacing: 0.06em; }
+.brand-sub  { font-family: 'Rajdhani', var(--font-body); font-weight: 400; letter-spacing: 0.06em; }
+
+/* ── Nav section titles: one size regardless of child count ── */
+.nav-parent .nav-title,
+.nav-parent-with-content .nav-title-link,
+.nav-leaf .nav-title { font-size: 0.88rem; font-weight: 600; letter-spacing: 0.16em; }
+
+/* ── Headings: Rajdhani display; h1 carries the accent gradient ── */
+h1, h2, h3 { font-family: 'Rajdhani', var(--font-body); letter-spacing: 0.01em; }
+#app h1, .doc-content h1 {
+  background: var(--grad-accent);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--accent);
+}
+#app h2, .doc-content h2 { border-bottom: 1px solid var(--grid-line); padding-bottom: 0.35rem; }
+#app h2::after, .doc-content h2::after {
+  content: ''; display: block; width: 56px; height: 2px;
+  background: var(--grad-accent); margin-top: 0.45rem;
+}
+
+/* ── Links: bold, highlighted, teal — cyan on hover ── */
+#app a, .doc-content a {
+  color: var(--accent); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-color: var(--highlight-border);
+  border-radius: 2px;
+  transition: color 140ms ease, background-color 140ms ease, text-decoration-color 140ms ease;
+}
+#app a:hover, .doc-content a:hover {
+  color: var(--accent-hover); background: var(--highlight-bg);
+  text-decoration-color: currentColor;
+}
+
+/* ── Blockquotes: temporal gradient + signature notched corner ── */
+#app blockquote, .doc-content blockquote {
+  background: var(--grad-temporal);
+  border-left: 2px solid var(--accent);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  padding: 0.75rem 1rem;
+}
+
+/* ── Active nav + selection in accent ── */
+.nav-item.active, .nav-item[aria-current], .nav-leaf.active, .nav-leaf[aria-current] {
+  border-left-color: var(--accent); color: var(--accent);
+}
+::selection { background: rgba(0, 212, 170, 0.35); }
+html.light ::selection { background: rgba(0, 128, 107, 0.25); }
+
+/* ── Theme toggle uses the ghost-button chrome; notched per brand motif ── */
+.roko-theme-toggle { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
