@@ -2008,42 +2008,37 @@ pre.highlighted code {
 }
 
 
-/* ═══════════════════ ROKO design system layer ═══════════════════
-   Palette: roko-marketing src/styles/tokens.ts (official brand tokens)
-   Motifs per Figma topology: dark-first, teal=live/active, monospace voice,
-   notched (clipped-corner) borders. Light mode = brand light-surface grays. */
+/* ═══════════════ ROKO design layer — PALETTE-PURE per PM OS brand kit ═══════════════
+   Five colors only: #BAC0CC primary · #BCC1D1 secondary · #D9DBE3 tertiary ·
+   #181818 dark · #00D4AA teal (SINGLE accent: CTAs/links/key highlights ONLY).
+   Discipline: grays carry everything else; no cyan, no green, no amber/red. */
 
 :root {
-  --accent-hover: #00ffcc;        /* tokens.accentHover */
-  --accent-2: #BAC0CC;            /* tokens.primary — blue-gray */
-  --roko-success: #10b981; --roko-warning: #f59e0b; --roko-error: #ef4444; --roko-info: #3b82f6;
+  --accent-2: #BAC0CC;
   --code-bg: rgba(255, 255, 255, 0.05);
-  --code-border: rgba(0, 212, 170, 0.15);
-  --sidebar-bg: #0a0a0a;          /* tokens.background.secondary */
-  --hover-bg: rgba(0, 212, 170, 0.07);
-  --table-border: rgba(186, 192, 204, 0.2);   /* tokens.border.primary */
+  --code-border: rgba(186, 192, 204, 0.18);
+  --sidebar-bg: #0a0a0a;
+  --table-border: rgba(186, 192, 204, 0.2);
   --table-header-bg: rgba(186, 192, 204, 0.08);
-  --grad-accent: linear-gradient(135deg, #00d4aa 0%, #00ffcc 100%);
-  --grad-temporal: linear-gradient(135deg, rgba(0, 212, 170, 0.10) 0%, rgba(186, 192, 204, 0.05) 100%);
+  --grad-hero: linear-gradient(135deg, #BAC0CC 0%, #D9DBE3 100%);
+  --grad-soft: linear-gradient(135deg, rgba(186, 192, 204, 0.10) 0%, rgba(217, 219, 227, 0.05) 100%);
 }
 
 html.light {
   color-scheme: light;
-  --surface: #F4F6FA;             /* brand light-surface blue-gray family */
-  --ink: #181818;                 /* tokens.dark */
+  --surface: #F4F6FA;
+  --ink: #181818;
   --muted: #5A6170;
-  --accent: #00806B;              /* darkened teal for AA contrast on light */
-  --accent-hover: #009e84;
+  --accent: #00D4AA;
   --grid-line: rgba(24, 24, 24, 0.10);
-  --highlight-bg: rgba(0, 128, 107, 0.10);
-  --highlight-border: rgba(0, 128, 107, 0.40);
+  --highlight-bg: rgba(0, 212, 170, 0.14);
+  --highlight-border: rgba(0, 212, 170, 0.45);
   --code-bg: rgba(24, 24, 24, 0.05);
-  --code-border: rgba(0, 128, 107, 0.18);
-  --sidebar-bg: #EDEFF4;          /* tokens.tertiary family */
-  --hover-bg: rgba(0, 128, 107, 0.07);
+  --code-border: rgba(24, 24, 24, 0.12);
+  --sidebar-bg: #EDEFF4;
   --table-border: rgba(24, 24, 24, 0.15);
   --table-header-bg: rgba(186, 192, 204, 0.25);
-  --grad-temporal: linear-gradient(135deg, rgba(0, 128, 107, 0.08) 0%, rgba(186, 192, 204, 0.12) 100%);
+  --grad-soft: linear-gradient(135deg, rgba(186, 192, 204, 0.18) 0%, rgba(217, 219, 227, 0.10) 100%);
 }
 
 /* Re-anchor hardcoded surfaces on variables so light mode flips them */
@@ -2052,7 +2047,7 @@ html.light {
 #app table th, .doc-content table th { background: var(--table-header-bg); }
 #app table, #app table td, #app table th, .doc-content table, .doc-content td, .doc-content th { border-color: var(--table-border); }
 
-/* ── Brand mark: ROKO + Network in the same display family ── */
+/* ── Brand mark: ROKO + Network unified in Rajdhani (weight contrast only) ── */
 .brand-mark { font-family: 'Rajdhani', var(--font-body); font-weight: 700; letter-spacing: 0.06em; }
 .brand-sub  { font-family: 'Rajdhani', var(--font-body); font-weight: 400; letter-spacing: 0.06em; }
 
@@ -2061,70 +2056,63 @@ html.light {
 .nav-parent-with-content .nav-title-link,
 .nav-leaf .nav-title { font-size: 0.88rem; font-weight: 600; letter-spacing: 0.16em; }
 
-/* ── Headings: Rajdhani display; h1 carries the accent gradient ── */
+/* ── Headings: Rajdhani display; grays/ink carry hierarchy (no accent spray) ── */
 h1, h2, h3 { font-family: 'Rajdhani', var(--font-body); letter-spacing: 0.01em; }
-#app h1, .doc-content h1 {
-  background: var(--grad-accent);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: var(--accent);
-}
 #app h2, .doc-content h2 { border-bottom: 1px solid var(--grid-line); padding-bottom: 0.35rem; }
 #app h2::after, .doc-content h2::after {
   content: ''; display: block; width: 56px; height: 2px;
-  background: var(--grad-accent); margin-top: 0.45rem;
+  background: var(--accent); margin-top: 0.45rem;   /* the one teal key-highlight per section */
 }
 
-/* ── Links: bold, highlighted, teal — cyan on hover ── */
+/* ── Links: THE clickable accent (kit: teal = CTAs/links) — bold + highlighted ── */
 #app a, .doc-content a {
   color: var(--accent); font-weight: 600;
   text-decoration: underline; text-underline-offset: 3px;
   text-decoration-color: var(--highlight-border);
   border-radius: 2px;
-  transition: color 140ms ease, background-color 140ms ease, text-decoration-color 140ms ease;
+  transition: background-color 140ms ease, text-decoration-color 140ms ease, color 140ms ease;
 }
-#app a:hover, .doc-content a:hover {
-  color: var(--accent-hover); background: var(--highlight-bg);
-  text-decoration-color: currentColor;
-}
+#app a:hover, .doc-content a:hover { background: var(--highlight-bg); text-decoration-color: currentColor; }
+/* Light mode: ink links with teal underline (teal text fails contrast on light) */
+html.light #app a, html.light .doc-content a { color: #181818; text-decoration-color: #00D4AA; }
+html.light #app a:hover, html.light .doc-content a:hover { background: var(--highlight-bg); }
 
-/* ── Blockquotes: temporal gradient + signature notched corner ── */
+/* ── Blockquotes: blue-gray rail + soft gray gradient, notched corner motif ── */
 #app blockquote, .doc-content blockquote {
-  background: var(--grad-temporal);
-  border-left: 2px solid var(--accent);
+  background: var(--grad-soft);
+  border-left: 2px solid var(--accent-2);
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
   padding: 0.75rem 1rem;
 }
 
-/* ── Active nav + selection in accent ── */
+/* ── Active nav = teal (Figma: accent = live/active state) ── */
 .nav-item.active, .nav-item[aria-current], .nav-leaf.active, .nav-leaf[aria-current] {
   border-left-color: var(--accent); color: var(--accent);
 }
-::selection { background: rgba(0, 212, 170, 0.35); }
-html.light ::selection { background: rgba(0, 128, 107, 0.25); }
+::selection { background: rgba(186, 192, 204, 0.35); }
+html.light ::selection { background: rgba(186, 192, 204, 0.55); }
 
-/* ── Theme toggle uses the ghost-button chrome; notched per brand motif ── */
+/* ── Theme toggle: ghost chrome + notched corner ── */
 .roko-theme-toggle { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
 
-
-/* ── Syntax highlighting on-palette (engine ships GitHub-light greens/reds) ──
-   Strings take the brand teal (replacing GitHub green); numbers go hover-cyan;
-   keywords/structure in blue-grays; warnings/errors from the token system. */
-.token.comment, .token.prolog, .token.doctype, .token.cdata { color: #5A6170; }
-.token.punctuation { color: #BCC1D1; }
-.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: #00d4aa; }
-.token.boolean, .token.number { color: #00ffcc; }
-.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string { color: #BCC1D1; }
-.token.atrule, .token.attr-value, .token.keyword { color: #BAC0CC; font-weight: 600; }
-.token.property, .token.tag, .token.constant, .token.symbol { color: #D9DBE3; }
-.token.deleted { color: #ef4444; }
+/* ── Syntax highlighting: MONOCHROME within the gray family + ink weights ──
+   (engine ships GitHub-light greens/reds/purples — all off-palette; the kit
+   reserves teal for CTAs, so code uses weight/opacity hierarchy instead) ── */
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: rgba(188, 193, 209, 0.55); font-style: italic; }
+.token.punctuation, .token.operator, .token.entity, .token.url { color: rgba(217, 219, 227, 0.65); }
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: #BAC0CC; }
+.token.boolean, .token.number { color: #D9DBE3; }
+.token.atrule, .token.attr-value, .token.keyword { color: #ffffff; font-weight: 600; }
+.token.property, .token.tag, .token.constant, .token.symbol { color: #BCC1D1; }
 .token.function, .token.class-name { color: #D9DBE3; font-weight: 500; }
-.token.regex, .token.important, .token.variable { color: #f59e0b; }
+.token.regex, .token.important, .token.variable { color: #BCC1D1; font-style: italic; }
+.token.deleted { color: rgba(188, 193, 209, 0.55); text-decoration: line-through; }
 
-html.light .token.comment, html.light .token.prolog, html.light .token.doctype, html.light .token.cdata { color: #6b7280; }
-html.light .token.punctuation { color: #4A5160; }
-html.light .token.selector, html.light .token.attr-name, html.light .token.string, html.light .token.char, html.light .token.builtin, html.light .token.inserted { color: #00806B; }
-html.light .token.boolean, html.light .token.number { color: #0e7490; }
-html.light .token.operator, html.light .token.entity, html.light .token.url { color: #4A5160; }
-html.light .token.atrule, html.light .token.attr-value, html.light .token.keyword { color: #181818; font-weight: 600; }
-html.light .token.property, html.light .token.tag, html.light .token.constant, html.light .token.symbol { color: #3a4358; }
-html.light .token.function, html.light .token.class-name { color: #3a4358; font-weight: 500; }
+html.light .token.comment, html.light .token.prolog, html.light .token.doctype, html.light .token.cdata { color: rgba(24, 24, 24, 0.45); }
+html.light .token.punctuation, html.light .token.operator, html.light .token.entity, html.light .token.url { color: rgba(24, 24, 24, 0.55); }
+html.light .token.selector, html.light .token.attr-name, html.light .token.string, html.light .token.char, html.light .token.builtin, html.light .token.inserted { color: rgba(24, 24, 24, 0.85); }
+html.light .token.boolean, html.light .token.number { color: rgba(24, 24, 24, 0.7); }
+html.light .token.atrule, html.light .token.attr-value, html.light .token.keyword { color: #181818; font-weight: 700; }
+html.light .token.property, html.light .token.tag, html.light .token.constant, html.light .token.symbol { color: rgba(24, 24, 24, 0.75); }
+html.light .token.function, html.light .token.class-name { color: rgba(24, 24, 24, 0.75); font-weight: 500; }
+html.light .token.regex, html.light .token.important, html.light .token.variable { color: rgba(24, 24, 24, 0.65); font-style: italic; }
