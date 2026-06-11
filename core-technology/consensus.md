@@ -16,7 +16,7 @@ PoAT — Proof of Accurate Time — works as a pipeline from physical clocks to 
 
 1. **The time mesh measures.** Validators run the PTP+Squared mesh (`/roko/timesync/1` over libp2p), probing each other's clocks, scoring peers with Welch's t-test reputation, and converging on a mesh consensus time. See [Temporal Infrastructure](./temporal-infrastructure.md). <!-- fact:CC-13 -->
 2. **An inherent puts it on-chain.** Each block carries a time-mesh state snapshot consumed by `pallet-timesync`, which stores per-block and per-validator time quality as a fixed-point score (0–10,000) and records health checkpoints every 100 blocks. <!-- fact:CC-14 -->
-3. **Quality feeds back into consensus.** The design, as documented in the project README, is that time quality influences block-production eligibility, finality votes, and rewards — making accurate time a condition of full participation rather than a courtesy. <!-- fact:CC-32 -->
+3. **Quality feeds back into consensus.** The design, as documented in the project README, is that time quality influences block-production eligibility and rewards — making accurate time a condition of full participation rather than a courtesy. (The README also envisions weighting finality votes by time quality; no runtime evidence implements that yet.) <!-- fact:CC-32,CC-15 -->
 
 Validators also self-classify their time source (GNSS/PPS hardware, a Timebeat PTP daemon, chrony, or plain system clock) into Anchor, Standard, or Minimal tiers, with a measured root-distance-to-UTC in nanoseconds. <!-- fact:CC-16 -->
 

@@ -44,7 +44,7 @@ Timestamping is also incentivized: transaction fees are split 20% to treasury, 5
 Builders query timestamps without touching transaction formats:
 
 - **JSON-RPC** — the `temporal_*` namespace on the standard RPC port (9944): `temporal_getTransactionTimestamp` accepts either a Substrate extrinsic hash or an Ethereum transaction hash. <!-- fact:CC-20,EVM-10 -->
-- **Solidity** — the temporal precompile at `0x...0600` exposes `getTransactionTimestamp(bytes32)`, `getConsensusTime()`, `getWatermark()`, and more (testnet runtime). <!-- fact:CC-23,EVM-15 -->
+- **Solidity** — the temporal precompile at `0x...0600` exposes `getTransactionTimestamp(bytes32)`, `getConsensusTime()`, `getWatermark()`, and more, via a standard keccak256-selector `ITemporal` interface (testnet runtime; the mainnet runtime does not include this precompile). <!-- fact:CC-23,EVM-17,EVM-15 -->
 
 EVM `block.timestamp` is unchanged — it stays the standard seconds-level value, so existing contracts behave identically. Nanosecond data lives in the temporal surfaces above. <!-- fact:EVM-25 -->
 

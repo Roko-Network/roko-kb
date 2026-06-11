@@ -6,8 +6,8 @@ The terms you'll meet in Roko's docs, RPCs, and code — each with a plain-Engli
 
 ## Time and consensus
 
-**Proof of Accurate Time (PoAT)** — *time, enforced by consensus.*
-A physics-anchored consensus modifier layered on top of BABE and GRANDPA: validators continuously measure clock offsets between each other, and a validator's time quality influences block-production eligibility, finality participation, and rewards. <!-- fact:PAL-29,CC-32 -->
+**Proof of Accurate Time (PoAT)** — *time, measured by consensus.*
+A physics-anchored consensus modifier layered on top of BABE and GRANDPA. It is designed so that a validator's time quality influences block-production eligibility and rewards; today the mesh measures and records per-validator time quality on-chain, while consensus-consequence enforcement is being enabled in stages. <!-- fact:PAL-29,CC-32,CC-14,CC-15 -->
 
 **Time mesh (PTP+Squared)** — *the network's shared clock.*
 Roko's native peer-to-peer time-synchronization layer, running over the `/roko/timesync/1` libp2p protocol. It estimates inter-validator clock offsets, scores each peer's reputation, detects convergence, and produces a single mesh consensus time. The PTP+Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:CC-13,DOC-27 -->
@@ -83,7 +83,7 @@ Governance-adjustable. In code today: 10 blocks on testnet (a development placeh
 Roko targets Polkadot SDK release 1.13.0, built with Rust 1.80.0 and a WebAssembly runtime. <!-- fact:CC-01,CC-31 -->
 
 **BABE** — *who produces the next block.*
-Substrate's block-production mechanism. On Roko, PoAT time quality additionally influences block-production eligibility. <!-- fact:CC-02,CC-32 -->
+Substrate's block-production mechanism. On Roko, PoAT is designed so that time quality additionally influences block-production eligibility; today that quality is measured and recorded on-chain, with consensus-consequence enforcement being enabled in stages. <!-- fact:CC-02,CC-32,CC-14,CC-15 -->
 
 **GRANDPA** — *how blocks become final.*
 Substrate's finality gadget, running alongside BABE. <!-- fact:CC-02 -->

@@ -809,3 +809,15 @@ facts:
     claim: "Mainnet EVM Chain ID is listed as 'TBD' in README's network table — only testnet 442 is pinned; public docs should not promise a mainnet chain ID."
     evidence: "README.md line 144"
     grade: proven
+  - id: OPR-01
+    claim: "ROKO Network never conducted a token raise, ICO, or token sale of any kind — the token was stealth launched. Any document describing a token sale (e.g. archived pages claiming a $50M raise) is fabricated fiction."
+    evidence: "Operator (founder) attestation, 2026-06-11 — corporate history outside repo scope; supersedes all archived claims to the contrary"
+    grade: proven
+  - id: OPR-02
+    claim: "The ROKO DAO treasury holds its assets at Ethereum address 0xc987AAa4edE4aB964883c5a768E57199643A593E (publicly verifiable on Etherscan)."
+    evidence: "Operator (founder) attestation, 2026-06-11; on-chain at https://etherscan.io/address/0xc987aaa4ede4ab964883c5a768e57199643a593e"
+    grade: proven
+  - id: OPR-03
+    claim: "A DAO treasury multisig exists at Ethereum address 0x1264aDFD955C353AFf6E267Df61f96973eC9BC65; its assets also belong to the DAO (publicly verifiable on Etherscan)."
+    evidence: "Operator (founder) attestation, 2026-06-11; on-chain at https://etherscan.io/address/0x1264adfd955c353aff6e267df61f96973ec9bc65"
+    grade: proven

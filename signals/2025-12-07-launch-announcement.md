@@ -1,3 +1,5 @@
+> **Historical announcement (December 2025).** For current network status see [Getting Started](../getting-started/introduction.md). Milestones and dates below are superseded and were forward-looking statements — plans change and nothing here guarantees timelines.
+
 # ROKO Network Unveils New Digital Presence and Development Roadmap
 
 **FOR IMMEDIATE RELEASE** | December 7, 2025
@@ -45,7 +47,7 @@ ROKO is renewing its community channels across multiple platforms:
 
 ### Community Platforms
 
-- **Discord**: [discord.gg/wvaWqa49qW](https://discord.gg/wvaWqa49qW)
+- **Discord**: [discord.gg/roko](https://discord.gg/roko)
 - **Telegram Community**: [t.me/joinrokonetwork](https://t.me/joinrokonetwork)
 - **Telegram News**: [t.me/rokonetworknews](https://t.me/rokonetworknews)
 - **Twitter/X**: [x.com/buildonroko](https://x.com/buildonroko)

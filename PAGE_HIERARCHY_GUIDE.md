@@ -32,8 +32,6 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 ├── 📂 Products & Solutions
 │   └── Use Cases
 │
-├── 📂 Meetings (anonymized historical record — do not rewrite)
-│
 ├── 📂 Articles
 │   └── Of Time and Stamps
 │
@@ -42,9 +40,9 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 │   ├── Glossary
 │   └── Community
 │
-└── 📂 Archive (deliberate heritage — do not modernize)
+└── (end of public nav)
 ```
 
-Hidden from nav: `CLAUDE.md`, `PAGE_HIERARCHY_GUIDE.md` (via root `_manifest.json` exclude), `_facts/` (registry, not a page), `.public/` (legal pages served separately).
+Hidden from nav: `CLAUDE.md`, `PAGE_HIERARCHY_GUIDE.md` (root `_manifest.json` exclude), `_facts/` (registry), `.public/` (legal pages served separately), **`meetings/` and `archive/`** (pulled from public nav 2026-06-11 on legal review — internal record stays in repo; counsel-supervised return only).
 
 Removed by owner decision (2026-06-11): Project Rosé (`products/project-rose.md`) — excluded from the public KB; era materials live in the private archive.

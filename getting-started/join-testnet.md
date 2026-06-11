@@ -2,6 +2,8 @@
 
 This page gets you from zero to a deployed contract on the ROKO testnet, and points node operators at the right entry points. One caveat up front: the endpoints below are the current **testnet-v2 infrastructure** — pre-public-launch, subject to change or reset. <!-- fact:OPS-12 -->
 
+> **Pre-launch on-ramp.** Before the public launch, faucet grants and explorer access are handled by the team. The deterministic path is Discord: join [discord.gg/roko](https://discord.gg/roko) and post your address, and someone will fund you and point you at the explorer. The faucet opens publicly at launch. <!-- fact:OPS-27,TOK-29 -->
+
 ## 1. Connect MetaMask
 
 Add the ROKO testnet as a custom network:
@@ -9,9 +11,11 @@ Add the ROKO testnet as a custom network:
 | Field | Value |
 |---|---|
 | Network name | ROKO Testnet |
-| RPC URL | `https://roko-testnetv2.ntfork.com` (WebSocket: `wss://roko-testnetv2.ntfork.com`) |
+| RPC URL | `https://roko-testnetv2.ntfork.com` |
 | Chain ID | `442` |
 | Currency symbol | `ROKO` (18 decimals) |
+
+For WebSocket tooling (polkadot.js, an ethers `WebSocketProvider`), use `wss://roko-testnetv2.ntfork.com` — the same host serves both transports. <!-- fact:OPS-12 -->
 
 Chain ID 442 is set at genesis for all testnet chain specs; the native token is ROKO with 18 decimals and Ethereum-style (`0x...`, 20-byte) accounts — there is no address translation between the Substrate and EVM layers. <!-- fact:CC-06,CC-08,EVM-21 -->
 
@@ -21,7 +25,7 @@ A mainnet chain ID is not yet assigned — if something claims to be "ROKO mainn
 
 ## 2. Get testnet ROKO
 
-Testnet ROKO is distributed through a faucet in the network's admin service: default 100 ROKO per request, hard-capped, with a per-address cooldown and IP rate limiting. The admin/faucet service runs on the testnet-v2 infrastructure; if you can't reach it, ask in the community channels and someone will fund you. <!-- fact:TOK-29,OPS-13 -->
+Testnet ROKO is distributed through a faucet in the network's admin service: default 100 ROKO per request, hard-capped, with a per-address cooldown and IP rate limiting. Pre-public-launch, faucet grants go through the team rather than an open endpoint: join [discord.gg/roko](https://discord.gg/roko) and post your address to get funded. The faucet opens publicly at launch. <!-- fact:TOK-29,OPS-27 -->
 
 ## 3. Watch your transactions
 
@@ -39,9 +43,12 @@ networks: {
   rokoTestnet: {
     url: "https://roko-testnetv2.ntfork.com",
     chainId: 442,
+    accounts: [process.env.PRIVATE_KEY],
   }
 }
 ```
+
+`PRIVATE_KEY` must be a faucet-funded testnet account — without ROKO it can't pay gas to deploy.
 
 Useful parameters: gas is EIP-1559-style with a 1 gwei default base fee; the block gas limit is 75,000,000; blocks currently arrive every 2 seconds (the production-testnet target is 6 seconds; mainnet runtime is compiled at 3). Contract deployment is enabled at genesis, behind a governance-controllable switch. <!-- fact:EVM-20,EVM-19,CC-05,EVM-23 -->
 
@@ -52,7 +59,55 @@ Two ROKO-specific things worth knowing as a builder:
 
 The pwROKO precompile at `0x...0500` implements the full ERC20 read interface, so it can be added to MetaMask as a custom token (note: pwROKO transfers are disabled by design — it's a locked staking representation). <!-- fact:EVM-16,PAL-07 -->
 
-## 5. Run a node
+## 5. Your first temporal read
+
+The whole point of ROKO is consensus time. Here's the shortest path to reading it two ways — from Solidity via the temporal precompile, and over RPC — and confirming you get the same value.
+
+The temporal precompile exposes this interface, callable with standard keccak256 ABI selectors. Copy it into your contract: <!-- fact:EVM-17,CC-23 -->
+
+```solidity
+interface ITemporal {
+    function getConsensusTime() external view returns (uint128);
+    function getMyTimestamp() external view returns (uint128);
+    function getTransactionTimestamp(bytes32 txHash) external view returns (uint128);
+    function getWatermark() external view returns (uint128);
+    function getBlockTimestamp(uint64 blockNumber) external view returns (uint128);
+}
+
+ITemporal constant TEMPORAL =
+    ITemporal(0x0000000000000000000000000000000000000600);
+```
+
+A minimal contract that stamps the current consensus time on demand:
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Stamper {
+    uint128 public lastStamp;
+
+    function stampNow() external returns (uint128) {
+        lastStamp = TEMPORAL.getConsensusTime(); // u128 nanoseconds since the UNIX epoch
+        return lastStamp;
+    }
+}
+```
+
+Calling `stampNow()` stores the nanosecond consensus time read straight from the precompile. To confirm the node agrees, query the same value over RPC: <!-- fact:EVM-07 -->
+
+```bash
+curl -s -X POST https://roko-testnetv2.ntfork.com \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"temporal_getConsensusTime","params":[]}'
+# → {"jsonrpc":"2.0","id":1,"result":{"consensusTimeNs":"...","timeQuality":...,...}}
+```
+
+The `temporal_*` RPC namespace is served on the same JSON-RPC port as the `eth_*` methods, so the precompile read and the RPC read hit the same node and resolve to the same consensus clock. <!-- fact:EVM-07 -->
+
+**What you'll see today.** Querying the live testnet right now returns a small mesh (~3 peers), possibly running `mock-anchor`, with `consensusOffsetNs` at 0. That's plumbing under test, not an accuracy claim — `mock-anchor` claims a perfect time source for development. Anchor-tier physics arrives as GNSS-disciplined validators join at public launch. <!-- fact:OPS-25 -->
+
+## 6. Run a node
 
 **From source** — pinned Rust 1.80.0 toolchain; build with exactly one runtime feature:
 

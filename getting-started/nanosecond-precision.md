@@ -35,6 +35,8 @@ So the honest statement is: **timestamps have nanosecond resolution; accuracy is
 
 On the current testnet, validators may run in `mock-anchor` mode, which claims a perfect time source for development purposes. Treat testnet time-quality figures as plumbing verification, not as accuracy benchmarks. <!-- fact:OPS-25 -->
 
+What you'll actually see querying the live testnet today: a small mesh (~3 peers), possibly `mock-anchor`, with `consensusOffsetNs` at 0. That's the plumbing under test — not an accuracy claim. Anchor-tier physics arrives as GNSS-disciplined validators join at public launch. <!-- fact:OPS-25 -->
+
 ## One more honest boundary: the EVM clock
 
 `block.timestamp` in your Solidity contracts remains the standard seconds-level value. Nanosecond time is exposed *additively* through the `temporal_*` RPC namespace and the `0x...0600` precompile — the Ethereum JSON-RPC schema is unchanged. If your contract needs nanosecond time, call the precompile; don't expect `block.timestamp` to change meaning. <!-- fact:EVM-25 -->

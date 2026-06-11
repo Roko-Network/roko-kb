@@ -23,7 +23,7 @@ Public documentation for **docs.roko.network** — GitBook-style markdown, no bu
 ## Structure
 
 - Nav comes from `_manifest.json` files (root + per-directory). Adding/retitling a page = update the manifest + `PAGE_HIERARCHY_GUIDE.md`.
-- **Do not touch**: `meetings/` (anonymized historical record), `archive/` (deliberate heritage), `.public/` (legal).
+- **Do not touch**: `meetings/` and `archive/` (internal record — REMOVED from public nav 2026-06-11 by legal review; never re-add to `_manifest.json` without counsel sign-off), `.public/` (legal).
 - **Project Rosé is excluded** from this KB by owner decision (2026-06-11). Do not re-add.
 
 ## Maintaining the registry

@@ -41,7 +41,7 @@ Ethereum RPCs, Substrate RPCs, and the temporal namespace are merged into a sing
 - **Temporal**: 14 `temporal_*` methods — consensus time, watermark info, per-block temporal metadata, per-transaction timestamps (queryable by either Substrate or Ethereum tx hash), queue statistics, validator time quality, mesh state, checkpoints, violations, and metrics. <!-- fact:EVM-08,EVM-10 -->
 - **Substrate**: the standard chain/state/author surface.
 
-MetaMask connects with RPC URL `http://<host>:9944`, Chain ID 442, currency ROKO (18 decimals). <!-- fact:EVM-28 -->
+MetaMask connects with RPC URL `https://roko-testnetv2.ntfork.com` (the live hosted endpoint, Chain ID 442), or `http://<host>:9944` against a self-hosted node, currency ROKO (18 decimals). <!-- fact:EVM-28,OPS-12 -->
 
 ## EVM environment
 
@@ -55,10 +55,10 @@ MetaMask connects with RPC URL `http://<host>:9944`, Chain ID 442, currency ROKO
 
 The deployment guide documents the live testnet endpoints as `wss://roko-testnetv2.ntfork.com` (AWS eu-north-1), running two genesis validators on one EC2 instance, with a Blockscout-based explorer (public endpoint to be announced at launch). <!-- fact:OPS-12,OPS-13,OPS-14 -->
 
-Two dev-stage caveats a builder should know:
+Two things a builder should understand about joining:
 
-1. **No public bootnodes are published** — the shipped chain specs have empty `bootNodes`, so you cannot join the public testnet P2P network from repo contents alone. <!-- fact:OPS-11 -->
-2. **Validator registration is currently sudo-gated** — joining the live validator set requires the network operators; there is no permissionless self-registration yet. <!-- fact:OPS-27 -->
+1. **You can join the P2P network from repo contents** — but not via the bundled chain-spec JSONs, which ship with empty `bootNodes`. <!-- fact:OPS-10 --> The join path is `docker/docker-compose.validator.yml`, which hardcodes the live testnet-v2 bootnode (`/dns/roko-testnetv2.ntfork.com/tcp/30333/p2p/12D3KooWLn4vDfN5agevaRd4ct5HRQUJ4R6GajYcd7abJdwq1WAA`) and fetches the running chain spec from the admin service (`https://roko-admin.ntfork.com/public/testnet-v2-chain-spec.json`). A node started this way connects to and syncs the public testnet. <!-- fact:OPS-11 -->
+2. **Validator registration is what's gated, not network access** — syncing as a node is open, but joining the live validator *set* is sudo-gated: it requires the network operators (the documented flow needs the sudo key to fund, lock pwROKO, bond, set session keys, and signal `validate`). There is no permissionless self-registration yet. <!-- fact:OPS-27 -->
 
 What you *can* do today: build `roko-node` from source, run a single dev node (`roko-node --dev --alice --database auto`), and run a full 3-validator local testnet with a working time mesh via `./run-e2e-local.sh --keep`. <!-- fact:OPS-30,OPS-09 -->
 

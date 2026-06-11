@@ -232,7 +232,7 @@ While provable time of signature and execution is a great feature for time‑att
 
 ### MEV
 
-Yes, MEV resistance has been the purpose all along.
+Removing the block producer's ordering discretion has been the purpose all along.
 
 What we are building toward is a way to prevent back‑dating, so that no miner nor front‑runner can do anything about the order in which your transaction is executed. As the block producer works on their block, they are working on a block that is created *after* your timestamp and are not able to include a transaction before it. It’s as simple as that. Moreover, if an observer looks at the mempool to try to extract value by executing a transaction before you, they won’t be able to back‑date it either. Or at least, that’s what we’re trying to build here.
 

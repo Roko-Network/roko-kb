@@ -14,11 +14,12 @@ To connect MetaMask:
 
 ```
 Network name:    Roko Testnet
-RPC URL:         http://<your-node-host>:9944
+RPC URL:         https://roko-testnetv2.ntfork.com
 Chain ID:        442
 Currency symbol: ROKO (18 decimals)
 ```
-<!-- fact:EVM-28 -->
+
+Running your own node? Point the RPC URL at `http://<your-node-host>:9944` instead — same APIs, same Chain ID. <!-- fact:OPS-12,EVM-28 -->
 
 ### What's the chain ID?
 
@@ -30,7 +31,7 @@ The current testnet runs **2-second blocks**. The production-testnet target is *
 
 ### How do I get testnet tokens?
 
-Through the testnet faucet, which is part of the roko-admin dashboard documented in the node repo. It dispenses 100 ROKO per request by default, with a per-address cooldown and rate limiting; broad public access opens with the public testnet launch. <!-- fact:TOK-29,OPS-11,OPS-27 -->
+Pre-public-launch, the deterministic path is Discord: join [discord.gg/roko](https://discord.gg/roko) and post your address, and the team will fund you. The underlying faucet dispenses 100 ROKO per request by default, with a per-address cooldown and rate limiting; it opens to broad public access with the public testnet launch. <!-- fact:TOK-29,OPS-27 -->
 
 ### Is there a mainnet?
 
@@ -63,6 +64,14 @@ You can run nodes today, and there's a real validator path:
 ### How decentralized is the testnet right now?
 
 Honestly: it's a pre-public-launch testnet, and it looks like one. The sudo pallet is present in both runtimes (full root governance during development), validator registration is sudo-gated, and time-quality slashing is implemented but currently disabled — violations are detected and recorded, not punished. These are deliberate dev-stage settings, disclosed here because you should know them before you build. <!-- fact:PAL-05,OPS-27,CC-15 -->
+
+### Did ROKO do an ICO or token sale?
+
+No. ROKO never conducted a token raise of any kind — no ICO, no token sale, no presale. The token was stealth launched. Any document describing a ROKO token sale is fabricated; it didn't happen. <!-- fact:OPR-01 -->
+
+### Where is the DAO treasury?
+
+On-chain and publicly verifiable. The DAO treasury holds its assets at [`0xc987AAa4edE4aB964883c5a768E57199643A593E`](https://etherscan.io/address/0xc987aaa4ede4ab964883c5a768e57199643a593e), and a DAO treasury multisig sits at [`0x1264aDFD955C353AFf6E267Df61f96973eC9BC65`](https://etherscan.io/address/0x1264adfd955c353aff6e267df61f96973ec9bc65). Both are verifiable on Etherscan. <!-- fact:OPR-02,OPR-03 -->
 
 ### How do I stay updated?
 

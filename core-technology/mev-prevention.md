@@ -33,6 +33,14 @@ Being precise about scope is the point:
 - **`block.timestamp` in the EVM is unchanged.** Solidity sees the standard seconds-level value; nanosecond ordering is pool-level and exposed via `temporal_*` RPCs and the Temporal precompile, not via changes to the Ethereum JSON-RPC schema. Don't build ordering assumptions on `block.timestamp`. <!-- fact:EVM-25,DOC-10 -->
 - **Cross-chain ordering is out of scope.** These guarantees apply within Roko, not across bridges.
 
+## Trust assumptions
+
+These mechanisms are strong, but they are not unconditional. An MEV researcher evaluating Roko should probe exactly where the trust sits:
+
+- **The canonical timestamp is a node-assigned clock reading, not a trustless oracle.** A transaction is stamped from the receiving node's clock at pool admission. <!-- fact:CC-19 --> So the ordering guarantee is only as strong as (1) the mesh's clock agreement — the PTP+Squared time mesh that probes peers, scores reputation, and converges on a consensus time <!-- fact:CC-13 --> — and (2) the assumption that the first node to see a transaction stamps it honestly rather than backdating or delaying it. A dishonest receiving node has latitude over the stamp it issues; the mesh constrains how far that stamp can drift from consensus time, it does not eliminate the node's discretion at the moment of admission.
+- **Inclusion enforcement is defense-in-depth, not a unilateral guarantee.** Block import rejects any block that omits a receipted transaction past its deadline. <!-- fact:CC-17 --> But "rejects" means honest validators reject it at import — the property holds under an honest majority at block import. It raises the cost of censorship and makes omission provable; it does not make censorship physically impossible against a colluding majority.
+- **What remains unprevented, plainly stated.** The mempool is unencrypted, so a searcher can still see pending transactions and respond by bidding a higher fee — fee priority is a designed feature, not a leak. Timesync offence slashing is currently disabled in both runtimes, so a node that stamps dishonestly is detected and recorded but not yet economically penalized. <!-- fact:CC-15 --> These are the honest edges of the design as it ships today.
+
 ## Verify it yourself
 
 The ordering pipeline is observable over the standard RPC port:

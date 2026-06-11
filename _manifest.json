@@ -6,10 +6,8 @@
     "getting-started",
     "core-technology",
     "products",
-    "meetings",
     "articles",
-    "resources",
-    "archive"
+    "resources"
   ],
   "exclude": [
     "CLAUDE",

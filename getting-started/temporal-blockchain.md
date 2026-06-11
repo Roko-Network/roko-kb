@@ -16,7 +16,7 @@ ROKO addresses both with mechanisms you can verify in the code, not with a vague
 
 ## PoAT mechanics, at overview level
 
-**Proof of Accurate Time (PoAT)** is a consensus *modifier* layered on Substrate's standard BABE (block production) + GRANDPA (finality), in which measured time quality influences block-production eligibility, finality votes, and rewards. <!-- fact:CC-02,PAL-29,CC-32 -->
+**Proof of Accurate Time (PoAT)** is a consensus *modifier* layered on Substrate's standard BABE (block production) + GRANDPA (finality). It is designed so that measured time quality influences block-production eligibility and rewards; today the mesh measures and records per-validator time quality on-chain, while consensus-consequence enforcement is being enabled in stages. <!-- fact:CC-02,PAL-29,CC-32,CC-14,CC-15 -->
 
 The architecture has four layers: libp2p networking, the validator time mesh, the BABE+GRANDPA+PoAT blockchain layer, and applications on top. <!-- fact:DOC-01 -->
 
