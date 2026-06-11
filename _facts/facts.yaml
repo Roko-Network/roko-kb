@@ -1,0 +1,811 @@
+# ROKO KB fact registry
+# Generated 2026-06-11 from code/roko_network @ fc397aa (docs-parity Phase 2)
+# Every factual claim in this KB must cite a fact id (inline <!-- fact:ID --> comment).
+# Grades: proven = read in code/config | likely = repo docs, unverified in code | uncertain
+# QA gate: pages are mechanically checked against this file. Do not edit claims here by hand —
+# regenerate from the capability extraction. Source map: ~/Roko-Network/docs/CAPABILITY-MAP.md
+facts:
+  - id: CC-01
+    claim: "Roko Network is built on Polkadot SDK release-polkadot-v1.13.0 with Frontier EVM from the ChainSupport fork, branch release-polkadot-v1.13.0."
+    evidence: "/Users/base/Roko-Network/code/roko_network/Cargo.toml lines 65-77"
+    grade: proven
+  - id: CC-02
+    claim: "Consensus is BABE for block production plus GRANDPA for finality, with staking/session/im-online/authority-discovery and BEEFY keys in the session key set."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/mainnet/src/lib.rs:1635 (pallet_grandpa::Config); node/cli/src/chain_spec/mainnet.rs session_keys (GrandpaId, BabeId, ImOnlineId, AuthorityDiscoveryId, MixnetId, BeefyId, TemporalId)"
+    grade: proven
+  - id: CC-03
+    claim: "BABE genesis epoch config uses AllowedSlots::PrimaryAndSecondaryPlainSlots with primary probability c = 1/4 (PRIMARY_PROBABILITY = (1, 4))."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:264-267; runtime/mainnet/src/lib.rs:262-265; runtime/*/src/constants.rs PRIMARY_PROBABILITY"
+    grade: proven
+  - id: CC-04
+    claim: "Mainnet runtime block time is 3 seconds (MILLISECS_PER_BLOCK = 3000, SLOT_DURATION = MILLISECS_PER_BLOCK), NOT 6 seconds."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/mainnet/src/constants.rs:54-59"
+    grade: proven
+  - id: CC-05
+    claim: "Testnet runtime block time is 2 seconds (MILLISECS_PER_BLOCK = 2000), with in-code note M-19 stating 'CLAUDE.md documents 6s blocks for testnet, but the development chain runs at 2s' and that production testnet should be 6000; a test asserts the 2000ms value."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/constants.rs:55-57; runtime/testnet/src/temporal_integration_tests.rs:106-114"
+    grade: proven
+  - id: CC-06
+    claim: "EVM Chain ID is 442 for all testnet chain specs, set at genesis via pallet-evm-chain-id (evmChainId.chainId)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/testnet.rs:385; testnet_2val.rs:21; testnet_v2.rs:22; testnet-v3-chain-spec.json genesis.runtimeGenesis.patch.evmChainId.chainId = 442"
+    grade: proven
+  - id: CC-07
+    claim: "The only mainnet chain spec in the repo is a development config that passes EVM chain ID 42 (not 442), named 'Frontier Mainnet' with id 'frontier-mainnet' and ChainType::Live; no production mainnet genesis with chain ID 442 exists in code."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/mainnet.rs:341-366; node/cli/src/command.rs:77-79"
+    grade: proven
+  - id: CC-08
+    claim: "Native token is ROKO with 18 decimals; chain spec properties are {\"isEthereum\": true, \"tokenDecimals\": 18, \"tokenSymbol\": \"ROKO\"} for both testnet and mainnet specs."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/mainnet.rs:361; testnet.rs:397; testnet_2val.rs:86; testnet_v2.rs:93; testnet-v3-chain-spec.json properties"
+    grade: proven
+  - id: CC-09
+    claim: "Accounts are Ethereum-style 20-byte addresses: Signature = EthereumSignature with AccountId derived from it; dev accounts use the Moonbeam-style ECDSA keyring (Alith, Baltathar, CharLeth). No custom SS58 prefix is configured anywhere."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/primitives/src/lib.rs:51-55; chain_spec files using ecdsa_keyring::Keyring; no ss58Format in chain spec properties"
+    grade: proven
+  - id: CC-10
+    claim: "Testnet existential deposit is 100_000_000_000_000 (1e14 = 0.0001 ROKO at 18 decimals)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:786-789"
+    grade: proven
+  - id: CC-11
+    claim: "Runtime versions: testnet spec_name 'testnet', spec_version 279, transaction_version 4; mainnet spec_name 'mainnet', spec_version 275, transaction_version 4."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:249-259; runtime/mainnet/src/lib.rs:247-257"
+    grade: proven
+  - id: CC-12
+    claim: "Epoch lengths: testnet epochs are 50 blocks (100 s at 2 s blocks; era = 5 minutes with SessionsPerEra = 3 per in-code comment); mainnet epochs are 60 minutes of blocks (1200 blocks at 3 s)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/constants.rs:69-74; runtime/mainnet/src/constants.rs:66"
+    grade: proven
+  - id: CC-13
+    claim: "PoAT is implemented as a 'PTP+Squared' validator time mesh in client/timesync: lucky-packet offset estimation, Welch's t-test reputation scoring, convergence detection, path-cost source selection, and seat management, over libp2p notification protocol /roko/timesync/1 with SCALE-encoded Probe/ProbeResponse/AnnounceV4 messages."
+    evidence: "/Users/base/Roko-Network/code/roko_network/client/timesync/src/lib.rs:1-80 (crate-level docs)"
+    grade: proven
+  - id: CC-14
+    claim: "Mesh time state reaches the runtime via a block inherent consumed by pallet-timesync, which stores per-block and per-validator time quality on-chain (fixed-point 0..10_000), records health checkpoints every 100 blocks, and defines TimeSyncOffence with slash fractions ExcessiveOffset 0%, PersistentDrift 1%, LowReputation 1%, ContradictoryOffsets 5%."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/timesync/src/lib.rs:1-55, 207-221"
+    grade: proven
+  - id: CC-15
+    claim: "Timesync offence enforcement is currently DISABLED in both compiled runtimes: EnforcementEnabled = ConstBool<false> in testnet and mainnet; time-quality violations are detected but do not slash."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:697; runtime/mainnet/src/lib.rs:684"
+    grade: proven
+  - id: CC-16
+    claim: "Validators self-classify their time source (Timebeat PTP daemon, chrony, GNSS/PPS, NIC hardware timestamping) with a measured root-distance-to-UTC in nanoseconds; GNSS/PPS hardware yields Anchor tier, others Standard/Minimal. Modes: Auto, MockAnchor (testnet), SystemOnly (10 ms assumed root distance)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/client/timesync/src/time_source.rs:1-60; client/timesync/src/tier.rs; client/timesync/src/lib.rs Phase 3 docs"
+    grade: proven
+  - id: CC-17
+    claim: "Every transaction receives an ECDSA-signed temporal receipt at pool admission (domain prefix ROKO_TX_RECEIPT_V1, key type 'temp'); block import rejects blocks omitting a receipted transaction past its inclusion deadline — default 15 seconds (DEFAULT_INCLUSION_DEADLINE_NS = 15_000_000_000) with enforce: true by default."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/primitives/src/lib.rs:39-42; runtime/pallets/temporal-transactions/src/types.rs:199-223; node/cli/src/service/temporal_block_import.rs:109-160"
+    grade: proven
+  - id: CC-18
+    claim: "Temporal timestamps are nanosecond-precision u128 (NanoMoment); the temporal-transactions pallet enforces per-block temporal ordering at on_finalize and maintains a monotonic TransactionWatermark."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/primitives/src/lib.rs:66-69; runtime/pallets/temporal-transactions/src/lib.rs:181-212"
+    grade: proven
+  - id: CC-19
+    claim: "A fee-priority timestamping queue is enabled by default: arrival time is recorded at submit and a background 'timestamping-queue' task assigns canonical timestamps so higher-fee transactions get earlier canonical timestamps; disable with --no-fee-priority-queue."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/service/timestamping_pool.rs:1-19"
+    grade: proven
+  - id: CC-20
+    claim: "The node exposes a temporal_* JSON-RPC namespace on the standard RPC port (default 9944): temporal_getConsensusTime, temporal_getWatermarkInfo, temporal_getBlockMetadata, temporal_getBlocksMetadata, temporal_getTransactionTimestamp, temporal_getBlockTransactionTimestamps, temporal_getQueueStats, temporal_getTransactionWaitTime, temporal_getRecentWaitTimes, temporal_getValidatorTimeQuality, temporal_getMeshState, temporal_getCheckpoint."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs:322-405; docs/rpc-reference.md"
+    grade: proven
+  - id: CC-21
+    claim: "temporal_getConsensusTime returns consensus_time_ns (u128 as string, ns since UNIX epoch = local_clock + consensus_offset_ns), time_quality (fixed-point, 10000 = 100%), convergence_state (Converged|Converging|Initializing), peer_count, and consensus_offset_ns (signed, string)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs:45-60 (ConsensusTimeInfo)"
+    grade: proven
+  - id: CC-22
+    claim: "Three custom EVM precompiles exist beyond the standard set: pwROKO at 0x0000000000000000000000000000000000000500, Temporal at 0x...0600, Staking at 0x...0700 (standard precompiles at 1-5, 1024, 1025)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/precompiles.rs:29-71"
+    grade: proven
+  - id: CC-23
+    claim: "The Temporal precompile (0x0600) exposes selectors: getConsensusTime() 0x3937a0db, getMyTimestamp() 0x8726a64f, getTransactionTimestamp(bytes32) 0x2fbff520, getWatermark() 0xb819dedd, getBlockTimestamp(uint64) 0x931672b8."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/temporal_precompile.rs:43-53"
+    grade: proven
+  - id: CC-24
+    claim: "pwROKO is a wrapped-token pallet (lock native ROKO to mint pwROKO; unlock_request/unlock_finalize with governance-adjustable cooloff; ERC20-style transfer/approve/transferFrom) with 18 decimals, exposed via the 0x500 precompile."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/; docs/tokens/pwroko.md; runtime/*/src/lib.rs pallet_pwroko::Config"
+    grade: proven
+  - id: CC-25
+    claim: "Staking is denominated in pwROKO in BOTH runtimes: pallet_staking::Config uses type Currency = PwRokoRewardAware (pallet_pwroko::PwRokoWithRewardBacking) with custom PwRokoToVote, slash and reward-remainder handlers in testnet AND mainnet; mainnet genesis seeds pwRoko balances (PWROKO_STAKE_AMOUNT = 50 units per genesis validator)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/mainnet/src/lib.rs:918-920; runtime/testnet/src/lib.rs:937-938; node/cli/src/chain_spec/mainnet.rs:58-59, 295-297"
+    grade: proven
+  - id: CC-26
+    claim: "pwROKO unlock cooloff: mainnet PwRokoCooloffPeriod = 14 * 24 * 60 * 20 blocks (14 days at 3 s blocks); testnet PwRokoCooloffPeriod = 10 blocks (dev placeholder)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/mainnet/src/lib.rs:576; runtime/testnet/src/lib.rs:583"
+    grade: proven
+  - id: CC-27
+    claim: "Genesis configures a contractDeploymentManager pallet with deploymentsEnabled: true — runtime-controlled policy hooks gating EVM contract deployment."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/testnet.rs and mainnet.rs genesis json; runtime/pallets/contract-deployment-manager/"
+    grade: proven
+  - id: CC-28
+    claim: "CLI chain profiles: testnet build maps dev|testnet|'' to the 3-validator dev config (id roko-testnet), testnet-v2 to the 5-validator 'Roko Network Testnet V2' (id roko-testnet-v2), testnet-2val to the 2-validator (Alice+Bob) deployed-testnet config; mainnet build maps ''|mainnet to the dev 'Frontier Mainnet' config. The binary is feature-gated: cargo build --features testnet|mainnet."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/command.rs:77-93; node/cli/src/chain_spec/*.rs; README.md Build section; docs/chainspec.md"
+    grade: proven
+  - id: CC-29
+    claim: "The earlier cohort-commitment pipeline and beacon-driven time path are retired; per-receipt inclusion enforcement (commit f11f70d) and the mesh-consensus time path are the current architecture. docs/MUST_READ_temporal_recovery_proposer_alignment.md carries an explicit OBSOLETE banner for its cohort content."
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/MUST_READ_temporal_recovery_proposer_alignment.md:1; docs/chain-evolution.md sections 3-5"
+    grade: proven
+  - id: CC-30
+    claim: "Genesis temporal state initializes transactionWatermark and blockTemporalWatermark to 0; testnet genesis additionally sets validateBlockTemporalSignature: false. Per-validator temporal genesis keys derive deterministically from dev SURIs (Alice=key_id 0, Bob=1, Charlie=2)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/testnet.rs:361-368; mainnet.rs:334-337; docs/chainspec.md"
+    grade: proven
+  - id: CC-31
+    claim: "Build toolchain is pinned to Rust 1.80.0 with wasm32-unknown-unknown target via rust-toolchain.toml."
+    evidence: "/Users/base/Roko-Network/code/roko_network/rust-toolchain.toml"
+    grade: proven
+  - id: CC-32
+    claim: "The README describes PoAT as 'a physics-anchored consensus modifier' where time quality influences block production eligibility, finality votes, and rewards, targeting HFT, time-sensitive contracts, auctions, and timestamping services."
+    evidence: "/Users/base/Roko-Network/code/roko_network/README.md lines 1-13"
+    grade: likely
+  - id: CC-33
+    claim: "Pre-built chain spec JSONs at repo root: testnet-v3-chain-spec.json (name 'Roko Network Testnet', id roko-testnet, chainType Development, used by E2E tests) and testnet-chain-spec.json (id frontier-testnet, historical)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/testnet-v3-chain-spec.json top-level fields; docs/chainspec.md Pre-Built Chain Spec Files table"
+    grade: proven
+  - id: EVM-01
+    claim: "Frontier EVM is integrated via pallet-evm, pallet-ethereum, pallet-evm-chain-id, pallet-base-fee, and pallet-dynamic-fee in the testnet runtime (type aliases Ethereum, EVM, EVMChainId, BaseFee in construct_runtime)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs lines 528, 551-575, 716-739, 2315-2324, 2437"
+    grade: proven
+  - id: EVM-02
+    claim: "Frontier crates are pulled from the ChainSupport/frontier fork on branch release-polkadot-v1.13.0, matching Polkadot SDK 1.13"
+    evidence: "/Users/base/Roko-Network/code/roko_network/Cargo.toml lines 65-80"
+    grade: proven
+  - id: EVM-03
+    claim: "EVM Chain ID 442 is set at genesis for the testnet via the chain specs (EVM_CHAIN_ID: u32 = 442); the runtime reads it from pallet_evm_chain_id storage"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/testnet.rs:385, testnet_v2.rs:22, testnet_2val.rs:21; runtime/testnet/src/lib.rs:728,2321"
+    grade: proven
+  - id: EVM-04
+    claim: "Mainnet EVM Chain ID is not yet assigned (README network table lists it as TBD)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/README.md line 144"
+    grade: proven
+  - id: EVM-05
+    claim: "eth_chainId is served via the standard fp_rpc::EthereumRuntimeRPCApi implementation returning pallet_evm's configured ChainId"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs lines 2980-2983"
+    grade: proven
+  - id: EVM-06
+    claim: "Standard Ethereum RPC namespaces registered in the node: Eth (eth_*), EthFilter (eth_newFilter etc.), EthPubSub (eth_subscribe), Net (net_*), Web3 (web3_*), and Debug (debug_*); the TxPool (txpool_*) API is present but commented out"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/eth.rs lines 103-212 (TxPool commented at 206-210)"
+    grade: proven
+  - id: EVM-07
+    claim: "Ethereum and Substrate RPCs (including all temporal_* methods) are merged into a single RpcModule and served on one JSON-RPC port (default 9944, both HTTP and WebSocket)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/lib.rs lines 161, 332-353; docs/rpc-reference.md line 5"
+    grade: proven
+  - id: EVM-08
+    claim: "The node implements 14 temporal_* RPC methods: getWatermarkInfo, getBlockMetadata, getBlocksMetadata, getConsensusTime, getTransactionTimestamp, getBlockTransactionTimestamps, getQueueStats, getTransactionWaitTime, getRecentWaitTimes, getValidatorTimeQuality, getMeshState, getCheckpoint, getViolations, getTemporalMetrics"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs lines 322-418 (RPC trait with #[method(name=...)] attributes)"
+    grade: proven
+  - id: EVM-09
+    claim: "temporal_getConsensusTime returns camelCase JSON: consensusTimeNs (string u128, computed as local clock + mesh consensus offset), timeQuality (fixed-point 0-10000), convergenceState (Initializing/Converging/Converged/Degraded), peerCount, consensusOffsetNs (string); error codes 40 (mesh not initialized), 41 (clock error), 42 (negative time)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs lines 43-58, 678-716"
+    grade: proven
+  - id: EVM-10
+    claim: "temporal_getTransactionTimestamp accepts EITHER a Substrate extrinsic hash (blake2_256) OR an Ethereum transaction hash (keccak256) — both lookups are tried, so EVM explorers can query by native Ethereum tx hash"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs lines 349-355, 718-747 (SharedEthHashTimestamps map at 245-251)"
+    grade: proven
+  - id: EVM-11
+    claim: "temporal_getBlocksMetadata caps requests at 1,000 block numbers (error code 13, DoS protection H-24)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs lines 648-660"
+    grade: proven
+  - id: EVM-12
+    claim: "The fee-priority timestamping queue is enabled by default with a 100 ms stamping tick; higher-fee transactions are stamped first (earlier canonical timestamps); it is disabled with --no-fee-priority-queue, and --timestamping-queue-max-history (default 10000) bounds the RPC wait-time tracker"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/cli.rs lines 163-175; node/cli/src/service.rs line 1904"
+    grade: proven
+  - id: EVM-13
+    claim: "temporal_getRecentWaitTimes caps the requested count at 1,000 entries"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs lines 930-932"
+    grade: proven
+  - id: EVM-14
+    claim: "Testnet runtime exposes 10 EVM precompiles: standard 0x01-0x05 (ECRecover, Sha256, Ripemd160, Identity, Modexp), 0x400/1024 (Sha3FIPS256), 0x401/1025 (ECRecoverPublicKey), plus custom 0x500 (pwROKO), 0x600 (Temporal), 0x700 (Staking)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/precompiles.rs lines 30-72"
+    grade: proven
+  - id: EVM-15
+    claim: "Mainnet runtime exposes only 8 precompiles — it has the pwROKO precompile at 0x500 but lacks the Temporal (0x600) and Staking (0x700) precompiles present on testnet"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/mainnet/src/precompiles.rs lines 25-57 (used_addresses is [H160; 8])"
+    grade: proven
+  - id: EVM-16
+    claim: "The pwROKO precompile at 0x0000000000000000000000000000000000000500 implements the full ERC20 interface (totalSupply, balanceOf, allowance, transfer, approve, transferFrom, decimals, symbol, name) plus staking extensions (lock, stakedBalanceOf, unlockRequest, completeUnlock, pendingUnlockAmount, readyUnlockAmount), so it can be added to MetaMask as a custom ERC20 token"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/src/precompile.rs lines 25-110; docs/frontier-impact.md (pwROKO/MetaMask section)"
+    grade: proven
+  - id: EVM-17
+    claim: "The Temporal precompile at 0x...0600 exposes a Solidity ITemporal interface: getConsensusTime() -> uint128, getMyTimestamp() -> uint128, getTransactionTimestamp(bytes32) -> uint128, getWatermark() -> uint128, getBlockTimestamp(uint64) -> uint128, using standard keccak256 ABI selectors (e.g. getConsensusTime() = 0x3937a0db)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/temporal_precompile.rs lines 9-44, 63-80"
+    grade: proven
+  - id: EVM-18
+    claim: "The Staking precompile at 0x...0700 (bond, unbond, nominate, withdrawUnbonded, stakedBalanceOf) currently uses NON-STANDARD sequential selectors that do not match keccak256 ABI selectors; code carries a security warning (C-06) that they must be replaced before mainnet — standard EVM tooling cannot call it via normal ABI encoding"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/staking_precompile.rs lines 14-48, 77-90"
+    grade: proven
+  - id: EVM-19
+    claim: "Block gas limit is 75,000,000 on both testnet and mainnet runtimes; WeightPerGas is derived from it via fp_evm::weight_per_gas with NORMAL_DISPATCH_RATIO and the block time"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs lines 164, 708-711; runtime/mainnet/src/lib.rs line 162"
+    grade: proven
+  - id: EVM-20
+    claim: "EVM fees use an EIP-1559-style model: pallet-base-fee is the FeeCalculator with DefaultBaseFeePerGas = 1 gwei (1_000_000_000), and pallet-dynamic-fee is also configured; fees are actually charged via EVMCurrencyAdapter<Balances, DealWithFees> (security fix C-08 against zero-cost spam)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs lines 551-575, 556, 717, 732"
+    grade: proven
+  - id: EVM-21
+    claim: "The chain uses Ethereum-native 20-byte accounts at the Substrate level: AccountId derives from fp_account::EthereumSignature, and pallet_evm uses IdentityAddressMapping with EnsureAccountId20 — there is NO address translation between Substrate and EVM addresses"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/primitives/src/lib.rs lines 24, 55; runtime/testnet/src/lib.rs lines 100, 721-723"
+    grade: proven
+  - id: EVM-22
+    claim: "Dev/testnet chain specs use the Moonbeam-style Ethereum dev keyring (Alith, Baltathar, CharLeth) for sudo and endowed accounts"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/testnet.rs lines 378-385"
+    grade: proven
+  - id: EVM-23
+    claim: "Smart-contract deployment is governance-gateable: pallet-contract-deployment-manager is wired into pallet_evm's OnCreate hook (ContractDeploymentChecker) and can enable/disable EVM contract deployments globally; deployments are enabled by default at genesis"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs line 733; runtime/pallets/contract-deployment-manager/src/lib.rs lines 1-64"
+    grade: proven
+  - id: EVM-24
+    claim: "EVM block author resolution uses FindAuthorTruncated<Babe>, and the pending-block RPC path uses a BabeConsensusDataProvider — consistent with BABE block production"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs line 734; node/cli/src/service.rs lines 43, 1353"
+    grade: proven
+  - id: EVM-25
+    claim: "EVM's block.timestamp remains the standard seconds-level Timestamp pallet value (pallet_evm Config: Timestamp = Timestamp); nanosecond temporal data is exposed only via temporal_* RPCs and the 0x600 precompile, not via Ethereum JSON-RPC schema changes"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs line 737; docs/frontier-impact.md 'What Stays the Same' section"
+    grade: proven
+  - id: EVM-26
+    claim: "Block time CONTRADICTION: README documents 6s (testnet) / 3s (mainnet), but testnet runtime code sets MILLISECS_PER_BLOCK = 2000 (2 seconds) with an explicit comment 'CLAUDE.md documents 6s blocks for testnet, but the development chain runs at 2s. For production testnet deployment, this should be set to 6000. (M-19)'; mainnet runtime code sets 3000 (3s, matching README)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/constants.rs lines 54-57; runtime/mainnet/src/constants.rs line 54; README.md line 143"
+    grade: proven
+  - id: EVM-27
+    claim: "No public hosted RPC endpoint URLs are configured anywhere in the repo — all examples and configs use localhost (ws://localhost:9944, http://localhost:9944); the staking dapp also hardcodes ws://localhost:9944"
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/frontier-impact.md (MetaMask section uses http://<host>:9944); staking-dapp/src/App.jsx:753; grep for wss://|https://rpc across node/, docker-compose, docs returned no public domains"
+    grade: proven
+  - id: EVM-28
+    claim: "MetaMask connection parameters per repo docs: RPC URL http://<host>:9944, Chain ID 442, currency symbol ROKO (18 decimals); chain spec properties set isEthereum: true, tokenSymbol ROKO, tokenDecimals 18"
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/frontier-impact.md (Wallets section); docs/temporal/wallet-integration.md lines 28-34; testnet-chain-spec.json properties"
+    grade: proven
+  - id: EVM-29
+    claim: "The dev docker-compose exposes 9944 (WebSocket RPC) and 9933 (HTTP RPC) for node 1, and maps node 2's 9944 to host port 8545 ('EVM-style port'); dev nodes run with --rpc-cors all and --rpc-methods Unsafe (development-only settings)"
+    evidence: "/Users/base/Roko-Network/code/roko_network/docker-compose.yml lines 48-83"
+    grade: proven
+  - id: EVM-30
+    claim: "eth_getLogs queries are bounded by a max_past_logs limit, eth_call/eth_estimateGas allow gas up to block_gas_limit * execute_gas_limit_multiplier, and the EthFilter API caps stored filters at 500"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/eth.rs lines 58-66, 157-170 (500_usize max stored filters at line 164)"
+    grade: proven
+  - id: EVM-31
+    claim: "Temporal ordering applies to Ethereum transactions too: the TimestampingPool assigns canonical nanosecond timestamps at pool receipt for both Substrate and Frontier-submitted transactions, with no extra fields required from Ethereum wallets"
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/frontier-impact.md 'What Is Different' and 'Temporal and Ethereum Transactions' sections; node/rpc/src/temporal.rs lines 1-4, 245-251"
+    grade: likely
+  - id: EVM-32
+    claim: "A portion of fees is routed to a TemporalFeePool via the DealWithFees handler in both runtimes"
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/mainnet/src/lib.rs lines 291-298 (pallet_temporal_transactions::TemporalFeePool::mutate inside DealWithFees)"
+    grade: likely
+  - id: EVM-33
+    claim: "temporal_getBlockTransactionTimestamps currently returns ethHash: null for every entry in the node implementation (a code comment says it is 'Populated by the explorer backend via eth_getBlockByNumber'), despite the struct's doc comment claiming eth_hash is 'Present for all extrinsics'"
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs lines 105-109 vs line 808"
+    grade: proven
+  - id: PAL-01
+    claim: "The Cargo workspace contains two runtime crates — runtime/testnet (spec_name \"testnet\", spec_version 279) and runtime/mainnet (spec_name \"mainnet\", spec_version 275) — plus runtime/common and four custom pallets under runtime/pallets/."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:249-256; runtime/mainnet/src/lib.rs:247-254; runtime/pallets/ directory listing"
+    grade: proven
+  - id: PAL-02
+    claim: "The chain is built on Polkadot SDK branch release-polkadot-v1.13.0, with Frontier EVM pulled from the ChainSupport/frontier fork on the matching release-polkadot-v1.13.0 branch."
+    evidence: "/Users/base/Roko-Network/code/roko_network/Cargo.toml:65-94 (polkadot-sdk deps) and :68-75 (fc-* deps from ChainSupport/frontier)"
+    grade: proven
+  - id: PAL-03
+    claim: "The runtime is declared with the modern #[frame_support::runtime] macro and includes 62 pallets at indices 0-86 (with gaps); testnet and mainnet pallet sets are identical except TransactionPayment placement (testnet index 9 with #[runtime::disable_call], mainnet index 7 with calls enabled)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:2125-2334; runtime/mainnet/src/lib.rs construct section (awk extraction, indices 0-86)"
+    grade: proven
+  - id: PAL-04
+    claim: "Four custom Roko pallets exist: pallet_pwroko (index 8), pallet_contract_deployment_manager (84), pallet_temporal_transactions (85), and pallet_timesync (86)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:2167-2168, 2326-2333; runtime/pallets/ directory"
+    grade: proven
+  - id: PAL-05
+    claim: "pallet_sudo IS present in BOTH testnet and mainnet runtimes at pallet index 22, with the standard full-root configuration — a centralization fact that must be disclosed in public docs."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:2207-2208 and 1620-1624; mainnet runtime pallet list index 22"
+    grade: proven
+  - id: PAL-06
+    claim: "pwROKO mechanics: lock(amount) reserves native ROKO 1:1 via ReservableCurrency and mints pwROKO; unlocking is a two-step process — unlock_request starts a cooldown (unlock_at = now + CurrentCooloffPeriod), then complete_unlock releases after the cooldown elapses; max 32 pending unlock requests per account."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/src/lib.rs:344-460; runtime/testnet/src/lib.rs:585 (MaxUnlockRequests = 32)"
+    grade: proven
+  - id: PAL-07
+    claim: "pwROKO is NON-TRANSFERABLE: the transfer, approve, and transfer_from extrinsics all unconditionally return Error::TransfersDisabled — pwROKO can only be minted (lock) and burned (unlock)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/src/lib.rs:462-501"
+    grade: proven
+  - id: PAL-08
+    claim: "pwROKO token metadata: symbol \"pwROKO\", name \"Wrapped ROKO\", 18 decimals."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/src/lib.rs:10-13"
+    grade: proven
+  - id: PAL-09
+    claim: "pwROKO is the staking currency in BOTH the testnet AND mainnet runtimes: pallet_staking::Config uses type Currency = PwRokoRewardAware (a reward-aware pwROKO wrapper) with CurrencyToVote = PwRokoToVote (1 pwROKO unit = 1 vote)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:937-939; runtime/mainnet/src/lib.rs:919 + impl pallet_staking::Config block"
+    grade: proven
+  - id: PAL-10
+    claim: "Staking slashes burn the pwROKO and route the extracted native ROKO backing to the Treasury (PwRokoStakingSlashHandler); reward remainders are burned; era rewards are minted from the void (type Reward = ())."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:945-946, 982-995 (PwRokoStakingSlashHandler/RewardRemainderHandler)"
+    grade: proven
+  - id: PAL-11
+    claim: "pwROKO governance controls: update_cooloff_period, migrate_unbacked_rewards, and slash_with_backing all require UpdateOrigin = Root OR Council 3/4 supermajority; testnet cooloff period is 10 blocks."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/src/lib.rs:503-581; runtime/testnet/src/lib.rs:583, 588-599"
+    grade: proven
+  - id: PAL-12
+    claim: "pwROKO genesis enforces 1:1 backing: every genesis pwROKO balance must be matched by reserving native ROKO from the same account, asserted at genesis build."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/src/lib.rs:299-338"
+    grade: proven
+  - id: PAL-13
+    claim: "Staking parameters (testnet): SessionsPerEra = 3, BondingDuration = 672 eras (24*28), SlashDeferDuration = 168 eras (24*7), MaxNominators = 64, MaxAuthorities = 100, slash cancellation requires Root or Council 3/4 (AdminOrigin)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:897-908, 951-954, 1626-1632"
+    grade: proven
+  - id: PAL-14
+    claim: "The staking reward curve targets: min inflation 2.5%, max inflation 10%, ideal stake 50%, falloff 5% (pallet_staking_reward_curve, ConvertCurve EraPayout)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:884-892, 957"
+    grade: proven
+  - id: PAL-15
+    claim: "Governance stack includes BOTH Gov1-style pallets (Democracy, Council collective, TechnicalCommittee collective, Elections-Phragmen, TechnicalMembership, Treasury, Bounties, ChildBounties, Tips) AND OpenGov-style pallets (Referenda, ConvictionVoting, RankedPolls, RankedCollective)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:2183-2197, 2202, 2243-2247, 2284-2297"
+    grade: proven
+  - id: PAL-16
+    claim: "Democracy timing (testnet): LaunchPeriod and VotingPeriod = 28 days, EnactmentPeriod = 30 days, FastTrackVotingPeriod = 3 days, CooloffPeriod = 28 days (all expressed in block counts via the MINUTES constant)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:1329-1334, 1338-1378"
+    grade: proven
+  - id: PAL-17
+    claim: "Block time IN CODE: testnet MILLISECS_PER_BLOCK = 2000 (2 seconds), mainnet = 3000 (3 seconds). The testnet constant carries an explicit comment: 'CLAUDE.md documents 6s blocks for testnet, but the development chain runs at 2s. For production testnet deployment, this should be set to 6000. (M-19)'."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/constants.rs:54-57; runtime/mainnet/src/constants.rs:54"
+    grade: proven
+  - id: PAL-18
+    claim: "Consensus is BABE (block production, with secondary slots, PRIMARY_PROBABILITY 1/4) + GRANDPA (finality), with BEEFY + MMR + BeefyMmrLeaf also in the runtime; testnet epochs are 50 blocks (~100s sessions at 2s blocks), mainnet epochs are 60 minutes."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/constants.rs:64-77; runtime/mainnet/src/constants.rs:62-71; runtime pallet list indices 2, 18, 41-43"
+    grade: proven
+  - id: PAL-19
+    claim: "EVM Chain ID 442 is confirmed for testnet in code (testnet_2val.rs and testnet_v2.rs: const EVM_CHAIN_ID: u32 = 442; testnet.rs genesis passes 442u32) and in the live testnet-v3 chain spec JSON. Mainnet chain ID is NOT set: README says 'TBD' and the only mainnet genesis in code (development config) uses 42."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/cli/src/chain_spec/testnet_2val.rs:21; testnet.rs:385; testnet-v3-chain-spec.json; mainnet.rs:349; README.md:144"
+    grade: proven
+  - id: PAL-20
+    claim: "EVM block gas limit is 75,000,000 in both runtimes; native token is ROKO with 18 decimals and chain spec property isEthereum: true."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:164; runtime/mainnet/src/lib.rs:162; node/cli/src/chain_spec/mainnet.rs with_properties (tokenSymbol ROKO, tokenDecimals 18)"
+    grade: proven
+  - id: PAL-21
+    claim: "Existential deposit differs: testnet ED = 100_000_000_000_000 (1e14 = 0.0001 ROKO at 18 decimals); mainnet ED = 0 (full EVM-style account semantics, no dust reaping)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:786; runtime/mainnet/src/lib.rs:769"
+    grade: proven
+  - id: PAL-22
+    claim: "Three custom EVM precompiles are registered: 0x500 = PwRokoPrecompile, 0x600 = TemporalPrecompile, 0x700 = StakingPrecompile, alongside standard Ethereum precompiles 0x1-0x5 plus Sha3FIPS256 (1024) and ECRecoverPublicKey (1025)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/precompiles.rs:30-71"
+    grade: proven
+  - id: PAL-23
+    claim: "The pwROKO precompile (0x500) exposes ERC20-style views plus staking views: balanceOf, allowance, transfer/approve/transferFrom (which will revert since transfers are disabled), stakedBalanceOf, pendingUnlockAmount, readyUnlockAmount."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/pwroko/src/precompile.rs:29-55"
+    grade: proven
+  - id: PAL-24
+    claim: "The temporal precompile (0x600) exposes getConsensusTime() returning uint128 (selector 0x3937a0db)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/temporal_precompile.rs:11, 44, 89"
+    grade: proven
+  - id: PAL-25
+    claim: "The staking precompile (0x700) exposes bond(uint256,uint8), unbond(uint256), nominate(address[]), withdrawUnbonded(uint32), stakedBalanceOf(address) — but currently uses NON-STANDARD sequential selectors (0x00000001 etc.) rather than keccak256 ABI selectors, flagged as security issue C-06 with 'TODO: Replace with keccak256 ABI selectors before mainnet'. Public docs must not publish standard-ABI call examples for this precompile yet."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/staking_precompile.rs:16-47"
+    grade: proven
+  - id: PAL-26
+    claim: "pallet_temporal_transactions provides temporal metadata storage for RPC-based temporal transactions: a temporal watermark, per-block temporal metadata via the 'temblmet' inherent, temporal validator keys/signatures (TemporalPublic, TemporalSignature, TemporalProof), and a TemporalTransactionsApi runtime API; EmergencyOrigin is EnsureRoot."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/temporal-transactions/src/lib.rs:1-56; runtime/testnet/src/lib.rs:652-664"
+    grade: proven
+  - id: PAL-27
+    claim: "pallet_timesync is the on-chain bridge for the off-chain PTP+Squared time mesh: it receives time-mesh quality snapshots via inherents, stores per-validator time quality, takes health checkpoints every 100 blocks, detects temporal violations, and defines TimeSyncOffence integrated with pallet_offences. Slash fractions: ExcessiveOffset 0%, PersistentDrift 1%, LowReputation 1%, ContradictoryOffsets 5%."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/timesync/src/lib.rs:1-60"
+    grade: proven
+  - id: PAL-28
+    claim: "Timesync runtime enforcement is currently DISABLED in BOTH runtimes: type EnforcementEnabled = ConstBool<false>; drift bounds are configured as MaxBlockMeshDriftMs = 5ms and MaxCrossValidatorDriftNs = 10s, and offence reporting is wired to pallet_offences."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:694-705; runtime/mainnet/src/lib.rs impl pallet_timesync::Config (identical, EnforcementEnabled = ConstBool<false>)"
+    grade: proven
+  - id: PAL-29
+    claim: "PoAT expands to 'Proof of Accurate Time' in this repo (a physics-anchored consensus modifier on top of BABE+GRANDPA, per README/docs) — not 'Proof of Attributed Time'."
+    evidence: "/Users/base/Roko-Network/code/roko_network/README.md:3,9,77; docs/index.md:3"
+    grade: proven
+  - id: PAL-30
+    claim: "The temporal RPC namespace (node/rpc/src/temporal.rs) includes: temporal_getConsensusTime (nanosecond mesh consensus time + quality metrics), temporal_getWatermarkInfo, temporal_getBlockMetadata, temporal_getBlocksMetadata, temporal_getTransactionTimestamp (accepts either Substrate blake2_256 or Ethereum keccak256 tx hash), temporal_getBlockTransactionTimestamps, temporal_getQueueStats, temporal_getTransactionWaitTime."
+    evidence: "/Users/base/Roko-Network/code/roko_network/node/rpc/src/temporal.rs:321-379"
+    grade: proven
+  - id: PAL-31
+    claim: "pallet_contract_deployment_manager is a small governance-gated global switch (DeploymentsEnabled bool) controlling whether EVM smart-contract deployment is permitted, enforced via a ContractDeploymentChecker hooked into EVM contract creation."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/pallets/contract-deployment-manager/src/lib.rs:1-60"
+    grade: proven
+  - id: PAL-32
+    claim: "Validator election uses pallet_election_provider_multi_phase with a bags-list VoterList (Instance1) and Phragmen on-chain fallback; ImOnline heartbeats, Offences, Historical session, and AuthorityDiscovery are all wired."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:2174-2181, 2210-2220, 2278-2279, 960-963"
+    grade: proven
+  - id: PAL-33
+    claim: "The runtime also ships a broad standard-pallet surface relevant to builders: Utility, Multisig, Proxy, Scheduler, Preimage, Identity, Recovery, Vesting, Indices, Assets (two instances), AssetConversion, AssetRate, NFTs + NftFractionalization, TransactionStorage, MessageQueue, Statement, Mixnet, CoreFellowship, StateTrieMigration."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:2146-2312"
+    grade: proven
+  - id: PAL-34
+    claim: "Frontier EVM wiring uses pallet_ethereum (80), pallet_evm (81), pallet_evm_chain_id (82), pallet_base_fee (83), with a TransactionConverter for fp_rpc and SuicideQuickClearLimit = 300 (incremental SELFDESTRUCT storage cleanup, security item M-23)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/runtime/testnet/src/lib.rs:2314-2324, 2336-2354, 711-716 (SuicideQuickClearLimit)"
+    grade: proven
+  - id: PAL-35
+    claim: "README's Network Configuration table claims mainnet staking currency is 'Native ROKO', but the mainnet runtime code stakes with pwROKO (type Currency = PwRokoRewardAware) exactly like testnet — the code contradicts the README."
+    evidence: "/Users/base/Roko-Network/code/roko_network/README.md:146 vs runtime/mainnet/src/lib.rs:919"
+    grade: proven
+  - id: TOK-01
+    claim: "The native token is ROKO with 18 decimals; chain specs set properties {isEthereum: true, tokenDecimals: 18, tokenSymbol: ROKO} for both testnet and mainnet specs."
+    evidence: "node/cli/src/chain_spec/mainnet.rs:361, node/cli/src/chain_spec/testnet.rs:397, testnet-chain-spec-readable.json:10-11"
+    grade: proven
+  - id: TOK-02
+    claim: "One ROKO = 10^18 base units: the runtime constant DOLLARS = 100 * CENTS = 100 * 1000 * MILLICENTS = 10^18 (MILLICENTS = 10^13)."
+    evidence: "runtime/mainnet/src/constants.rs:24-26 (identical in runtime/testnet/src/constants.rs:24-26)"
+    grade: proven
+  - id: TOK-03
+    claim: "Existential deposit is 0 on mainnet (accounts are never reaped for low balance) and 10^14 base units (0.0001 ROKO) on testnet."
+    evidence: "runtime/mainnet/src/lib.rs:769 (EXISTENTIAL_DEPOSIT = 0); runtime/testnet/src/lib.rs:786 (100_000_000_000_000)"
+    grade: proven
+  - id: TOK-04
+    claim: "The chain uses Ethereum-style 20-byte accounts: pallet_evm is configured with IdentityAddressMapping and EnsureAccountId20 for CallOrigin/WithdrawOrigin, so Substrate AccountId == EVM H160 address."
+    evidence: "runtime/mainnet/src/lib.rs:707-710 (pallet_evm::Config)"
+    grade: proven
+  - id: TOK-05
+    claim: "EVM Chain ID 442 is hardcoded in the testnet chain specs and in the deployed testnet chain spec genesis; the mainnet spec takes evm_chain_id as a parameter and its development config uses 42 (mainnet chain ID effectively TBD, matching README)."
+    evidence: "node/cli/src/chain_spec/testnet_2val.rs:21, testnet.rs:385, testnet_v2.rs:22; testnet-chain-spec-readable.json genesis evmChainId.chainId=442; mainnet.rs:342-349 (dev config passes 42u32); README.md Network Configuration table"
+    grade: proven
+  - id: TOK-06
+    claim: "There is no fixed total-supply cap in the runtime; supply inflates via staking rewards (Currency::deposit_creating mints new ROKO as reward backing) and, on testnet, via the sudo faucet."
+    evidence: "runtime/pallets/pwroko/src/helpers.rs:149-188 (mint_reward_with_direct_backing calls deposit_creating); roko-admin/backend/src/rpc/client.ts:544-561"
+    grade: proven
+  - id: TOK-07
+    claim: "Deployed testnet genesis allocates native ROKO to exactly 3 accounts: two validators with 100 ROKO each and one account (0x798d4ba9...) with 1,000,000,000 ROKO (10^27 base units); pwROKO genesis gives the two validators 51 pwROKO each."
+    evidence: "testnet-chain-spec-readable.json genesis patch: balances.balances (3 entries), pwRoko.balances"
+    grade: proven
+  - id: TOK-08
+    claim: "Genesis chain-spec constants: ENDOWMENT = 100 ROKO per endowed account and PWROKO_STAKE_AMOUNT = 50 ROKO per genesis validator bond, with each validator endowed PWROKO_STAKE_AMOUNT + 1 ROKO of pwROKO so fees/rounding don't brick genesis."
+    evidence: "node/cli/src/chain_spec/mainnet.rs:56-59,241-246; testnet.rs:59"
+    grade: proven
+  - id: TOK-09
+    claim: "Genesis pwROKO is backed: the pallet's genesis build asserts each account's free native ROKO >= its pwROKO allocation, reserves the ROKO 1:1, and records it in LockedBalances — genesis pwROKO cannot be unbacked."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:299-338 (BuildGenesisConfig)"
+    grade: proven
+  - id: TOK-10
+    claim: "Substrate transaction fees use WeightToFee = IdentityFee and LengthToFee = 10 MILLICENTS per byte (10^14 base units = 0.0001 ROKO/byte), with OperationalFeeMultiplier = 5 and TargetedFeeAdjustment dynamic multiplier."
+    evidence: "runtime/mainnet/src/lib.rs:796-816"
+    grade: proven
+  - id: TOK-11
+    claim: "Transaction fees and tips are split three ways: 20% to Treasury, 50% to the block author, and 30% into the TemporalFeePool for timestamper rewards (fees.ration(20,80) then rest.ration(50,30)). Identical logic on testnet and mainnet."
+    evidence: "runtime/mainnet/src/lib.rs:279-304 (DealWithFees); runtime/testnet/src/lib.rs:281-301"
+    grade: proven
+  - id: TOK-12
+    claim: "The TemporalFeePool (30% fee share) is periodically distributed to timestamping validators proportionally to recorded TimestamperWeights via deposit_creating; if no weights exist, the entire pool goes to the current block author."
+    evidence: "runtime/pallets/temporal-transactions/src/lib.rs:477-517 (distribute_temporal_fees)"
+    grade: proven
+  - id: TOK-13
+    claim: "EVM gas pricing is EIP-1559 style via pallet_base_fee: DefaultBaseFeePerGas = 1 gwei (1_000_000_000), DefaultElasticity = 12.5%, and pallet_evm's FeeCalculator = BaseFee."
+    evidence: "runtime/mainnet/src/lib.rs:549-569,703"
+    grade: proven
+  - id: TOK-14
+    claim: "EVM block gas limit is 75,000,000 with gas mapped to Substrate weight via FixedGasWeightMapping and WeightPerGas derived from BLOCK_GAS_LIMIT, NORMAL_DISPATCH_RATIO and the block time."
+    evidence: "runtime/mainnet/src/lib.rs:162 (BLOCK_GAS_LIMIT), 695-705"
+    grade: proven
+  - id: TOK-15
+    claim: "EVM fee handling differs between runtimes: testnet routes EVM transaction fees through EVMCurrencyAdapter<Balances, DealWithFees> (same 20/50/30 split), while mainnet sets pallet_evm OnChargeTransaction = () (Frontier default adapter; fees are not routed through DealWithFees)."
+    evidence: "runtime/testnet/src/lib.rs:732 vs runtime/mainnet/src/lib.rs:717"
+    grade: proven
+  - id: TOK-16
+    claim: "pwROKO is an on-chain wrapped/staking token implemented as a custom pallet (pallet_pwroko): symbol pwROKO, name 'Wrapped ROKO', 18 decimals, minimum balance 0."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:10-13; src/impls/fungible.rs:18-20"
+    grade: proven
+  - id: TOK-17
+    claim: "pwROKO is acquired by calling lock(amount): the pallet reserves the caller's native ROKO 1:1 and mints an equal amount of pwROKO. It is NOT bridged from Ethereum — it wraps the chain's own native ROKO."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:344-368 (lock extrinsic)"
+    grade: proven
+  - id: TOK-18
+    claim: "pwROKO is non-transferable: the transfer, approve, and transfer_from extrinsics all unconditionally return Error::TransfersDisabled — pwROKO can only be minted (lock) and burned (unlock)."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:462-501"
+    grade: proven
+  - id: TOK-19
+    claim: "Unwrapping pwROKO is a two-step cooldown flow: unlock_request(amount) records a pending request unlockable at current_block + CurrentCooloffPeriod (max 32 pending on mainnet); complete_unlock(max_requests) then burns the pwROKO and unreserves the backing ROKO."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:370-460; runtime/pallets/pwroko/src/helpers.rs:205-240; runtime/mainnet/src/lib.rs:578 (MaxUnlockRequests=32)"
+    grade: proven
+  - id: TOK-20
+    claim: "The pwROKO unlock cooloff period is governance-adjustable (update_cooloff_period, UpdateOrigin-gated) and is configured as 403,200 blocks on mainnet (14*24*60*20; 14 days at the mainnet 3s block time) but only 10 blocks on testnet."
+    evidence: "runtime/mainnet/src/lib.rs:576; runtime/testnet/src/lib.rs:583; runtime/pallets/pwroko/src/lib.rs:503-520"
+    grade: proven
+  - id: TOK-21
+    claim: "pwROKO is the staking currency on BOTH runtimes: pallet_staking::Config::Currency = PwRokoRewardAware (a reward-aware wrapper around the pwROKO pallet) in mainnet and testnet runtimes alike."
+    evidence: "runtime/mainnet/src/lib.rs:903,919; runtime/testnet/src/lib.rs:938"
+    grade: proven
+  - id: TOK-22
+    claim: "Staking rewards are minted with direct backing: when pallet_staking pays rewards, the wrapper mints new native ROKO to the beneficiary, immediately reserves it, records it as reward-locked, and mints an equal amount of pwROKO (RewardMinted event carries both amounts)."
+    evidence: "runtime/pallets/pwroko/src/reward_wrapper.rs:123-151; runtime/pallets/pwroko/src/helpers.rs:149-188"
+    grade: proven
+  - id: TOK-23
+    claim: "Staking inflation follows the standard Substrate reward curve: min_inflation 2.5%, max_inflation 10%, ideal_stake 50%, falloff 5% (EraPayout = ConvertCurve<RewardCurve>)."
+    evidence: "runtime/mainnet/src/lib.rs:867-876,936"
+    grade: proven
+  - id: TOK-24
+    claim: "Mainnet staking timing constants: SessionsPerEra = 6, epoch duration 60 minutes of blocks, BondingDuration = 672 eras (24*28), SlashDeferDuration = 168 eras, MaxNominators = 64, max 16 nominations."
+    evidence: "runtime/mainnet/src/lib.rs:879-890; runtime/mainnet/src/constants.rs:66"
+    grade: proven
+  - id: TOK-25
+    claim: "Slashing burns pwROKO and its backing ROKO together: a governance-only slash_with_backing extrinsic exists, and the staking slash handler (PwRokoStakingSlashHandler) routes slashed pwROKO backing toward the Treasury."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:566-581; runtime/mainnet/src/lib.rs:958-966"
+    grade: proven
+  - id: TOK-26
+    claim: "pwROKO is exposed to the EVM as an ERC-20-like precompile at address 0x0000000000000000000000000000000000000500, supporting totalSupply/balanceOf/decimals/symbol/name plus custom selectors lock, stakedBalanceOf, unlockRequest, completeUnlock, pendingUnlockAmount, readyUnlockAmount (transfer/approve revert since transfers are disabled)."
+    evidence: "runtime/mainnet/src/precompiles.rs:35,57; runtime/pallets/pwroko/src/precompile.rs:25-110; staking-dapp/src/App.jsx:14"
+    grade: proven
+  - id: TOK-27
+    claim: "The testnet runtime additionally exposes a staking precompile at 0x0000000000000000000000000000000000000700; the mainnet runtime's precompile set does NOT include it (only 0x500)."
+    evidence: "runtime/testnet/src/precompiles.rs:39-41,70 vs runtime/mainnet/src/precompiles.rs:25-37,57"
+    grade: proven
+  - id: TOK-28
+    claim: "There is no bridge or wrap mechanism to the Ethereum ERC-20 ROKO in this repo: the address 0x6f222e04... appears nowhere in the codebase, and no bridge pallet/contract exists. On-chain ROKO and pwROKO are independent of the Ethereum ERC-20."
+    evidence: "repo-wide grep for 6f222e04 across .rs/.md/.json/.ts/.js returns zero matches; no bridge mentions in docs/"
+    grade: proven
+  - id: TOK-29
+    claim: "Testnet users acquire ROKO from a faucet in the roko-admin backend that mints via sudo (api.tx.sudo.sudo(balances.forceSetBalance)), default 100 ROKO per request, hard max 10,000 ROKO (FAUCET_MAX_AMOUNT overridable), with per-address cooldown plus nginx per-IP rate limiting."
+    evidence: "roko-admin/backend/src/api/faucet.ts:6-120; roko-admin/backend/src/rpc/client.ts:544-561"
+    grade: proven
+  - id: TOK-30
+    claim: "The credits/rewards system described in credits-implementation-plan.md (indexer producing JSONL activity facts + scorer applying credits.json rules, served from roko-admin/backend/src/credits/) is a PLAN ONLY — the proposed directories and files (src/credits/, api/credits.ts, credits.json) do not exist; the backend API only has blockchain, faucet, mempool, stress, temporal, and validators routes."
+    evidence: "credits-implementation-plan.md:46-78 (proposed tree) vs ls roko-admin/backend/src/api/ and absence of roko-admin/backend/src/credits/"
+    grade: proven
+  - id: TOK-31
+    claim: "Actual compiled block times are 3 seconds on mainnet (MILLISECS_PER_BLOCK = 3000) and 2 seconds on testnet (MILLISECS_PER_BLOCK = 2000) — not 6 seconds."
+    evidence: "runtime/mainnet/src/constants.rs:54; runtime/testnet/src/constants.rs:57"
+    grade: proven
+  - id: TOK-32
+    claim: "A governance migration extrinsic migrate_unbacked_rewards exists to retroactively mint and reserve backing ROKO for historically unbacked pwROKO rewards (UpdateOrigin-gated, intended one-time after upgrade)."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:522-564"
+    grade: proven
+  - id: TOK-33
+    claim: "pwROKO storage tracks user-locked and reward-locked ROKO separately (LockedBalances vs RewardLockedBalances, RewardMintedBalances) for clean accounting during unlock and slashing; unlocks consume user-locked first, then reward-locked."
+    evidence: "runtime/pallets/pwroko/src/lib.rs:90-145; helpers.rs:209-231"
+    grade: proven
+  - id: TOK-34
+    claim: "New EVM contract deployment is gated by a contract-deployment-manager pallet hooked into pallet_evm's OnCreate (ContractDeploymentChecker)."
+    evidence: "runtime/mainnet/src/lib.rs:718 (type OnCreate); runtime/pallets/contract-deployment-manager/"
+    grade: proven
+  - id: OPS-01
+    claim: "The node binary is named `roko-node` (Cargo package roko-node, [[bin]] name roko-node, default-run roko-node); it is the only node binary target in the workspace"
+    evidence: "node/cli/Cargo.toml lines 2, 9, 30-32"
+    grade: proven
+  - id: OPS-02
+    claim: "Building requires Rust 1.80.0 (pinned via rust-toolchain.toml with wasm32-unknown-unknown target, rust-src, clippy, rustfmt) plus build-essential, protobuf-compiler, clang, llvm-dev on Ubuntu/Debian"
+    evidence: "rust-toolchain.toml lines 1-4; README.md Quick Start; docs/deployment-guide.md lines 27-44"
+    grade: proven
+  - id: OPS-03
+    claim: "The node must be built with exactly one runtime feature: `cargo build --release --features testnet` or `--features mainnet`; these select roko-testnet-runtime or roko-mainnet-runtime as optional dependencies"
+    evidence: "node/cli/Cargo.toml lines 59-60, 134-135; Cargo.toml workspace members lines 19-20"
+    grade: proven
+  - id: OPS-04
+    claim: "Docs recommend `-j2` to limit parallel compilation because Substrate builds exhaust memory on machines under 32 GB RAM; build needs minimum 8 GB RAM, 50 GB disk"
+    evidence: "docs/deployment-guide.md lines 25-26, 56; .github/workflows/ci.yml header comments"
+    grade: proven
+  - id: OPS-05
+    claim: "EVM Chain ID 442 is set in all testnet chain spec code (testnet, testnet-v2, testnet-2val profiles)"
+    evidence: "node/cli/src/chain_spec/testnet_v2.rs:22 (EVM_CHAIN_ID = 442), testnet.rs:385, testnet_2val.rs:21"
+    grade: proven
+  - id: OPS-06
+    claim: "Named chain profiles resolvable via --chain in a testnet build: `dev`/`testnet`/'' (development_config), `testnet-v2`, `testnet-2val`, `local_testnet`, `local_testnet_v2`, or a JSON file path; mainnet builds resolve ''/`mainnet`/`local_mainnet`"
+    evidence: "node/cli/src/command.rs lines 74-96"
+    grade: proven
+  - id: OPS-07
+    claim: "Temporal-specific node CLI flags are implemented in code: --timesync-time-source (auto|mock-anchor|system-only), --timesync-no-enforce, --timesync-strict, --timesync-probe-interval-ms, --timesync-rate-limit, --timesync-min-sources, plus fee-priority queue flags (--no-fee-priority-queue) and Frontier flags (--frontier-backend-type)"
+    evidence: "node/cli/src/cli.rs lines 90-119; node/cli/src/service.rs lines 2648-2666; docs/deployment-guide.md CLI Reference section"
+    grade: proven
+  - id: OPS-08
+    claim: "A single-validator or local node MUST run with --timesync-no-enforce (no peers to converge with); --db-storage-threshold 0 is needed to avoid storage-monitor crashes on low-disk systems"
+    evidence: "docs/deployment-guide.md lines 95-104, Known Issues section; flags verified in node/cli/src/cli.rs"
+    grade: proven
+  - id: OPS-09
+    claim: "`./run-e2e-local.sh --keep` starts a 3-validator local testnet (Alice 9944, Bob 9945, Charlie 9946) that generates a fresh chain spec from the current binary (`roko-node build-spec --chain testnet --disable-default-bootnode`) and runs validators with --timesync-time-source mock-anchor --timesync-no-enforce"
+    evidence: "run-e2e-local.sh lines 35, 232-295"
+    grade: proven
+  - id: OPS-10
+    claim: "Repo-shipped chain specs testnet-chain-spec.json (id: frontier-testnet) and testnet-v3-chain-spec.json (id: roko-testnet, name: Roko Network Testnet) both have chainType \"Development\", empty bootNodes [], and no telemetry endpoints"
+    evidence: "testnet-v3-chain-spec.json line 5 and top-level fields; testnet-chain-spec.json top-level fields"
+    grade: proven
+  - id: OPS-11
+    claim: "Public testnet-v2 join infrastructure IS published in the repo: docker/docker-compose.validator.yml hardcodes bootnode /dns/roko-testnetv2.ntfork.com/tcp/30333/p2p/12D3KooWLn4vDfN5agevaRd4ct5HRQUJ4R6GajYcd7abJdwq1WAA and fetches the chain spec from https://roko-admin.ntfork.com/public/testnet-v2-chain-spec.json; validator accounts are created via roko-admin."
+    evidence: "docker/docker-compose.validator.yml lines 10, 36-37, 101 (verified 2026-06-11, supersedes original extraction)"
+    grade: proven
+  - id: OPS-12
+    claim: "The documented live testnet endpoints are wss://roko-testnetv2.ntfork.com (and https:// same host) plus direct ws://13.51.27.22:9944, served by AWS EC2 in eu-north-1 (Stockholm)"
+    evidence: "docs/deployment-guide.md lines 336-346 (Connection Endpoints), lines 268-276 (instance table)"
+    grade: likely
+  - id: OPS-13
+    claim: "Testnet infrastructure per repo docs: roko-testnetv2 (i-01c4d336e568017c4, 13.51.27.22, t3.large, runs Alice+Bob validators via systemd frontier-alice/frontier-bob services), roko-admin (13.51.161.245, t3.small), roko-explorerv2 (13.49.70.97, t3.small block explorer)"
+    evidence: "docs/deployment-guide.md AWS EC2 Deployment section lines 268-300"
+    grade: likely
+  - id: OPS-14
+    claim: "A Blockscout-based block explorer with substrate sidecar API is documented at https://roko-explorer.ntfork.com (e.g. /api/v2/substrate/validators), backed by the wss://roko-testnetv2.ntfork.com archive endpoint"
+    evidence: "docs/runbooks/sidecar-go-live.md lines 15, 29-73"
+    grade: likely
+  - id: OPS-15
+    claim: "Authoritative CI runs on Gitea (git.integrolabs.net, self-hosted roko-builder runner): push/PR to main/develop triggers fmt, clippy (--features testnet -D warnings), and workspace tests; GitHub Actions ci.yml is explicitly a manual (workflow_dispatch-only) fallback and a package-publish target"
+    evidence: ".github/workflows/ci.yml lines 1-29 (header + on: workflow_dispatch); .gitea/workflows/ci.yml lines 1-27"
+    grade: proven
+  - id: OPS-16
+    claim: "Tagged releases (v*.*.*) on Gitea build roko-node binaries for testnet+mainnet on linux amd64 and arm64 (cross aarch64) and upload source + binary artifacts; an automated GitHub→Gitea sync every 15 minutes plus GitHub release publication is documented"
+    evidence: ".gitea/workflows/release.yml lines 1-73, 120-124; docs/ci-sync-setup.md Overview"
+    grade: proven
+  - id: OPS-17
+    claim: "GitHub CI pins build runners to ubuntu-22.04 (GLIBC 2.35) on both amd64 and arm64 specifically so binaries load on the Pi validator's Debian Bookworm (GLIBC 2.36)"
+    evidence: ".github/workflows/ci.yml header comments lines 14-24"
+    grade: proven
+  - id: OPS-18
+    claim: "Docker image CI pushes to git.integrolabs.net/roko/roko-node-testnet and roko-node-mainnet (internal Gitea registry) and mirrors to ghcr.io/roko-network/roko-node with tags like testnet-<version>-arm64; docs list public tags testnet-main-amd64 and testnet-main-arm64"
+    evidence: ".gitea/workflows/docker-build.yml lines 20-25, docker-build-arm64.yml lines 25-30, 341-347; docs/deployment-guide.md Pre-Built Images table lines 259-261"
+    grade: proven
+  - id: OPS-19
+    claim: "docker-compose.prod.yml runs a single production validator from ghcr.io/roko-network/roko-node:${IMAGE_TAG:-testnet-main-amd64} with a user-mounted chain spec, healthcheck on http://localhost:9944/health, 4 CPU / 4 GB limits — but ships with --rpc-methods Unsafe, --unsafe-rpc-external, and --timesync-no-enforce despite the 'production' label"
+    evidence: "docker-compose.prod.yml lines 44-88"
+    grade: proven
+  - id: OPS-20
+    claim: "The Docker node image (docker/testnet-node.Dockerfile) requires a locally pre-built binary, bundles a Node.js 20 admin dashboard, and exposes 30333 (P2P), 9944 (WS RPC), 9933 (HTTP RPC), 9615 (Prometheus), 3000 (admin dashboard); entrypoint runs the dashboard plus `roko-node --database auto --base-path /data`"
+    evidence: "docker/testnet-node.Dockerfile lines 4-9, 91-107; docker/entrypoint.sh lines 14-34"
+    grade: proven
+  - id: OPS-21
+    claim: "A pre-configured `roko-builder` container (Rust 1.80.0 + all Substrate deps) lets contributors build without local Rust: ghcr.io/roko-network/roko-builder:latest (documented as private) or git.integrolabs.net/roko/roko-builder:latest"
+    evidence: "docs/builder-guide.md lines 1-45; .gitea/workflows/docker-build.yml line 20 (BUILDER_IMAGE)"
+    grade: proven
+  - id: OPS-22
+    claim: "Production validator hardware requirements: minimum 4 CPU cores (8 recommended), 16 GB RAM (32 GB high-traffic), 500 GB SSD (1 TB recommended), 100 Mbps network"
+    evidence: "docs/deployment-guide.md Operational Notes, Production Requirements"
+    grade: likely
+  - id: OPS-23
+    claim: "PoAT classifies validators into time-quality tiers: Anchor (<1µs root distance, GNSS/PPS-disciplined clock), Standard (<10µs, NTP via chrony), Minimal (>10µs, system clock); a production network needs at least 2-3 anchor validators for BFT"
+    evidence: "docs/gnss-hardware-deployment-guide.md lines 7-15"
+    grade: likely
+  - id: OPS-24
+    claim: "Anchor validators need a GNSS receiver with PPS output (documented options: u-blox ZED-F9T ~$200-300, NEO-M8T ~$50-100, Trimble Thunderbolt E, BG7TBL GPSDO, Pi GPS HAT) wired to the kernel via serial DCD, GPIO (pps-gpio), or a PPS card, plus gpsd + chrony with refclock SHM+PPS; the node's auto time-source detector reads `chronyc -c tracking`, scans /dev/pps*, and checks `ethtool -T` for hardware timestamping"
+    evidence: "docs/gnss-hardware-deployment-guide.md lines 19-58, 120-260; auto-detection mode confirmed in node/cli/src/cli.rs lines 90-98"
+    grade: likely
+  - id: OPS-25
+    claim: "Testnet validators without GNSS hardware can run --timesync-time-source mock-anchor, which claims UtcSourceDirect with root_distance=0 bypassing all detection (development/testnet only); mock-anchor is implemented in code and the older --timesync-mock-anchor flag is deprecated"
+    evidence: "docs/gnss-hardware-deployment-guide.md Testnet Validator section; node/cli/src/service.rs lines 2648-2655"
+    grade: proven
+  - id: OPS-26
+    claim: "A real Raspberry Pi CM5 validator runs on the testnet using a u-blox GNSS module + Timebeat + chrony, with the node reading CLOCK_REALTIME (NTP-disciplined to ~5ms) rather than the PHC, because the PHC has no continuous UTC anchor and drifts; recovery and time-sync runbooks exist for it"
+    evidence: "docs/pi-validator-runbook.md lines 1-110"
+    grade: likely
+  - id: OPS-27
+    claim: "Adding a validator to the live testnet is sudo-gated: the documented registration flow requires the Alith sudo private key (ROKO_SUDO_KEY) to fund 200 ROKO via forceSetBalance, lock 50 ROKO into pwROKO, bond, set session keys, and signal staking.validate; active status takes effect next staking era (~5 minutes on testnet). A stranger cannot self-register as validator"
+    evidence: "docs/pi-validator-runbook.md Validator Registration section lines 165-186"
+    grade: likely
+  - id: OPS-28
+    claim: "A full monitoring stack ships in-repo: docker/monitoring/docker-compose.yml with Prometheus (9090), Grafana (3000, admin/admin), AlertManager (9093), Node Exporter (9100), plus a 920-line setup guide; node Prometheus metrics default to port 9615 and include timesync metrics (timesync_time_source_type, timesync_local_root_distance_nanoseconds, timesync_convergence_state)"
+    evidence: "docker/monitoring/ directory + QUICK-START.md; docs/monitoring-setup.md lines 1-80; docs/gnss-hardware-deployment-guide.md Prometheus Metrics table"
+    grade: proven
+  - id: OPS-29
+    claim: "Operational temporal RPCs used in runbooks (temporal_getMeshState for mesh convergence, plus system_health) are implemented in the node RPC crate"
+    evidence: "node/rpc/src/temporal.rs lines 156, 399; docs/pi-validator-runbook.md Verification section"
+    grade: proven
+  - id: OPS-30
+    claim: "What a stranger can actually do today from this repo: build the binary from source (full proven path), run a single dev node (`roko-node --dev --alice --database auto`), and run a 3-validator local time-mesh testnet (run-e2e-local.sh); they can pull the documented GHCR image and run a node, but cannot join the public testnet P2P network (no published bootnodes) and cannot become a testnet validator (sudo-gated)"
+    evidence: "Synthesis of: README.md Quick Start, run-e2e-local.sh, docker-compose.prod.yml, testnet-v3-chain-spec.json bootNodes:[], pi-validator-runbook registration"
+    grade: proven
+  - id: OPS-31
+    claim: "The GitHub e2e workflow is manual-only (workflow_dispatch with selectable test suite, default --foundation); the sidecar workflow is also workflow_dispatch-only"
+    evidence: ".github/workflows/e2e.yml lines 18-27; .github/workflows/sidecar.yml lines 17-20"
+    grade: proven
+  - id: DOC-01
+    claim: "docs/index.md is the docs landing page: describes Roko as Substrate+Frontier with PoAT, a four-layer architecture (libp2p / PTP+Squared time mesh / BABE+GRANDPA+PoAT / applications), and lists pre-PoAT components removed (external timestamp mock service, temporal signed-extension flow, separate temporal key registration). Last updated 2026-03-17 in the cohort-removal sweep."
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/index.md (whole file); git log: commit 9988689 2026-03-17"
+    grade: proven
+  - id: DOC-02
+    claim: "docs/SUMMARY.md defines the mdBook-style nav: Overview, MUST_READ temporal-recovery doc (annotated as superseded by commit f11f70d), Chain Evolution, Build & Run, Deployment Guide, Chain Spec, RPC Reference, 4 Temporal docs, pwROKO token, EC2 two-node deployment, Frontier Integration Impact."
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/SUMMARY.md lines 1-19"
+    grade: proven
+  - id: DOC-03
+    claim: "The chain is built on Polkadot SDK release-polkadot-v1.13.0 with Frontier from the ChainSupport fork on the same release branch."
+    evidence: "/Users/base/Roko-Network/code/roko_network/Cargo.toml lines 65-71 (branch = \"release-polkadot-v1.13.0\")"
+    grade: proven
+  - id: DOC-04
+    claim: "EVM Chain ID 442 is set in code for the testnet chain specs."
+    evidence: "node/cli/src/chain_spec/testnet.rs:385 (442u32), testnet_2val.rs:21, testnet_v2.rs:21 (const EVM_CHAIN_ID: u32 = 442)"
+    grade: proven
+  - id: DOC-05
+    claim: "CONTRADICTION with the 6s-block anchor: the compiled testnet runtime sets MILLISECS_PER_BLOCK = 2000 (2s blocks), with an in-code comment stating 'CLAUDE.md documents 6s blocks for testnet, but the development chain runs at 2s. For production testnet deployment, this should be set to 6000. (M-19)'. A unit test asserts the 2000ms value. README documents 6s testnet / 3s mainnet."
+    evidence: "runtime/testnet/src/constants.rs:54-57 + runtime/testnet/src/lib.rs:3434-3439; README.md line 143"
+    grade: proven
+  - id: DOC-06
+    claim: "Mainnet runtime block time is MILLISECS_PER_BLOCK = 3000 (3s), matching README's mainnet column; SLOT_DURATION equals block time in both runtimes and cannot be changed after chain start without bricking block production (per code comment)."
+    evidence: "runtime/mainnet/src/constants.rs:54-59; runtime/testnet/src/constants.rs:60-62"
+    grade: proven
+  - id: DOC-07
+    claim: "The node exposes 14 temporal_* RPC methods in code: getWatermarkInfo, getBlockMetadata, getBlocksMetadata, getConsensusTime, getTransactionTimestamp, getBlockTransactionTimestamps, getQueueStats, getTransactionWaitTime, getRecentWaitTimes, getValidatorTimeQuality, getMeshState, getCheckpoint, getViolations, getTemporalMetrics. docs/rpc-reference.md documents this surface and was updated 2026-03-17."
+    evidence: "node/rpc/src/temporal.rs lines 325-416 (#[method(name=...)]) ; docs/rpc-reference.md; git log commit 05ddbed 2026-03-17"
+    grade: proven
+  - id: DOC-08
+    claim: "temporal_getConsensusTime RPC exists in code as the consensus time oracle returning nanosecond consensus_time_ns."
+    evidence: "node/rpc/src/temporal.rs:38-48, 346-347"
+    grade: proven
+  - id: DOC-09
+    claim: "pwROKO precompile is at EVM address 0x...0500 in code (testnet runtime precompile set), matching docs/frontier-impact.md and README."
+    evidence: "runtime/testnet/src/precompiles.rs:39,68 (hash(0x500) -> PwRokoPrecompile); docs/frontier-impact.md line 30; README.md line 14"
+    grade: proven
+  - id: DOC-10
+    claim: "docs/frontier-impact.md (the key EVM-builder doc) states: Ethereum RPC surface unchanged on single port 9944; MetaMask works with no extra fields; EVM block.timestamp stays seconds-level (NOT nanosecond); temporal ordering is pool-level via TimestampingPool; fee-priority queue enabled by default gives higher-fee transactions earlier canonical timestamps; dapps needing nanosecond data must use temporal_* RPCs."
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/frontier-impact.md lines 5-60"
+    grade: proven
+  - id: DOC-11
+    claim: "STALE REFERENCE: docs/frontier-impact.md line 54 still says the node merges 'Substrate, Temporal, Cohort, and Ethereum RPCs', but the cohort system and all cohort_* RPCs were removed in commit f11f70d (grep finds zero cohort references in node/rpc/src/). The doc was last touched 2026-02-26, before the 2026-03-17 cohort-removal docs sweep, which missed it."
+    evidence: "docs/frontier-impact.md line 54 vs grep -rni cohort node/rpc/src/ (no matches); SECURITY_REVIEW.md lines 314-327; git log frontier-impact.md = 7da01bc 2026-02-26"
+    grade: proven
+  - id: DOC-12
+    claim: "Per-receipt inclusion enforcement exists in code: DEFAULT_INCLUSION_DEADLINE_NS = 15_000_000_000 (15 seconds) in the temporal-transactions pallet types, and temporal_block_import.rs validates inclusion deadlines at block import (consensus level). This matches README's '15-second deadline' claim and replaced the removed cohort system."
+    evidence: "runtime/pallets/temporal-transactions/src/types.rs:200,220; node/cli/src/service/temporal_block_import.rs:109-158,796; README.md line 12"
+    grade: proven
+  - id: DOC-13
+    claim: "docs/builder-guide.md (last updated 2026-01-20) documents the roko-builder Docker container: Rust 1.80.0, wasm32 target, GCC15 RocksDB fix (CXXFLAGS=-include cstdint), pull from ghcr.io/roko-network/roko-builder or git.integrolabs.net/roko/roko-builder, parallelism tuning (-j / CARGO_BUILD_JOBS), build times (~15-45 min), node image build via docker/node.Dockerfile, CI snippets for GitHub and Gitea Actions."
+    evidence: "/Users/base/Roko-Network/code/roko_network/docs/builder-guide.md (whole file); git log 3f6dc13 2026-01-20"
+    grade: proven
+  - id: DOC-14
+    claim: "docs/start-develop.md is a 12-line stub last touched 2024-12-19 ('update') that just links install-environment.md, build-node-local.md, build-node-docker.md, and run-testnet-node.md — the oldest, most skeletal page on the doc surface."
+    evidence: "docs/start-develop.md (12 lines); git log 7d72354 2024-12-19"
+    grade: proven
+  - id: DOC-15
+    claim: "docs/getting-started/build-run.md (updated 2026-02-26 'post-PoAT architecture') gives the canonical build commands: Rust 1.80.0 via rust-toolchain.toml, cargo build --release --features testnet -j2 (the -j2 flag prevents OOM under 32GB RAM), output binary target/release/substrate, dev node via --dev --alice --database auto, and 3-validator local testnet via ./run-e2e-local.sh --keep."
+    evidence: "docs/getting-started/build-run.md lines 1-30; README.md lines 20-67; git log 7da01bc 2026-02-26"
+    grade: proven
+  - id: DOC-16
+    claim: "There are exactly 5 ADRs, all Accepted, all build/CI-infrastructure scoped (none architectural): 001 Docker build isolation, 002 configurable build parallelism, 003 GCC15+ RocksDB fix, 004 multi-registry container publishing, 005 dedicated CI runner — dated 2026-01-18 to 2026-01-20. Consensus/temporal design decisions are NOT captured as ADRs in docs/adr/ (a separate ADR-002 on PTP-squared time sync lives in .aiwg/architecture/, referenced by HANDOFF.md)."
+    evidence: "docs/adr/README.md index table; ls docs/adr/; HANDOFF.md line 9"
+    grade: proven
+  - id: DOC-17
+    claim: "docs/proposals/ contains 4 US-government grant proposals (md + PDF pairs): DARPA MTO 'Distributed Temporal Consensus Layer for Micro-PNT Clock Ensembles' (BAA HR001124S0028), DARPA RoQS QSNCP, DHS S&T PNT 'Chronos Layer', DOT Complementary PNT — marketing/funding material, not protocol docs."
+    evidence: "ls docs/proposals/; docs/proposals/darpa-mto-dtcl.md lines 1-6"
+    grade: proven
+  - id: DOC-18
+    claim: "docs/research/ contains 3 items unsuitable for public technical docs as-is: plasmaformer-v0.2.md (a pasted Claude chat snapshot), roko-tokenomics-research-strategies.md (synthesized from HeyPocket voice conversations Jan-Apr 2026, named participants), and us-government-grant-opportunities-chronos-layer.md."
+    evidence: "docs/research/plasmaformer-v0.2.md lines 1-3; docs/research/roko-tokenomics-research-strategies.md lines 1-4"
+    grade: proven
+  - id: DOC-19
+    claim: "docs/sprint-plans/ holds Sprint 4 (Substrate-native explorer UI; states /api/v2/substrate/* + temporal API endpoints live with 4 active validators) and Sprint 5 (substrate extrinsic visibility / polkadot.js-Apps read parity; states Blockscout shows only EVM half and blocks show transactions_count 0 despite 4-6 substrate extrinsics). Sprint 5 was last touched 2026-05-18 with 'Phase 1' indexer work landing — the freshest doc surface in docs/."
+    evidence: "docs/sprint-plans/sprint-4-substrate-ui.md lines 1-15; sprint-5-substrate-extrinsic-visibility.md lines 1-18; git log 8e3fd0b 2026-05-18"
+    grade: proven
+  - id: DOC-20
+    claim: "dev_docs/ is internal agent-era working material: agent_tasks (develop.md, global_instructions.md), pwroko_token and staking_with_pwroko development plans with validate_*.sh scripts, rename_native_coin_roko plan/summary, and a dev_tree.json. Not public-doc grade."
+    evidence: "ls dev_docs/* output (agent_tasks, pwroko_token, staking_with_pwroko, rename_native_coin_roko)"
+    grade: proven
+  - id: DOC-21
+    claim: "docs/MUST_READ_temporal_recovery_proposer_alignment.md is explicitly marked OBSOLETE at the top: the cohort system it describes (CohortAwareProposer, cohort commitment/validation) was replaced by per-receipt inclusion enforcement in commit f11f70d. It documents the historical chain-stall root cause (three code paths taking different pool snapshots, stall at block 1658 on roko-testnetv2)."
+    evidence: "docs/MUST_READ_temporal_recovery_proposer_alignment.md lines 1-30"
+    grade: proven
+  - id: DOC-22
+    claim: "PRODUCTION_HARDENING.md (2026-02-26, branch time_consensus) documents a hardening pass: 4 panic-path expect() fixes in timesync_proof_provider, 2 unbounded canonical_timestamps HashMap memory leaks fixed (100K eviction cap), 8 log-level downgrades, and 5 explicitly-unaddressed items: CLI bounds validation, 60s-window-only replay protection, free-rider correlation analysis not implemented, pallet-timesync weights NOT benchmarked, no fuzz targets for SCALE decode paths."
+    evidence: "/Users/base/Roko-Network/code/roko_network/PRODUCTION_HARDENING.md lines 1-12, 250-257"
+    grade: proven
+  - id: DOC-23
+    claim: "SECURITY_REVIEW.md (2026-02-26, OWASP-framed, + 2026-03-10 addendum) reports 7 code-fixed and 9 design-level findings. Outstanding production blockers it names: no authentication on roko-admin API (H-4, SECURITY TODO only), hardcoded Alith dev private key fallback in roko-admin (H-3, warning only), wallet mnemonics in plaintext localStorage (M-3). It also records 10 positive security patterns (DenyUnsafe on sensitive RPCs, timesync rate limiting, AnnounceV4-only signed announces with 60s replay protection, earliest-wins canonical timestamps)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/SECURITY_REVIEW.md lines 10-19, 107-143, 182-195, 331-362"
+    grade: proven
+  - id: DOC-24
+    claim: "CODE_QUALITY_REVIEW.md (2026-02-26) scores the codebase 7/10; unfixed issues include file-level #![allow(unused_imports/unused_variables)] in node/cli/src/service.rs, hardcoded gas costs and NON-STANDARD sequential precompile selectors ([0x00,0x00,0x00,0x01]-style, not keccak256 ABI) in the staking precompile — documented as 'Breaks standard EVM tooling', TODO for mainnet — plus 65+ TypeScript `any` types and French comments in staking_precompile.rs."
+    evidence: "/Users/base/Roko-Network/code/roko_network/CODE_QUALITY_REVIEW.md lines 93-133, 150-156"
+    grade: proven
+  - id: DOC-25
+    claim: "docs/tokens/pwroko.md (last touched 2026-01-08, the stalest token doc) documents the pwROKO pallet: lock/unlock_request/unlock_finalize with cooloff, ERC20-like transfer/approve/transfer_from, governance-adjustable CurrentCooloffPeriod — and itself flags that the testnet cooloff is a placeholder 10 blocks in code while comments describe a 14-day target."
+    evidence: "docs/tokens/pwroko.md lines 1-25; git log 98f6eff 2026-01-08"
+    grade: proven
+  - id: DOC-26
+    claim: "README.md (updated 2026-03-17) is the most complete single-page public summary: PoAT key features, fee-priority temporal ordering pipeline (6-step walkthrough), directory structure, network config table (testnet 6s / mainnet 3s / Chain ID 442 / pwROKO testnet staking vs native ROKO mainnet staking), and 8 timesync CLI flags (--timesync-time-source, --timesync-probe-interval-ms, --timesync-no-enforce, --timesync-strict, --timesync-min-sources, --timesync-convergence-threshold-ns, --timesync-rate-limit, --no-fee-priority-queue)."
+    evidence: "/Users/base/Roko-Network/code/roko_network/README.md lines 1-160"
+    grade: proven
+  - id: DOC-27
+    claim: "README credits 'PTP+Squared algorithms by Lasse Limkilde Johnsen (September 2021 Technical Preview)' and the time mesh runs natively over libp2p protocol /roko/timesync/1."
+    evidence: "README.md lines 80-83, 179; docs/index.md line 22"
+    grade: proven
+  - id: DOC-28
+    claim: "HANDOFF.md is a mechanically generated session-end snapshot (2026-05-28) — not documentation. It flags '1354 uncommitted file(s)' at generation time and points to pi-validator-runbook.md / pi-validator-timing-fix.md and a Timebeat install path as active work; it references commit 5f20359 (timesync asymmetry-blindness analysis) which is not the current HEAD (fc397aa, 2026-05-24), so it was generated from a different branch/worktree state."
+    evidence: "/Users/base/Roko-Network/code/roko_network/HANDOFF.md lines 1-29; git log -1 = fc397aa 2026-05-24; current git status --porcelain = 15 files"
+    grade: proven
+  - id: DOC-29
+    claim: "docs/chain-evolution.md (updated 2026-03-17) is the historical narrative: standard Substrate+Frontier v1.13.0 baseline, fork work starting 2025-03-05 (commit 728d2fc), ROKO rename b251da0 (2025-05-01), chain ID 442 in d5d3117, pwROKO in fe1cc0c/38ab3cd, then staking and PoAT phases — with representative commit hashes per phase, useful for a public 'how we got here' page."
+    evidence: "docs/chain-evolution.md lines 1-40; git log 05ddbed 2026-03-17"
+    grade: proven
+  - id: DOC-30
+    claim: "The four docs/temporal/ pages cover the post-PoAT model: temporal-transactions.md (what a temporal tx is), temporal-keys-and-self-attestation.md (unified validator identity, temporal ECDSA keys derived from same seed as BABE/GRANDPA), block-temporal-metadata.md (TemporalBlockMetadata structure incl. tx_timestamps), wallet-integration.md ('Post-PoAT Simplification' — no wallet changes needed). temporal-transactions.md still contains at least one cohort reference (grep hit)."
+    evidence: "docs/temporal/* heads; docs/index.md lines 30-32; grep -rni cohort docs/ -l includes docs/temporal/temporal-transactions.md"
+    grade: proven
+  - id: DOC-31
+    claim: "Six docs still contain 'cohort' references after the removal sweep: SUMMARY.md (annotated, intentional), MUST_READ (marked OBSOLETE, intentional), frontier-impact.md (unintentional stale), chain-evolution.md, temporal/temporal-transactions.md, strategy/roko-network-value-proposition.md, plus research/us-government-grant doc — a KB rewrite must scrub or annotate each."
+    evidence: "grep -rni cohort docs/ --include=*.md -l output (7 files)"
+    grade: proven
+  - id: DOC-32
+    claim: "Latest commit on the checked-out branch is fc397aa 'ci: publish github releases via rest api' (2026-05-24); the last 8 commits are all CI/release-pipeline work (GHCR auth, release packaging, concurrency), indicating current engineering focus is release/distribution infrastructure rather than protocol changes."
+    evidence: "git log --oneline -8; git log -1 --format output"
+    grade: proven
+  - id: DOC-33
+    claim: "docs also include operational guides outside SUMMARY.md nav: deployment-guide.md, docker-aws-deployment.md, gnss-hardware-deployment-guide.md, pi-validator-runbook.md + pi-validator-timing-fix.md (Raspberry Pi validator + GNSS timing), monitoring-setup.md, ci-sync-setup.md, run-mainnet-node.md, run-testnet-node.md, runbooks/sidecar-go-live.md (TICKET-20, explorer indexer go-live), and a roko-network-technical-crash-course.html — several are unlinked from SUMMARY.md."
+    evidence: "ls docs/ output vs docs/SUMMARY.md contents"
+    grade: proven
+  - id: DOC-34
+    claim: "The fee-priority queue is enabled by default and stamps pending transactions in descending fee order on a 100ms tick; it can be disabled with --no-fee-priority-queue (stamp immediately on submit)."
+    evidence: "README.md lines 119-125, 160; docs/frontier-impact.md line 16"
+    grade: likely
+  - id: DOC-35
+    claim: "Mainnet EVM Chain ID is listed as 'TBD' in README's network table — only testnet 442 is pinned; public docs should not promise a mainnet chain ID."
+    evidence: "README.md line 144"
+    grade: proven
