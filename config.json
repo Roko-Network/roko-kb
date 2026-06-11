@@ -1,6 +1,6 @@
 {
   "title": "ROKO Network Documentation",
-  "description": "The Temporal Layer for Web3 - nanosecond precision blockchain with OCP-TAP compliance and IEEE 1588 PTP synchronization.",
+  "description": "ROKO Network documentation \u2014 an EVM Layer 1 with Proof of Accurate Time (PoAT): nanosecond-resolution consensus timestamps, temporal receipts with inclusion enforcement, and an on-chain consensus time oracle.",
   "brandMark": "ROKO",
   "brandSub": "Network",
   "tagline": "The Temporal Layer for Web3",
