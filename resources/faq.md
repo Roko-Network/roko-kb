@@ -71,7 +71,13 @@ No. ROKO never conducted a token raise of any kind — no ICO, no token sale, no
 
 ### Where is the DAO treasury?
 
-On-chain and publicly verifiable. The DAO treasury holds its assets at [`0xc987AAa4edE4aB964883c5a768E57199643A593E`](https://etherscan.io/address/0xc987aaa4ede4ab964883c5a768e57199643a593e), and a DAO treasury multisig sits at [`0x1264aDFD955C353AFf6E267Df61f96973eC9BC65`](https://etherscan.io/address/0x1264adfd955c353aff6e267df61f96973ec9bc65). Both are verifiable on Etherscan. <!-- fact:OPR-02,OPR-03 -->
+On-chain and publicly verifiable. The DAO treasury holds its assets at [`0xc987AAa4edE4aB964883c5a768E57199643A593E`](https://etherscan.io/address/0xc987aaa4ede4ab964883c5a768e57199643a593e), and three DAO treasury multisigs hold further DAO assets: <!-- fact:OPR-02,OPR-03,OPR-04,OPR-05 -->
+
+- [`0x1264aDFD955C353AFf6E267Df61f96973eC9BC65`](https://etherscan.io/address/0x1264adfd955c353aff6e267df61f96973ec9bc65)
+- [`0x71C5957b5998D9fF8eeB757C5F42AB8566e90075`](https://etherscan.io/address/0x71c5957b5998d9ff8eeb757c5f42ab8566e90075)
+- [`0x560F45677c2Ddd24108BF23B950f1651E437194A`](https://etherscan.io/address/0x560F45677c2Ddd24108BF23B950f1651E437194A)
+
+All four are verifiable on Etherscan.
 
 ### How do I stay updated?
 

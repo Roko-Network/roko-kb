@@ -821,3 +821,11 @@ facts:
     claim: "A DAO treasury multisig exists at Ethereum address 0x1264aDFD955C353AFf6E267Df61f96973eC9BC65; its assets also belong to the DAO (publicly verifiable on Etherscan)."
     evidence: "Operator (founder) attestation, 2026-06-11; on-chain at https://etherscan.io/address/0x1264adfd955c353aff6e267df61f96973ec9bc65"
     grade: proven
+  - id: OPR-04
+    claim: "A second ROKO DAO treasury multisig exists at Ethereum address 0x71C5957b5998D9fF8eeB757C5F42AB8566e90075; its assets belong to the DAO (publicly verifiable on Etherscan)."
+    evidence: "Operator (founder) attestation, 2026-06-11; on-chain at https://etherscan.io/address/0x71c5957b5998d9ff8eeb757c5f42ab8566e90075"
+    grade: proven
+  - id: OPR-05
+    claim: "A third ROKO DAO treasury multisig exists at Ethereum address 0x560F45677c2Ddd24108BF23B950f1651E437194A; its assets belong to the DAO (publicly verifiable on Etherscan)."
+    evidence: "Operator (founder) attestation, 2026-06-11; on-chain at https://etherscan.io/address/0x560F45677c2Ddd24108BF23B950f1651E437194A"
+    grade: proven
