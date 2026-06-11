@@ -1,4 +1,4 @@
-# Time Beacons
+# From Time Beacons to the Time Mesh
 
 > **Heritage note.** Earlier Roko designs described dedicated hardware "time beacon" nodes broadcasting signed timestamps, with beacon proofs embedded in blocks. That design — along with the cohort-commitment pipeline — has been retired. In the current architecture, **every validator is a time source**, the validator time mesh plays the role the beacon network once did, and inclusion guarantees come from per-receipt enforcement. This page documents what runs today. <!-- fact:CC-29 -->
 

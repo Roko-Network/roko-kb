@@ -19,7 +19,7 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 │   ├── OCP-TAP and Open Time Hardware
 │   ├── IEEE 1588 PTP
 │   ├── Hardware Timestamping
-│   ├── Time Beacons (heritage + current time-source tiers)
+│   ├── From Time Beacons to the Time Mesh (heritage → current architecture)
 │   ├── Consensus (BABE/GRANDPA + PoAT)
 │   ├── Temporal Transactions
 │   ├── Transaction Ordering & Censorship Resistance
