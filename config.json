@@ -5,8 +5,6 @@
   "brandSub": "Network",
   "tagline": "The Temporal Layer for Web3",
   "copyright": "Roko Network",
-  "accentColor": "#6366F1",
-  "surfaceColor": "#F7FAFC",
   "export": {
     "logo": "embed",
     "logoPath": "favicon.png",
@@ -23,5 +21,28 @@
     "structuredData": {
       "organizationName": "ROKO Network"
     }
-  }
+  },
+  "theme": {
+    "colorScheme": "dark",
+    "surface": "#000000",
+    "ink": "#ffffff",
+    "muted": "#BAC0CC",
+    "accent": "#00d4aa",
+    "gridLine": "rgba(186, 192, 204, 0.10)",
+    "highlightBg": "rgba(0, 212, 170, 0.15)",
+    "highlightBorder": "rgba(0, 212, 170, 0.40)",
+    "codeBackground": "rgba(255, 255, 255, 0.05)",
+    "codeBorder": "rgba(0, 212, 170, 0.15)",
+    "hoverBackground": "rgba(0, 212, 170, 0.07)",
+    "activeBackground": "rgba(0, 212, 170, 0.12)",
+    "inputBackground": "rgba(255, 255, 255, 0.03)",
+    "tableHeaderBg": "rgba(186, 192, 204, 0.08)",
+    "tableBorder": "rgba(186, 192, 204, 0.15)",
+    "blockquoteBorder": "rgba(0, 212, 170, 0.35)",
+    "sidebarBg": "#0a0a0e",
+    "modalBg": "#101014",
+    "modalBorder": "#333a44"
+  },
+  "fontBody": "'HK Guise', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  "fontMono": "'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace"
 }
