@@ -29,3 +29,7 @@ Public documentation for **docs.roko.network** — GitBook-style markdown, no bu
 ## Maintaining the registry
 
 `_facts/facts.yaml` is generated from the docs-parity capability extraction (capability map lives outside this repo). Never hand-edit claims without verifying evidence in the node repo first; record corrections in the evidence field.
+
+## Fonts & style override (maintenance note)
+
+`overrides/styles.css` is the engine's `src/styles.css` with brand `@font-face` rules prepended (Rajdhani + JetBrains Mono, self-hosted woff2 in `overrides/fonts/`, both SIL OFL — see fonts/LICENSES.txt) and a heading-typography rule appended. **On Pagenary upgrades, regenerate this file from the new `src/styles.css`** (the engine has no custom-CSS hook yet — feature request candidate). Theme colors from config.json apply AFTER overrides, so the override never needs theme values baked in. HK Guise and Aeonik are commercially licensed — never ship their files.
