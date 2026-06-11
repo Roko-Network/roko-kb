@@ -2104,3 +2104,27 @@ html.light ::selection { background: rgba(0, 128, 107, 0.25); }
 
 /* ── Theme toggle uses the ghost-button chrome; notched per brand motif ── */
 .roko-theme-toggle { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
+
+
+/* ── Syntax highlighting on-palette (engine ships GitHub-light greens/reds) ──
+   Strings take the brand teal (replacing GitHub green); numbers go hover-cyan;
+   keywords/structure in blue-grays; warnings/errors from the token system. */
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: #5A6170; }
+.token.punctuation { color: #BCC1D1; }
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: #00d4aa; }
+.token.boolean, .token.number { color: #00ffcc; }
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string { color: #BCC1D1; }
+.token.atrule, .token.attr-value, .token.keyword { color: #BAC0CC; font-weight: 600; }
+.token.property, .token.tag, .token.constant, .token.symbol { color: #D9DBE3; }
+.token.deleted { color: #ef4444; }
+.token.function, .token.class-name { color: #D9DBE3; font-weight: 500; }
+.token.regex, .token.important, .token.variable { color: #f59e0b; }
+
+html.light .token.comment, html.light .token.prolog, html.light .token.doctype, html.light .token.cdata { color: #6b7280; }
+html.light .token.punctuation { color: #4A5160; }
+html.light .token.selector, html.light .token.attr-name, html.light .token.string, html.light .token.char, html.light .token.builtin, html.light .token.inserted { color: #00806B; }
+html.light .token.boolean, html.light .token.number { color: #0e7490; }
+html.light .token.operator, html.light .token.entity, html.light .token.url { color: #4A5160; }
+html.light .token.atrule, html.light .token.attr-value, html.light .token.keyword { color: #181818; font-weight: 600; }
+html.light .token.property, html.light .token.tag, html.light .token.constant, html.light .token.symbol { color: #3a4358; }
+html.light .token.function, html.light .token.class-name { color: #3a4358; font-weight: 500; }
