@@ -25,7 +25,7 @@ Testnet ROKO is distributed through a faucet in the network's admin service: def
 
 ## 3. Watch your transactions
 
-A Blockscout-based block explorer (with a Substrate sidecar API) is documented at `https://roko-explorer.ntfork.com`, backed by the testnet-v2 archive endpoint. <!-- fact:OPS-14 -->
+A Blockscout-based block explorer (with a Substrate sidecar API) runs against the testnet; its public endpoint will be announced at launch. <!-- fact:OPS-14 -->
 
 For temporal data the explorer doesn't show, query the node directly — `temporal_getTransactionTimestamp` accepts either a Substrate extrinsic hash or a native Ethereum transaction hash. <!-- fact:EVM-10 -->
 

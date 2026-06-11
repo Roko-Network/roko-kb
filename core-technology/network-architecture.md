@@ -53,7 +53,7 @@ MetaMask connects with RPC URL `http://<host>:9944`, Chain ID 442, currency ROKO
 
 ## Testnet topology, honestly
 
-The deployment guide documents the live testnet endpoints as `wss://roko-testnetv2.ntfork.com` (AWS eu-north-1), running two genesis validators on one EC2 instance, with a Blockscout-based explorer documented at `https://roko-explorer.ntfork.com`. <!-- fact:OPS-12,OPS-13,OPS-14 -->
+The deployment guide documents the live testnet endpoints as `wss://roko-testnetv2.ntfork.com` (AWS eu-north-1), running two genesis validators on one EC2 instance, with a Blockscout-based explorer (public endpoint to be announced at launch). <!-- fact:OPS-12,OPS-13,OPS-14 -->
 
 Two dev-stage caveats a builder should know:
 
