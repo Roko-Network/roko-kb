@@ -3,18 +3,24 @@
   "summary": "Development meeting logs from June 2026",
   "sections": [
     {
-      "id": "2026-06-04",
-      "title": "June 4, 2026",
-      "file": "2026-06-04.md"
+      "id": "2026-06-monthly",
+      "title": "June 2026 Monthly Summary",
+      "file": "2026-06-monthly.md"
     },
     {
       "id": "2026-06-11",
       "title": "June 11, 2026",
       "file": "2026-06-11.md"
+    },
+    {
+      "id": "2026-06-04",
+      "title": "June 4, 2026",
+      "file": "2026-06-04.md"
     }
   ],
   "order": [
-    "2026-06-04",
-    "2026-06-11"
+    "2026-06-monthly",
+    "2026-06-11",
+    "2026-06-04"
   ]
 }
