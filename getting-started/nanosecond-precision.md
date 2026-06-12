@@ -1,303 +1,48 @@
-# Why Nanosecond Precision Matters
+# Nanosecond Precision: Resolution vs. Accuracy
 
-## The Hidden Cost of Imprecise Time
+ROKO's temporal layer works in nanoseconds. Before you build on that, you should understand exactly what is guaranteed — and what isn't. This page draws the line explicitly, because the distinction is where trust comes from.
 
-In our interconnected digital world, **time is everything**. Yet most blockchain and distributed systems treat time as an afterthought, operating with precision measured in seconds or, at best, milliseconds. This seemingly small detail has massive implications.
+## Two different claims
 
-## Understanding Time Scales
+- **Resolution** is how finely a timestamp is *represented*: how many distinguishable values the format can hold.
+- **Accuracy** is how close a timestamp is to *true UTC time*.
 
-### The Nanosecond Reality
+A clock can have nanosecond resolution and millisecond accuracy. They are independent properties, and conflating them is how timing systems oversell themselves.
 
-To understand why nanosecond precision matters, let's put it in perspective:
+## What ROKO ships today: nanosecond resolution
 
-- **1 second** = 1,000,000,000 nanoseconds
-- **1 millisecond** = 1,000,000 nanoseconds  
-- **1 microsecond** = 1,000 nanoseconds
-- **1 nanosecond** = Time for light to travel 30 cm
+Temporal timestamps on ROKO are `u128` nanosecond values — the **NanoMoment** type. The temporal-transactions pallet enforces per-block temporal ordering on these values at block finalization and maintains a monotonic transaction watermark. <!-- fact:CC-18 -->
 
-In the time it takes Bitcoin to confirm one block (~10 minutes), there are **600 billion nanoseconds** of potential precision lost.
+That resolution is real and surfaces everywhere a builder touches time:
 
-### What Happens in One Nanosecond?
+- `temporal_getConsensusTime` returns `consensusTimeNs` as a u128 string (nanoseconds since the UNIX epoch), alongside a time-quality score, convergence state, peer count, and the signed consensus offset. <!-- fact:EVM-09 -->
+- The temporal precompile at `0x...0600` exposes `getConsensusTime()`, `getMyTimestamp()`, `getTransactionTimestamp(bytes32)`, `getWatermark()`, and `getBlockTimestamp(uint64)` — all returning `uint128` nanosecond values to Solidity. <!-- fact:CC-23,EVM-17 -->
+- Every transaction's canonical timestamp is a nanosecond value assigned at pool receipt. <!-- fact:CC-19 -->
 
-- A modern CPU executes ~4 instructions
-- Light travels 30 centimeters
-- High-frequency trading algorithms make decisions
-- Network packets traverse datacenter switches
-
-## Real-World Impact
+Nanosecond resolution buys you something concrete even before any accuracy claim: **unambiguous ordering**. Two transactions assigned distinct canonical timestamps have a total order the runtime enforces; there is no "same second, who knows" ambiguity. <!-- fact:CC-18 -->
 
-### Financial Markets
-
-In high-frequency trading, **microseconds mean millions**:
+## What ROKO does not claim: shipped sub-100ns accuracy
 
-```javascript
-// Traditional blockchain (1-second precision)
-Trade A: Timestamp: 1704067200 (Jan 1, 2024, 12:00:00)
-Trade B: Timestamp: 1704067200 (Jan 1, 2024, 12:00:00)
-// Which came first? Impossible to tell!
+You may find older material describing "sub-100 nanosecond accuracy" as a network property. **That is not a shipped, proven guarantee, and we don't claim it.** What the network actually does about accuracy is more interesting, because it is measurable:
 
-// ROKO Network (nanosecond precision)
-Trade A: Timestamp: 1704067200123456789n
-Trade B: Timestamp: 1704067200123456790n  
-// Trade A clearly came first by 1 nanosecond
-```
+- **Accuracy is measured per validator, not assumed.** Each validator self-classifies its time source — Timebeat PTP daemon, chrony (NTP), or GNSS/PPS hardware with NIC hardware timestamping — and reports a measured root-distance-to-UTC in nanoseconds. GNSS/PPS hardware yields the Anchor tier; software-disciplined clocks yield Standard or Minimal (a system-clock-only mode assumes a 10 ms root distance). <!-- fact:CC-16 -->
+- **Time quality is scored on-chain.** The timesync pallet stores per-validator and per-block time quality as a fixed-point score (0–10,000) and records health checkpoints every 100 blocks. You can inspect it rather than take our word. <!-- fact:CC-14 -->
+- **Convergence is reported honestly.** The consensus-time RPC tells you whether the mesh is `Initializing`, `Converging`, `Converged`, or `Degraded` — accuracy state is part of the API, not a marketing constant. <!-- fact:EVM-09 -->
 
-**Real Impact**: 
-- NYSE processes ~1 million trades per second
-- Average HFT firm response time: 10 microseconds
-- Potential arbitrage window: 1-100 microseconds
-- **Cost of imprecision**: $100M+ in MEV annually
-
-### Distributed Systems
+So the honest statement is: **timestamps have nanosecond resolution; accuracy is whatever the mesh measures it to be, per validator, and the network exposes that measurement.** As more Anchor-tier (GNSS-disciplined) validators join, measured accuracy improves — and you can watch it happen via `temporal_getValidatorTimeQuality` and `temporal_getMeshState`. <!-- fact:CC-20 -->
 
-#### Database Consistency
-```sql
--- Problem: Concurrent updates with millisecond timestamps
-UPDATE accounts SET balance = 1000 WHERE id = 1;
--- Timestamp: 2024-01-01 12:00:00.500
+### Testnet caveat
 
-UPDATE accounts SET balance = 2000 WHERE id = 1;  
--- Timestamp: 2024-01-01 12:00:00.500
+On the current testnet, validators may run in `mock-anchor` mode, which claims a perfect time source for development purposes. Treat testnet time-quality figures as plumbing verification, not as accuracy benchmarks. <!-- fact:OPS-25 -->
 
--- Which update wins? Last-write-wins is ambiguous!
-```
-
-With nanosecond precision:
-```sql
--- ROKO Temporal Database
-UPDATE WITH TEMPORAL ORDERING
-  SET balance = 1000 
-  AT NANOMOMENT 1704067200500000001;
-
-UPDATE WITH TEMPORAL ORDERING
-  SET balance = 2000
-  AT NANOMOMENT 1704067200500000789;
-  
--- Clear ordering: second update wins by 788 nanoseconds
-```
-
-### Gaming & Virtual Worlds
-
-**Frame-Perfect Synchronization**:
-- Game runs at 144 FPS = 6.94ms per frame
-- Network latency variation: 1-5ms
-- Input processing: 100-500 microseconds
-
-Without nanosecond precision:
-```javascript
-// Player A and B shoot simultaneously
-// Traditional: Both timestamps show "same millisecond"
-// Result: Random winner or trade kills
-
-// With ROKO nanosecond precision:
-playerA.shoot() // 1704067200500123456n
-playerB.shoot() // 1704067200500123789n
-// Player A shot first by 333 nanoseconds - clear winner
-```
-
-### IoT and Edge Computing
-
-**Sensor Fusion Requirements**:
-```python
-# Autonomous vehicle sensor correlation
-lidar_reading = {
-    'timestamp': '2024-01-01T12:00:00.5000000',  # Millisecond
-    'distance': 10.5
-}
-
-camera_reading = {
-    'timestamp': '2024-01-01T12:00:00.5000000',  # Same millisecond
-    'object': 'pedestrian'
-}
-
-# Problem: Which reading came first? 
-# Are they the same object?
-# Sensor fusion fails!
-
-# With nanosecond precision:
-lidar_reading = {
-    'nano_time': 1704067200500000123,
-    'distance': 10.5
-}
-
-camera_reading = {
-    'nano_time': 1704067200500000456,  # 333ns later
-    'object': 'pedestrian'  
-}
-
-# Clear temporal correlation for accurate fusion
-```
-
-## The Cascade Effect
-
-### MEV (Maximal Extractable Value) Prevention
-
-Traditional blockchains suffer from ~$1 billion in annual MEV extraction:
-
-```solidity
-// Traditional Blockchain
-// Validator can reorder these for profit:
-Transaction 1: Buy TOKEN at $100
-Transaction 2: Large buy order (price impact)
-Transaction 3: Sell TOKEN at $110
-
-// ROKO with nanosecond ordering
-// Transactions ordered by hardware timestamp:
-Tx1: NanoMoment(1704067200500000001) // First
-Tx2: NanoMoment(1704067200500000456) // Second  
-Tx3: NanoMoment(1704067200500000789) // Third
-// Immutable ordering - no MEV possible
-```
-
-### Regulatory Compliance
-
-Financial regulators don't care about your decentralization story. MiFID II requires microsecond accuracy. CAT wants 50 microseconds. GDPR demands provable event ordering. Traditional blockchains can't comply. ROKO exceeds every requirement.
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Regulation</th><th>Time Requirement</th><th>Traditional Blockchain</th><th>ROKO Network</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>MiFID II</strong></td><td>Microsecond accuracy</td><td>Cannot comply</td><td>Exceeds requirement</td></tr>
-    <tr><td><strong>CAT</strong></td><td>50 microseconds</td><td>Cannot comply</td><td>Full compliance</td></tr>
-    <tr><td><strong>GDPR Event Ordering</strong></td><td>Precise sequence</td><td>Best effort</td><td>Cryptographic proof</td></tr>
-  </tbody>
-</table>
-```
-
-## Scientific and Research Applications
-
-### Distributed Experiments
-```python
-# Large Hadron Collider data correlation
-# 40 million collisions per second
-# Each collision = 25 nanoseconds apart
-
-# Traditional blockchain: Useless for correlation
-# ROKO Network: Perfect temporal alignment
-
-collision_event = {
-    'nano_moment': 1704067200500000000,
-    'energy': '13 TeV',
-    'particles_detected': 1847,
-    'hardware_attestation': proof
-}
-```
-
-### Climate Modeling
-- Weather stations report every second
-- 10,000 stations = 10,000 readings/second
-- Correlation window: microseconds
-- **Impact**: Better prediction accuracy
-
-## The Competitive Advantage
-
-### For Developers
-```javascript
-// Build impossible-before applications
-const fairAuction = new TemporalAuction({
-    precision: 'nanosecond',
-    ordering: 'strict-temporal',
-    mev_protection: true
-});
-
-// Guaranteed fair ordering of bids
-fairAuction.on('bid', (bid) => {
-    // Processed in exact nanosecond order
-    // No front-running possible
-});
-```
-
-### For Enterprises
-- **Compliance**: Meet strictest regulatory requirements
-- **Efficiency**: Eliminate reconciliation overhead
-- **Trust**: Cryptographic proof of event ordering
-- **Innovation**: Enable new business models
-
-### For Users
-- **Fairness**: First-come, first-served guarantee
-- **Transparency**: Verifiable temporal ordering
-- **Security**: Protection from timing attacks
-- **Performance**: Optimal transaction processing
-
-## Why Not Microseconds?
-
-You might ask: "Isn't microsecond precision enough?"
-
-**The answer is no**, for several reasons:
-
-1. **Future-Proofing**: Computing speeds double every 18 months
-2. **Quantum Computing**: Operations in nanoseconds
-3. **Optical Networks**: Speed of light latency
-4. **Precision Margin**: Better to have excess than shortage
-
-## The Mathematics of Time
-
-### Precision vs. Accuracy
-- **Precision**: How many decimal places
-- **Accuracy**: How close to true time
-
-ROKO provides both:
-- **Precision**: 1 nanosecond (10^-9 seconds)
-- **Accuracy**: <100 nanoseconds to UTC
-
-### Time Synchronization
-```
-Traditional NTP: ±10 milliseconds
-PTP (IEEE 1588): ±1 microsecond  
-ROKO + OCP TAP: ±100 nanoseconds
-GPS Atomic Clock: ±30 nanoseconds
-```
-
-## Enabling New Paradigms
-
-### Temporal Smart Contracts
-```solidity
-contract NanoAuction {
-    mapping(uint128 => Bid) public bidsByNanoTime;
-    
-    function placeBid(uint256 amount) external {
-        uint128 nanoTime = Time.getNanoMoment();
-        
-        // Bid placed at exact nanosecond
-        bidsByNanoTime[nanoTime] = Bid({
-            bidder: msg.sender,
-            amount: amount,
-            timestamp: nanoTime
-        });
-        
-        // Winner determined by temporal ordering
-        // Not by block inclusion or validator preference
-    }
-}
-```
-
-### Distributed Consensus
-- Byzantine fault tolerance with temporal bounds
-- Instant finality with time proofs
-- Fork resolution via temporal precedence
-
-## The Bottom Line
-
-**Nanosecond precision isn't just an incremental improvement—it's a paradigm shift.**
-
-It enables:
-- ✅ True fairness in decentralized systems
-- ✅ Regulatory compliance for financial applications  
-- ✅ New categories of time-sensitive applications
-- ✅ Prevention of timing-based attacks and MEV
-- ✅ Scientific-grade data correlation
-- ✅ Future-proof infrastructure
-
-Without nanosecond precision, blockchain remains a technology of compromises. With it, we unlock the full potential of decentralized systems.
-
----
-
-> **Remember**: In the digital age, time isn't just money—it's trust, fairness, and possibility. ROKO Network makes every nanosecond count.
-
-## Next Steps
-
-Ready to build with nanosecond precision?
-
-- [Understanding NanoMoments →](../core-technology/nanomoment.md)
+What you'll actually see querying the live testnet today: a small mesh (~3 peers), possibly `mock-anchor`, with `consensusOffsetNs` at 0. That's the plumbing under test — not an accuracy claim. Anchor-tier physics arrives as GNSS-disciplined validators join the mesh. <!-- fact:OPS-25 -->
+
+## One more honest boundary: the EVM clock
+
+`block.timestamp` in your Solidity contracts remains the standard seconds-level value. Nanosecond time is exposed *additively* through the `temporal_*` RPC namespace and the `0x...0600` precompile — the Ethereum JSON-RPC schema is unchanged. If your contract needs nanosecond time, call the precompile; don't expect `block.timestamp` to change meaning. <!-- fact:EVM-25 -->
+
+## Why the distinction builds trust
+
+Any system can print 19 digits. The question that matters is what stands behind them. ROKO's answer: a peer-measured time mesh, per-validator quality scores on-chain, self-classified hardware tiers with measured root distance, and APIs that report convergence state — verifiable machinery instead of a brochure number. When we do publish accuracy figures, they will come from that machinery. <!-- fact:CC-13,CC-14 -->
+
+**Next:** [Join the Testnet](./join-testnet.md) and read consensus time yourself.

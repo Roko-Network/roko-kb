@@ -1,450 +1,65 @@
-# MEV Prevention
+# Transaction Ordering & Censorship Resistance
 
-## Temporal Ordering Removes Reordering
+Roko's answer to ordering manipulation is not a vague resistance slogan — it is two concrete, verifiable mechanisms: a **deterministic fee-priority ordering rule** that takes transaction ordering out of the block producer's hands, and **per-receipt inclusion enforcement** that makes silent censorship provable. Both are live in the node today, and you can audit both over RPC. <!-- fact:CC-19,CC-17 -->
 
-MEV exists because block producers choose transaction order. ROKO removes that choice. Transactions execute in the order they were signed, proven by time beacons. The arbitrage window closes.
+## How ordering works
 
-## Understanding MEV
+Every transaction — Substrate or Ethereum-format — receives a **canonical nanosecond timestamp** at pool admission. Ethereum wallets need no extra fields; the timestamping happens server-side in the pool. <!-- fact:EVM-31 -->
 
-$1 billion annually. That's what gets extracted from users on major chains through:
-- Reordering transactions for profit
-- Front-running user transactions
-- Sandwich attacks
-- Arbitrage racing
+Timestamps are assigned by a fee-priority queue, enabled by default: a background task runs on a 100 ms tick and stamps pending transactions in descending fee order, so **a higher fee earns an earlier canonical timestamp**. The rule is fixed at the protocol level. Operators can disable it with `--no-fee-priority-queue` (transactions are then stamped immediately on arrival). <!-- fact:EVM-12,CC-19,DOC-34 -->
 
-The validators aren't broken. They're working exactly as designed. The design is the problem.
+The canonical timestamp is then enforced, not advisory: the temporal-transactions pallet checks per-block temporal ordering at `on_finalize` and maintains a monotonic transaction watermark across blocks. <!-- fact:CC-18 -->
 
----
+What this changes versus a conventional chain: ordering is decided by a **deterministic, transparent rule applied at receipt** — not by validator preference, and not by a private builder auction. A block producer cannot quietly reorder, front-run, or sandwich transactions it has already received, because the order was fixed and sealed before block assembly.
 
-## ROKO's MEV Solution
+## How inclusion is enforced
 
-### Hardware-Enforced Ordering
+Ordering rules mean little if a validator can simply drop your transaction. Roko closes that hole with temporal receipts:
 
-Timebeat cards stamp transactions at the nanosecond. Not when they arrive at the mempool - when they're signed. The timestamp is the position. Hardware-attested, cryptographically sealed. Validators can't reorder what they don't control.
+- Every transaction gets an **ECDSA-signed temporal receipt** at pool admission (domain prefix `ROKO_TX_RECEIPT_V1`).
+- Each receipt carries an **inclusion deadline** — 15 seconds by default.
+- Block import **rejects any block that omits a receipted transaction past its deadline**, with enforcement on by default. <!-- fact:CC-17,DOC-12 -->
 
-```rust
-pub struct TemporalTransaction {
-    pub nano_moment: NanoMoment,
-    pub hardware_attestation: TimeProof,
-    pub immutable_order: bool, // Always true
-}
+The 15-second window is an *inclusion deadline*, not a latency or speed claim: it is the point past which omission of a receipted transaction invalidates the block. The practical effect is that censorship stops being deniable — either your transaction is included, or honest validators reject the block that excluded it. <!-- fact:CC-17 -->
 
-impl Block {
-    pub fn add_transaction(&mut self, tx: TemporalTransaction) -> Result<()> {
-        // Transactions MUST be ordered by NanoMoment
-        // No reordering possible
+A share of transaction fees backs this machinery: fees are split 20% to treasury, 50% to the block author, and 30% to a temporal fee pool that rewards timestamping validators. <!-- fact:TOK-11,TOK-12 -->
 
-        let position = self.transactions
-            .binary_search_by_key(&tx.nano_moment, |t| t.nano_moment)
-            .unwrap_or_else(|pos| pos);
+## What this does NOT prevent
 
-        self.transactions.insert(position, tx);
-        Ok(())
-    }
-}
+Being precise about scope is the point:
+
+- **Fee priority still exists — by design.** Higher fees get earlier timestamps, transparently. Roko removes *validator discretion* over ordering, not fee-based priority. <!-- fact:CC-19 -->
+- **The mempool is not encrypted.** Pending transactions are visible; a searcher can still react to what it sees by bidding a higher fee. The difference is that the resulting order follows the published rule, not a private deal with the builder.
+- **`block.timestamp` in the EVM is unchanged.** Solidity sees the standard seconds-level value; nanosecond ordering is pool-level and exposed via `temporal_*` RPCs and the Temporal precompile, not via changes to the Ethereum JSON-RPC schema. Don't build ordering assumptions on `block.timestamp`. <!-- fact:EVM-25,DOC-10 -->
+- **Cross-chain ordering is out of scope.** These guarantees apply within Roko, not across bridges.
+
+## Trust assumptions
+
+These mechanisms are strong, but they are not unconditional. An MEV researcher evaluating Roko should probe exactly where the trust sits:
+
+- **The canonical timestamp is a node-assigned clock reading, not a trustless oracle.** A transaction is stamped from the receiving node's clock at pool admission. <!-- fact:CC-19 --> So the ordering guarantee is only as strong as (1) the mesh's clock agreement — the PTP Squared time mesh that probes peers, scores reputation, and converges on a consensus time <!-- fact:CC-13 --> — and (2) the assumption that the first node to see a transaction stamps it honestly rather than backdating or delaying it. A dishonest receiving node has latitude over the stamp it issues; the mesh constrains how far that stamp can drift from consensus time, it does not eliminate the node's discretion at the moment of admission.
+- **Inclusion enforcement is defense-in-depth, not a unilateral guarantee.** Block import rejects any block that omits a receipted transaction past its deadline. <!-- fact:CC-17 --> But "rejects" means honest validators reject it at import — the property holds under an honest majority at block import. It raises the cost of censorship and makes omission provable; it does not make censorship physically impossible against a colluding majority.
+- **What remains unprevented, plainly stated.** The mempool is unencrypted, so a searcher can still see pending transactions and respond by bidding a higher fee — fee priority is a designed feature, not a leak. Timesync offence slashing is currently disabled in both runtimes, so a node that stamps dishonestly is detected and recorded but not yet economically penalized. <!-- fact:CC-15 --> These are the honest edges of the design as it ships today.
+
+## Verify it yourself
+
+The ordering pipeline is observable over the standard RPC port:
+
+```bash
+# Canonical timestamp for a transaction — accepts a Substrate
+# extrinsic hash OR an Ethereum tx hash
+curl -s -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"temporal_getTransactionTimestamp","params":["0x..."]}' \
+  http://localhost:9944
+
+# Queue behavior and wait times
+# temporal_getQueueStats / temporal_getTransactionWaitTime / temporal_getWatermarkInfo
 ```
 
----
+The node exposes 14 `temporal_*` methods covering consensus time, per-block metadata, queue statistics, and watermark state. <!-- fact:EVM-08,EVM-10 -->
 
-## Technical Implementation
+On testnet, contracts can read temporal state directly through the Temporal precompile at `0x...0600` (`getConsensusTime()`, `getTransactionTimestamp(bytes32)`, `getWatermark()`, and friends — standard keccak256 ABI selectors). The mainnet runtime does not yet include this precompile. <!-- fact:EVM-17,EVM-15 -->
 
-### Immutable Temporal Sequencing
+## Current status
 
-Every order carries proof of creation time. Can't be forged. Can't be back-dated. You clicked buy at 10:17:36.500? That's your slot. No one inserts at 10:17:36.499 after the fact. Timeline locked.
-
-```solidity
-contract MEVProofExchange {
-    using NanoMoment for uint128;
-
-    struct Order {
-        uint128 timestamp;
-        address trader;
-        uint256 amount;
-        bytes hardwareProof;
-    }
-
-    // Orders stored in temporal order
-    mapping(uint128 => Order) public ordersByTime;
-
-    function submitOrder(uint256 amount) external {
-        uint128 orderTime = Time.nanoNow();
-
-        // Impossible to front-run - time is hardware-attested
-        ordersByTime[orderTime] = Order({
-            timestamp: orderTime,
-            trader: msg.sender,
-            amount: amount,
-            hardwareProof: Time.getProof()
-        });
-
-        // Execute in exact temporal order
-        executeOrdersUntil(orderTime);
-    }
-}
-```
-
----
-
-## Attack Vector Analysis
-
-### Front-Running: ELIMINATED
-
-Bots watch the mempool. See your trade. Submit their own with higher gas to cut the line. Profit from the price movement you caused. Standard operating procedure on Ethereum. MEV infrastructure.
-
-ROKO: the line is sorted by timestamp, not gas. Bot sees your transaction? Cool. It was signed at T. Bot's transaction gets signed at T+delta. Math doesn't care about gas prices.
-
-Traditional:
-```
-User submits: Buy 100 ETH at 12:00:00.500
-MEV bot sees tx → Submits: Buy 100 ETH at 12:00:00.499
-Result: Bot profits from price impact
-```
-
-ROKO:
-```
-User submits: Buy 100 ETH at NanoMoment(1704067200500000000)
-MEV bot cannot create earlier timestamp
-Result: Temporal ordering preserved, no front-running
-```
-
-### Sandwich Attacks: IMPOSSIBLE
-
-Front-slice: buy before victim. Back-slice: sell after. Victim gets squeezed. Attacker extracts from both ends. Requires inserting transactions around yours.
-
-On ROKO? Can't insert before (timestamp already happened). Can't insert between (sequence is hardware-determined). The attack geometry doesn't exist.
-
-```python
-def sandwich_attack_attempt(victim_tx):
-    """This attack is impossible on ROKO"""
-    victim_time = victim_tx.nano_moment
-
-    # Cannot create transaction before victim
-    front_tx_time = victim_time - 1  # INVALID - can't forge past time
-
-    # Cannot insert between victim and next tx
-    back_tx_time = victim_time + 1  # Will execute AFTER victim
-
-    # Attack fails - temporal ordering enforced
-    return None
-```
-
----
-
-## Zero-MEV Architecture
-
-### Protocol-Level Guarantees
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Attack Type</th><th>Traditional Chains</th><th>ROKO Network</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Front-running</strong></td><td>Common</td><td>Impossible</td></tr>
-    <tr><td><strong>Back-running</strong></td><td>Common</td><td>Time-ordered only</td></tr>
-    <tr><td><strong>Sandwich attacks</strong></td><td>Common</td><td>Impossible</td></tr>
-    <tr><td><strong>Time-bandit attacks</strong></td><td>Possible</td><td>Impossible</td></tr>
-    <tr><td><strong>Uncle-bandit attacks</strong></td><td>Possible</td><td>No uncles</td></tr>
-    <tr><td><strong>Liquidation racing</strong></td><td>Common</td><td>Fair temporal order</td></tr>
-  </tbody>
-</table>
-```
-
----
-
-## Fair Sequencing
-
-### First-Signed-First-Processed
-
-Timestamp at signing. Not at arrival. Not at inclusion. Your place in line is determined when you click, not when a validator decides to notice you.
-
-```javascript
-class FairSequencer {
-    constructor() {
-        this.queue = new TemporalPriorityQueue();
-    }
-
-    addTransaction(tx) {
-        // Order determined by hardware timestamp
-        // Not by reception time or validator preference
-        this.queue.insert(tx, tx.nanoMoment);
-    }
-
-    getNextBatch(count) {
-        const batch = [];
-
-        while (batch.length < count && !this.queue.isEmpty()) {
-            const tx = this.queue.extractMin(); // Earliest time first
-            batch.push(tx);
-        }
-
-        return batch;
-    }
-}
-```
-
----
-
-## Validator Incentive Alignment
-
-### No MEV = Pure Staking Rewards
-
-Validators on other chains extract MEV because they can. ROKO validators can't. They don't control order - time does. Income comes from block production, attestations, temporal accuracy bonuses. Securing the network, not exploiting users.
-
-```solidity
-contract ValidatorRewards {
-    // Validators earn from:
-    // 1. Block production rewards
-    // 2. Attestation rewards
-    // 3. Time accuracy bonuses
-    // NOT from transaction ordering manipulation
-
-    function calculateReward(address validator) public view returns (uint256) {
-        uint256 baseReward = getBaseReward();
-        uint256 attestationReward = getAttestationReward(validator);
-        uint256 temporalBonus = getTemporalAccuracyBonus(validator);
-
-        // No MEV extraction possible
-        return baseReward + attestationReward + temporalBonus;
-    }
-}
-```
-
----
-
-## DeFi Without MEV
-
-### Automated Market Makers
-
-DEXs on traditional chains: hunting grounds. Every large swap is extraction opportunity. ROKO: swaps happen in signed order. Two swaps at nearly the same instant? First signed goes first. Price at initiation is price at execution. No one jumps the queue.
-
-```solidity
-contract TemporalAMM {
-    using NanoMoment for uint128;
-
-    function swap(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn
-    ) external {
-        uint128 swapTime = Time.nanoNow();
-
-        // All swaps at same nanosecond get same price
-        uint256 price = getPriceAtTime(swapTime);
-
-        // No sandwich attacks possible
-        uint256 amountOut = amountIn * price / PRECISION;
-
-        // Update price for next nanosecond
-        updatePrice(swapTime + 1);
-
-        executeSwap(msg.sender, tokenIn, tokenOut, amountOut);
-    }
-}
-```
-
-### Fair Liquidations
-
-Collateral drops. Position underwater. Traditional chains: gas war. Bots racing, fees spiking, network clogged. ROKO: first liquidator to sign the transaction executes it. Temporal order. No racing.
-
-```python
-class LiquidationEngine:
-    def check_position(self, position_id):
-        position = self.positions[position_id]
-        current_time = NanoMoment.now()
-
-        if position.health_factor < LIQUIDATION_THRESHOLD:
-            # First liquidator at this nanosecond wins
-            # No racing, no gas wars
-            liquidation = Liquidation(
-                position_id=position_id,
-                liquidator=msg.sender,
-                timestamp=current_time,
-                hardware_proof=Time.get_proof()
-            )
-
-            # Process in temporal order
-            self.liquidation_queue.add(liquidation)
-```
-
----
-
-## Performance Benefits
-
-### No Priority Gas Auctions
-
-MEV opportunity on Ethereum: gas prices spike. Bots bid against each other. Regular users pay inflated fees. ROKO: order is timestamp, not gas. No bidding. Fees stay flat.
-
-Traditional chains:
-```
-Gas price escalation during MEV opportunities:
-Normal: 20 gwei
-During MEV: 500+ gwei
-Result: High fees for all users
-```
-
-ROKO:
-```
-Consistent gas prices:
-Always: 10 gwei
-No MEV competition
-Result: Predictable, low fees
-```
-
----
-
-## Implementation Examples
-
-### Decentralized Exchange
-
-No commit-reveal. No encrypted mempools. No MEV mitigation workarounds. Build exchange logic. Protocol handles ordering. Code stays simple.
-
-```rust
-pub struct TemporalDEX {
-    orders: BTreeMap<NanoMoment, Order>,
-}
-
-impl TemporalDEX {
-    pub fn place_order(&mut self, order: Order) -> Result<()> {
-        // Get hardware-attested timestamp
-        let timestamp = TimeCard::get_nano_moment()?;
-
-        // Verify temporal proof
-        order.verify_time_proof()?;
-
-        // Insert in temporal order
-        self.orders.insert(timestamp, order);
-
-        // Match orders chronologically
-        self.match_orders()?;
-
-        Ok(())
-    }
-
-    fn match_orders(&mut self) -> Result<()> {
-        // Orders matched in exact temporal sequence
-        // No possibility of manipulation
-
-        for (time, order) in self.orders.iter() {
-            if let Some(match_) = self.find_match(&order) {
-                self.execute_trade(order, match_)?;
-            }
-        }
-
-        Ok(())
-    }
-}
-```
-
----
-
-## Monitoring & Verification
-
-### MEV Detection (Should Always Be Zero)
-
-On other chains, researchers track MEV. On ROKO, monitoring confirms the protocol works. Detection finds nothing because there's nothing to find. Non-zero MEV score = protocol bug, not successful attack.
-
-```python
-class MEVMonitor:
-    def analyze_block(self, block):
-        """Verify no MEV extraction occurred"""
-
-        transactions = block.transactions
-
-        # Check temporal ordering
-        for i in range(len(transactions) - 1):
-            assert transactions[i].nano_moment < transactions[i+1].nano_moment
-
-        # Check for suspicious patterns
-        mev_score = 0
-
-        # These should never happen:
-        if self.detect_sandwich_pattern(transactions):
-            mev_score += 100  # Critical alert
-
-        if self.detect_frontrun_pattern(transactions):
-            mev_score += 100  # Critical alert
-
-        return mev_score  # Should always be 0
-```
-
----
-
-## Economic Impact
-
-### Benefits to Users
-
-1. **No Slippage from MEV**: Trades execute at expected prices
-2. **Lower Fees**: No gas wars from MEV bots
-3. **Fair Access**: All users treated equally
-4. **Predictable Outcomes**: No transaction reordering
-
-### Benefits to Protocol
-
-1. **Trust**: Users know they can't be exploited
-2. **Efficiency**: No resources wasted on MEV extraction
-3. **Simplicity**: No need for MEV mitigation tools
-4. **Growth**: Fair system attracts more users
-
----
-
-## Comparison with MEV Solutions
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Solution</th><th>Approach</th><th>Effectiveness</th><th>Trade-offs</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>ROKO</strong></td><td>Hardware timestamps</td><td>100% elimination</td><td>Requires time cards</td></tr>
-    <tr><td><strong>Flashbots</strong></td><td>Private mempool</td><td>Partial mitigation</td><td>Centralization</td></tr>
-    <tr><td><strong>Threshold Encryption</strong></td><td>Hide transactions</td><td>Good protection</td><td>Complexity</td></tr>
-    <tr><td><strong>Batch Auctions</strong></td><td>Time windows</td><td>Reduces MEV</td><td>Latency</td></tr>
-    <tr><td><strong>Random Ordering</strong></td><td>Randomization</td><td>Some protection</td><td>Unpredictable</td></tr>
-  </tbody>
-</table>
-```
-
----
-
-## Future Considerations
-
-### Cross-Chain MEV
-
-MEV goes multi-chain. Attackers front-run cross-chain swaps. Manipulate prices across ecosystems. ROKO temporal proofs extend across bridges - timestamp on origin chain verified and respected on destination. Fair ordering survives the hop.
-
-```solidity
-contract CrossChainMEVPrevention {
-    // Even cross-chain transactions are temporally ordered
-
-    function initiateCrossChainTx(uint256 targetChain) external {
-        uint128 txTime = Time.nanoNow();
-
-        CrossChainMessage memory msg = CrossChainMessage({
-            originTime: txTime,
-            originChain: CHAIN_ID,
-            targetChain: targetChain,
-            temporalProof: Time.getProof(),
-            sender: msg.sender
-        });
-
-        // Target chain must respect temporal ordering
-        bridge.send(msg);
-    }
-}
-```
-
----
-
-## Best Practices for Developers
-
-### Building on Zero-MEV Infrastructure
-
-1. **Assume Fair Ordering**: Design without MEV defenses
-2. **Leverage Timestamps**: Use NanoMoments for sequencing
-3. **Simplify Logic**: No need for commit-reveal schemes
-4. **Trust the Protocol**: Temporal ordering is guaranteed
-
----
-
-Validators can't extract value from reordering because they don't control the order. Time does.
+This is a gated development testnet. The development testnet runs 2-second blocks, with 6 seconds as the production-testnet target (tracked in-code as M-19); the mainnet runtime is compiled at 3 seconds. Treat any numbers you measure today as development-configuration numbers. <!-- fact:CC-05,CC-04 -->

@@ -1,253 +1,49 @@
 # ROKO Network Use Cases
 
-Proven timestamps and temporal ordering enable applications that need fair sequencing and verifiable time.
+ROKO is a Substrate + Frontier EVM chain whose distinguishing primitives are temporal: nanosecond-resolution canonical timestamps assigned at pool admission, deterministic fee-priority ordering, signed temporal receipts with an inclusion deadline, and a consensus time oracle readable from RPC and from contracts. This page maps those primitives to the kinds of applications they make practical. Benefits below are framed as what the primitives enable — measure your own numbers on the network. <!-- fact:CC-18,CC-19,CC-17,CC-20 -->
 
-## Overview
+Everything here builds with unmodified Ethereum tooling: 20-byte accounts, standard `eth_*` RPC on one port, MetaMask with no extra fields. <!-- fact:EVM-21,EVM-07,EVM-28 -->
 
-When transaction order is determined by signing time rather than block producer choice, new applications become possible. ROKO provides the timing infrastructure for systems that need guaranteed fairness and precise temporal records.
+## Time-sensitive DeFi: auctions and order-driven markets
 
-## Financial Services
+**The problem.** On a conventional chain, the block producer decides transaction order. For auctions, liquidations, and order books, that discretion is the attack surface: bids and orders can be reordered or sandwiched after submission.
 
-### High-Frequency Trading (HFT)
+**What ROKO provides.** Ordering is fixed by a deterministic rule at receipt, not by the producer: every transaction — Substrate or Ethereum-format — gets a canonical nanosecond timestamp at pool admission, assigned by a fee-priority queue (higher fee, earlier timestamp), and per-block temporal ordering is enforced at finalization against a monotonic watermark. <!-- fact:CC-19,EVM-31,CC-18 -->
 
-#### Key Benefits
-- **Nanosecond Execution**: Orders executed in exact temporal sequence
-- **No Latency Arbitrage**: Geographic location doesn't provide advantage
-- **Fair Price Discovery**: All traders see the same order book state
-- **Transparent Execution**: Every trade has verifiable timestamp
+**What you'd build.** Batch auctions settled strictly by canonical timestamp, on-chain limit order books where sequence disputes are resolvable by querying `temporal_getTransactionTimestamp` (which accepts an Ethereum tx hash directly), and liquidation engines whose ordering rules are auditable rather than asserted. <!-- fact:EVM-10 -->
 
-#### Real-World Impact
-- Savings of $3.5B annually from MEV prevention
-- 99.99% reduction in failed arbitrage attempts
-- Level playing field for retail traders
+## Fair launches and mints
 
-### Decentralized Exchanges (DEX)
+**The problem.** Popular mints degenerate into ordering games: whoever influences the producer — or outbids in a private channel — wins allocation.
 
-#### Features Enabled
-- **Zero Front-running**: Impossible to insert transactions ahead
-- **Better Pricing**: Reduced slippage from MEV elimination
-- **Flash Loan Safety**: Time-ordered execution prevents exploits
-- **Cross-DEX Arbitrage**: Fair, timestamp-based opportunities
+**What ROKO provides.** The ordering rule is published and protocol-level: descending fee order on a 100 ms stamping tick, with no private path around it. Receipts make exclusion provable — every transaction gets an ECDSA-signed temporal receipt, and block import rejects blocks that omit a receipted transaction past its 15-second inclusion deadline (a censorship check, not a speed claim). <!-- fact:EVM-12,CC-17 -->
 
-### Derivatives & Options
+**What you'd build.** First-come allocation keyed to canonical timestamps, or fee-tiered allocation where the priority rule is the same transparent one every participant faces. Fee priority still exists by design — what's removed is producer discretion. <!-- fact:CC-19 -->
 
-#### Use Cases
-- Binary options with precise expiry
-- Perpetual futures with exact funding rates
-- Time-weighted average price (TWAP) orders
-- Automated market maker (AMM) rebalancing
+## Verifiable timestamping and attestation
 
-## Gaming & Entertainment
+**The problem.** "This existed at time T" usually rests on a trusted party's clock.
 
-### Competitive Gaming
+**What ROKO provides.** Timestamps are nanosecond-resolution `u128` values bound to consensus: ordering is enforced on-finalize, and the watermark is monotonic across blocks. The node exposes 14 `temporal_*` RPC methods for retrieving per-transaction and per-block temporal metadata. <!-- fact:CC-18,EVM-08 -->
 
-#### Applications
-- **Esports Tournaments**: Millisecond-precise action ordering
-- **Racing Games**: True photo-finish determination
-- **Battle Royale**: Fair loot distribution
-- **Card Games**: Provably random shuffling with time entropy
+**What you'd build.** Document and data-existence proofs (anchor a hash, retrieve its canonical timestamp later), IP priority claims, and sensor or event attestations where the proof of *when* is queryable by anyone over standard RPC. <!-- fact:EVM-10 -->
 
-### Real Money Gaming
+## Audit trails for regulated workflows
 
-#### Provably Fair Systems
-- Lottery drawings using temporal entropy
-- Poker with cryptographic card dealing
-- Sports betting with instant settlement
-- Casino games with verifiable randomness
+**The problem.** Regulated workflows need event sequences that are reconstructible and tamper-evident after the fact.
 
-#### Regulatory Compliance
-- Immutable audit trail with complete transaction history
-- Precise timestamp verification for all gaming activities
-- Built-in player protection mechanisms
-- Automated regulatory reporting capabilities
-- Customizable jurisdiction-specific rule enforcement
+**What ROKO provides.** A consensus-enforced temporal record: each transaction's canonical timestamp, signed receipt, and the per-block metadata to reconstruct sequence, all retrievable via `temporal_getBlockTransactionTimestamps` and related RPCs. <!-- fact:CC-18,CC-17,CC-20 -->
 
-### NFT Drops & Auctions
+**What you'd build.** Trade-event recorders, custody handoff logs, and approval-chain registries with a verifiable timeline. To be clear: ROKO provides timestamps and ordering proofs — it does not provide regulatory compliance. Mapping records to any regime's requirements is the application's job.
 
-#### Fair Distribution
-ROKO's temporal precision enables truly fair NFT distributions through hardware-attested timestamps, ensuring first-come-first-served allocation without the possibility of manipulation.
+## Time-locked and scheduled contract logic
 
-#### Benefits
-- No gas wars for popular drops
-- Fair queue system
-- Bot prevention through time attestation
-- Transparent allocation process
+**The problem.** Solidity's `block.timestamp` is seconds-level and producer-influenced — a coarse foundation for time-conditional logic. On ROKO it remains the standard seconds-level value by design. <!-- fact:EVM-25 -->
 
-## Internet of Things (IoT)
+**What ROKO provides.** A consensus time oracle: `temporal_getConsensusTime` returns nanosecond consensus time with quality and convergence metrics, and on testnet contracts read the same state on-chain through the Temporal precompile at `0x...0600` (`getConsensusTime()`, `getTransactionTimestamp(bytes32)`, `getWatermark()` — standard keccak256 ABI selectors). The mainnet runtime does not yet include this precompile. <!-- fact:CC-21,EVM-17,EVM-15 -->
 
-### Sensor Networks
+**What you'd build.** Vesting and unlock schedules, option expiries, and deadline-driven settlement that key off consensus time instead of block heights or producer-set timestamps.
 
-#### Data Integrity
-Every sensor reading includes hardware-attested timestamps with nanosecond precision, creating an immutable sequence of measurements that cannot be tampered with or reordered.
+## A note on what these claims mean
 
-#### Applications
-- Weather station networks
-- Industrial monitoring
-- Smart city infrastructure
-- Agricultural sensors
-- Environmental monitoring
-
-### Supply Chain
-
-#### Tracking & Verification
-Supply chain operations benefit from precise temporal tracking:
-- **Manufacturing**: Timestamp production with nanosecond accuracy
-- **Quality Control**: Record all inspection activities
-- **Shipping**: Track movement and handoffs
-- **Customs**: Log clearances and border crossings
-- **Delivery**: Confirm final receipt
-
-**Benefits**: Immutable timeline, instant verification, automated compliance.
-
-### Autonomous Vehicles
-
-#### Coordination Protocol
-ROKO enables safe autonomous vehicle coordination through precise temporal sequencing. Vehicles negotiate intersection priorities based on exact arrival times, ensuring optimal traffic flow and collision prevention.
-
-## Enterprise Applications
-
-### Real-Time Analytics
-
-#### Stream Processing
-ROKO's nanosecond precision enables real-time analytics with unprecedented accuracy, allowing enterprises to process millions of events with exact temporal ordering for business intelligence and operational monitoring.
-
-### Compliance & Auditing
-
-#### Regulatory Features
-- **Timestamped Records**: Every action has nanosecond timestamp
-- **Immutable Audit Trail**: Cannot be modified retroactively
-- **Real-time Reporting**: Instant compliance checks
-- **Automated Documentation**: Self-documenting transactions
-
-### Database Synchronization
-
-#### Distributed Systems
-ROKO solves database synchronization challenges across global distributed systems by providing a single source of temporal truth, ensuring all nodes apply operations in the exact same order regardless of network latency.
-
-## Scientific Research
-
-### Time-Series Data
-
-#### Precision Measurements
-- Particle physics experiments
-- Astronomical observations
-- Seismic monitoring
-- Climate data collection
-
-#### Data Integrity
-Scientific measurements benefit from hardware-attested timestamps that provide irrefutable proof of observation timing, ensuring research data integrity and enabling precise correlation of events across multiple instruments and locations.
-
-### Collaborative Research
-
-#### Features
-- Timestamped contributions
-- Priority establishment
-- Data provenance
-- Reproducible experiments
-
-## Social & Communication
-
-### Messaging Platforms
-
-#### Ordered Communication
-ROKO ensures messages are delivered and displayed in exact chronological order, preventing communication confusion and providing legal-grade evidence of when messages were sent and received.
-
-### Content Creation
-
-#### Copyright & Attribution
-- First-publication proof
-- Content versioning
-- Plagiarism detection
-- Royalty distribution
-
-## Healthcare
-
-### Medical Records
-
-#### Temporal Integrity
-Patient records maintain precise chronological order with nanosecond timestamps:
-- **Exact sequence of events** for medical decision making
-- **Medication timing** verification for dosage compliance
-- **Procedure ordering** to prevent medical errors
-- **Legal compliance** with healthcare regulations
-
-**Example Timeline**: From admission through vitals, medication, and procedures, every event is timestamped with nanosecond precision for complete accountability.
-
-### Clinical Trials
-
-#### Data Collection
-- Precise dosing times
-- Reaction timestamps
-- Side effect tracking
-- Protocol compliance
-
-## Government & Public Services
-
-### Voting Systems
-
-#### Temporal Voting
-ROKO enables transparent, tamper-proof voting systems where every vote is timestamped with hardware attestation, preventing fraud and ensuring accurate election results with verifiable timing.
-
-### Public Records
-
-#### Applications
-- Birth certificates
-- Property transfers
-- License issuance
-- Permit tracking
-
-## Energy & Utilities
-
-### Smart Grid
-
-#### Load Balancing
-Smart grids utilize ROKO's temporal precision to optimize electricity distribution, matching supply and demand with nanosecond accuracy for maximum efficiency and grid stability.
-
-### Renewable Energy
-
-#### Trading & Credits
-- Peer-to-peer energy trading
-- Carbon credit tracking
-- Renewable energy certificates
-- Grid contribution rewards
-
-## Real Estate
-
-### Property Transactions
-
-#### Smart Contracts
-Property transactions execute automatically with precise timing guarantees, ensuring all conditions are met in the correct sequence and providing immutable proof of transfer timing for legal purposes.
-
-### Rental Agreements
-
-#### Automated Management
-- Lease execution
-- Rent collection
-- Maintenance requests
-- Deposit handling
-
-## Insurance
-
-### Parametric Insurance
-
-#### Automatic Triggers
-Parametric insurance contracts execute automatically based on verified external data, with precise timestamps ensuring fair and immediate payouts when trigger conditions are met.
-
-### Claims Processing
-
-#### Benefits
-- Instant verification
-- Automated payouts
-- Fraud prevention
-- Transparent process
-
-## Future Possibilities
-
-### Emerging Use Cases
-- Quantum computing coordination
-- Interplanetary transactions
-- Brain-computer interfaces
-- Molecular simulations
-- Time-travel prevention (😉)
-
-*Transforming possibilities with temporal precision*
+Nanosecond figures here are *resolution* — the granularity of the canonical timestamp format — not an accuracy guarantee for any individual clock. The 15-second receipt deadline is an inclusion-enforcement bound, not transaction latency. The network is in a gated testnet phase; verify behavior against a live node before depending on it. <!-- fact:CC-18,CC-17,CC-05 -->

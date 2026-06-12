@@ -1,235 +1,44 @@
 # Introduction to ROKO Network
 
-## Welcome to the Future of Time-Synchronized Blockchain
+You ship Solidity. Your tooling is MetaMask, Hardhat, ethers.js. ROKO hands that exact toolchain one new power: **consensus-grade time** — nanosecond-resolution timestamps the network itself measures, agrees on, and enforces, instead of a number the block producer suggests.
 
-ROKO Network represents a revolutionary advancement in blockchain technology, introducing the world's first **temporal blockchain infrastructure** with **nanosecond precision**. By integrating datacenter-grade timing standards directly into the consensus mechanism, ROKO enables an entirely new category of time-sensitive decentralized applications.
+The mechanism is **Proof of Accurate Time (PoAT)** — a physics-anchored consensus *modifier* in which validators measure time against each other in a live mesh. PoAT is designed so that measured time quality influences block-production eligibility and rewards; today the mesh measures and records per-validator time quality on-chain, while consensus-consequence enforcement is being enabled in stages. <!-- fact:PAL-29,CC-32,CC-14,CC-15 -->
 
-## The Problem We Solve
+## What ROKO actually is
 
-### Current Blockchain Limitations
+ROKO is an EVM-compatible blockchain built on Polkadot SDK (release-polkadot-v1.13.0) with the Frontier Ethereum layer, so MetaMask, Hardhat, ethers.js, and your existing Solidity contracts work unmodified. <!-- fact:CC-01,DOC-10 -->
 
-Traditional blockchains face critical timing challenges:
+On top of that familiar base, three things are different:
 
-- **Imprecise Timestamps**: Most blockchains operate with second or millisecond precision at best
-- **MEV Exploitation**: Miners and validators can reorder transactions for profit
-- **Unfair Ordering**: Transaction sequencing based on gas fees rather than actual time
-- **Synchronization Issues**: No reliable way to coordinate time-sensitive operations across the network
-- **Limited Use Cases**: Cannot support applications requiring precise temporal guarantees
+- **A validator time mesh.** Validators run a native peer-to-peer time-sync layer ("PTP Squared") over the `/roko/timesync/1` libp2p protocol — measuring clock offsets between peers, scoring reputation statistically, and converging on a single mesh consensus time. <!-- fact:CC-13 -->
+- **Temporal receipts on every transaction.** Each transaction gets an ECDSA-signed receipt when it enters the pool, and block import rejects blocks that omit a receipted transaction past its inclusion deadline (default 15 seconds). The chain can prove your transaction wasn't silently dropped. <!-- fact:CC-17 -->
+- **Deterministic, fee-priority ordering.** Canonical nanosecond timestamps are assigned at pool receipt; higher-fee transactions get earlier canonical timestamps under a transparent protocol rule, and per-block temporal ordering is enforced by the runtime. Order is fixed at receipt by a deterministic, tamper-evident rule — no private builder reordering auction. <!-- fact:CC-19,CC-18 -->
 
-### Real-World Impact
+Timestamps are nanosecond-resolution `u128` values (NanoMoment), exposed to contracts through a temporal precompile and to everything else through a `temporal_*` JSON-RPC namespace — a consensus-backed time oracle with no third party to trust. <!-- fact:CC-18,CC-23,CC-20 -->
 
-These limitations prevent blockchain adoption in critical sectors:
+Validators self-classify their time source — Timebeat PTP daemon, chrony, or GNSS/PPS hardware — into Anchor, Standard, or Minimal tiers, with a measured root-distance-to-UTC in nanoseconds. The meshheads anchored to physics carry the highest tier. <!-- fact:CC-16 -->
 
-- **High-frequency trading** loses millions to imprecise execution
-- **Industrial IoT** cannot achieve reliable synchronization
-- **Gaming** suffers from unfair advantages due to timing manipulation
-- **Supply chains** lack precise temporal tracking
-- **Cross-chain operations** face coordination challenges
+## Honest status (read this)
 
-## The ROKO Solution
+ROKO is at the **gated-testnet stage**. Builders should know:
 
-### Revolutionary Temporal Infrastructure
+- The testnet currently runs **2-second blocks**; the production-testnet target is 6 seconds (tracked in-code as M-19), and the mainnet runtime is compiled at 3 seconds. <!-- fact:CC-05,CC-04 -->
+- The testnet EVM Chain ID is **442**. A mainnet chain ID is not yet assigned — mainnet does not exist yet. <!-- fact:CC-06,EVM-04 -->
+- Time-quality offences are *detected and recorded on-chain*, but slashing enforcement is currently disabled in both compiled runtimes while the mesh matures. <!-- fact:CC-14,CC-15 -->
+- A sudo key (full root) is present in both runtimes — standard for this stage, and a centralization fact you should weigh. <!-- fact:PAL-05 -->
 
-ROKO Network introduces groundbreaking innovations:
+We would rather show you the real state of the chain than sell you a finished one.
 
-#### 1. Hardware-Attested Timestamps
-Every block includes cryptographically signed timestamps from specialized hardware, providing irrefutable proof of time with nanosecond accuracy.
+## Who this is for
 
-#### 2. OCP-TAP Compliance
-First blockchain built on Open Compute Project Time Appliance specifications, bringing datacenter-grade timing to Web3.
+If you build anything where *when* matters — auctions, trading and settlement, time-sensitive contracts, timestamping services, coordination between autonomous agents — ROKO gives you consensus-grade time as a native primitive instead of a trusted oracle. <!-- fact:CC-32 -->
 
-#### 3. IEEE 1588 PTP Integration
-Precision Time Protocol ensures sub-100 nanosecond synchronization across the entire validator network.
+## Map of these docs
 
-#### 4. Temporal Consensus
-Transactions are ordered by their actual signing time, not by gas fees or validator preference, eliminating MEV and ensuring fairness.
+- **[What is Temporal Blockchain?](./temporal-blockchain.md)** — the concept: why time as a consensus input matters, and how PoAT works (mesh, time quality, receipts).
+- **[Nanosecond Precision: Resolution vs. Accuracy](./nanosecond-precision.md)** — what nanosecond-resolution timestamps do and don't guarantee. We draw this line explicitly.
+- **[Join the Testnet](./join-testnet.md)** — MetaMask config (Chain ID 442), how to request testnet ROKO, where the explorer will live, deploying a contract, and running a node.
+- **[What You Can Build](../products/use-cases.md)** — applications where consensus-grade time is the unlock.
+- **Core Technology** — deeper pages on consensus, temporal transactions, and network architecture.
 
-## Key Innovations
-
-### NanoMoment Architecture
-```
-Traditional Blockchain: Unix timestamp (seconds)
-└── 1,704,067,200 (low precision)
-
-ROKO Network: NanoMoment (nanoseconds)
-└── 1,704,067,200,123,456,789 (nanosecond precision)
-```
-
-Our u128 timestamp implementation provides:
-- **9 decimal places** of sub-second precision
-- **Hardware attestation** for every timestamp
-- **Cryptographic proofs** of temporal ordering
-- **Network-wide consensus** on time
-
-### TimeRPC Authority
-
-A decentralized network of time authorities that:
-- Maintains global time synchronization
-- Validates temporal proofs
-- Prevents time-based attacks
-- Ensures consistent ordering across shards
-
-### MEV Prevention by Design
-
-Unlike traditional blockchains where validators can reorder transactions:
-1. Transactions include hardware-attested timestamps at signing
-2. Network consensus enforces temporal ordering
-3. Validators cannot manipulate transaction sequence
-4. Fair execution based on actual time, not fees
-
-## Technical Specifications
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr>
-      <th>Specification</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Time Precision</strong></td><td>&lt; 100 nanoseconds</td></tr>
-    <tr><td><strong>Block Time</strong></td><td>2-3 seconds</td></tr>
-    <tr><td><strong>Finality</strong></td><td>Instant (single block)</td></tr>
-    <tr><td><strong>Throughput</strong></td><td>50,000+ TPS</td></tr>
-    <tr><td><strong>Network Sync</strong></td><td>IEEE 1588 PTP</td></tr>
-    <tr><td><strong>Hardware Standard</strong></td><td>OCP-TAP compliant</td></tr>
-    <tr><td><strong>Timestamp Format</strong></td><td>u128 NanoMoment</td></tr>
-    <tr><td><strong>Gas Costs</strong></td><td>&lt; $0.01 per transaction</td></tr>
-  </tbody>
-</table>
-```
-
-## Unique Capabilities
-
-### What ROKO Enables
-
-With nanosecond precision, ROKO unlocks applications impossible on other blockchains:
-
-#### Financial Markets
-- **Microsecond arbitrage** with guaranteed fair ordering
-- **High-frequency trading** without front-running
-- **Cross-market synchronization** for global operations
-- **Regulatory compliance** with precise audit trails
-
-#### Industrial Systems
-- **5G network coordination** with sub-microsecond precision
-- **Manufacturing synchronization** across global facilities
-- **Power grid management** with precise load balancing
-- **Autonomous vehicle coordination** for safety-critical operations
-
-#### Gaming & Entertainment
-- **Frame-perfect synchronization** for competitive gaming
-- **Fair play guarantees** with tamper-proof timing
-- **Cross-platform coordination** for metaverse experiences
-- **Real-time betting** with instant settlement
-
-#### Web3 Infrastructure
-- **Cross-chain bridges** with atomic time locks
-- **Layer 2 synchronization** without trust assumptions
-- **Decentralized exchanges** with guaranteed order matching
-- **Oracle networks** with temporal attestations
-
-## Network Architecture
-
-### Three-Layer Design
-
-```html
-<div class="layer-stack">
-  <div class="layer">
-    <div class="layer-title">Application Layer</div>
-    <div class="layer-desc">DApps, Smart Contracts</div>
-  </div>
-  <div class="layer">
-    <div class="layer-title">Temporal Consensus Layer</div>
-    <div class="layer-desc">NanoMoment, TimeRPC, Ordering</div>
-  </div>
-  <div class="layer">
-    <div class="layer-title">Hardware Timing Layer</div>
-    <div class="layer-desc">OCP-TAP, IEEE 1588, Attestation</div>
-  </div>
-</div>
-```
-
-### Global Validator Network
-
-- **127+ active validators** across 6 continents
-- **PTP grandmaster clocks** in each region
-- **Redundant time sources** including GPS, atomic clocks
-- **Sub-100ns synchronization** maintained continuously
-
-## Why Build on ROKO?
-
-### For Developers
-- **Deterministic execution** - Know exactly when your code runs
-- **Temporal smart contracts** - Build time-based logic natively
-- **MEV protection** - Your users are safe from front-running
-- **Rich SDKs** - JavaScript, Rust, Python, Go support
-
-### For Enterprises
-- **Regulatory compliance** - Precise audit trails for every operation
-- **SLA enforcement** - Automated penalties for timing violations
-- **Cross-system coordination** - Integrate with existing infrastructure
-- **Enterprise solutions** - Custom branding and private network configurations on ROKO
-
-### For Users
-- **Fair transaction ordering** - First come, first served, guaranteed
-- **Lower costs** - No bidding wars for transaction priority
-- **Instant finality** - Know immediately when transactions complete
-- **Protected from MEV** - No front-running or sandwich attacks
-
-## Project Nexus
-
-ROKO's flagship product, **Project Nexus**, demonstrates the power of temporal blockchain:
-
-### Temporal Compute Marketplace
-- Decentralized compute resources with nanosecond scheduling
-- Automated job distribution based on precise timing requirements
-- SLA enforcement through smart contracts
-- Fair resource allocation without manipulation
-
-### Use Cases Enabled
-- **Automated employment contracts** with exact payment timing
-- **Service marketplaces** with temporal SLA guarantees
-- **Milestone-based agreements** with time-locked releases
-- **Decentralized scheduling** for resource optimization
-
-## Getting Started
-
-### Quick Links
-
-- **[Temporal Blockchain Explained](./temporal-blockchain.md)** - Deep dive into our technology
-- **[Why Nanosecond Precision Matters](./nanosecond-precision.md)** - Understanding the importance of time
-
-### Choose Your Path
-
-#### 🚀 **I'm a Developer**
-Explore our temporal blockchain technology and start building time-sensitive applications.
-
-#### ⚡ **I'm a Validator**
-Join our network of validators maintaining nanosecond precision across the globe.
-
-#### 💎 **I'm a Token Holder**
-Participate in governance and staking opportunities.
-
-#### 🏢 **I'm an Enterprise**
-Discover [white-label solutions](../products/use-cases.md) for your business needs.
-
-## Key Differentiators
-
-What sets ROKO apart from every other blockchain:
-
-1. **First and Only** blockchain with nanosecond precision
-2. **OCP-TAP Compliant** meeting datacenter timing standards
-3. **IEEE 1588 PTP** for guaranteed synchronization
-4. **Hardware Attestation** for every timestamp
-5. **MEV-Resistant** by architectural design
-6. **Deterministic Execution** based on actual time
-7. **Instant Finality** with temporal proof
-8. **Sub-penny Costs** without sacrificing speed
-
-## Join the Revolution
-
-ROKO Network isn't just another blockchain – it's a fundamental reimagining of how distributed systems can coordinate with precision. By solving the temporal ordering problem, we're enabling applications that were previously impossible, from microsecond financial trading to global IoT synchronization.
-
-Ready to build the future? Let's get started.
+**Background reading:** [Of Time and Stamps](../articles/of-time-and-stamps.md) — the story of why blockchains never had a trustworthy clock, told from the build.

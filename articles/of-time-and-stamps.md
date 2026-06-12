@@ -77,7 +77,9 @@ No one, individually. But we have BFT. Let’s piggyback on that. BFT can be pro
 
 ### Time Beacons
 
-Roko technology, built on Substrate, adds a new task for validators: producing **time beacons**. By configuring this specific pallet, it is possible to force all validators to emit time beacons and apply penalties to out‑of‑sync actors. It is also possible to configure a subset of validators to provide the time beacons to the network as a bootstrapping phase until greater adoption of the required hardware, or simply to rely on in‑house (but auditable) validators with time capabilities to support your network.
+*A note from the present before we go on: what follows is the first full design we built — the beacon system. The architecture has since evolved into the validator time mesh and receipt system that runs today (I'll come back to that in the State of R&D section), but the beacons are where the thinking took shape, so let me walk you through them as we designed them.* <!-- fact:CC-29 -->
+
+This design, built on Substrate, added a new task for validators: producing **time beacons**. By configuring this specific pallet, it was possible to force all validators to emit time beacons and apply penalties to out‑of‑sync actors. It was also possible to configure a subset of validators to provide the time beacons to the network as a bootstrapping phase until greater adoption of the required hardware, or simply to rely on in‑house (but auditable) validators with time capabilities to support your network.
 
 What the validators then start producing looks like this:
 
@@ -91,15 +93,15 @@ What the validators then start producing looks like this:
 }
 ```
 
-Those timestamps are shared with the whole network and signed by the validator. Beacon frequency can be configured. For Roko Network we’re aiming at 150 ms at launch.
+Those timestamps are shared with the whole network and signed by the validator. Beacon frequency was configurable; for Roko Network we were aiming at 150 ms.
 
 Now you have your network inundated by this chatter, but you don’t want it to clog your chain, right?
 
-While the networking load can’t be reduced as of now, storage won’t suffer much from this because beacons actually live in the runtime. Basically they are temporary. They will only be stored when added to a block or mentioned in a slashing transaction.
+While the networking load couldn’t be reduced in that design, storage wouldn’t suffer much from this because beacons actually live in the runtime. Basically they are temporary. They will only be stored when added to a block or mentioned in a slashing transaction.
 
 ### Proof of Time
 
-Now we have those beacons ready for collecting, but how do we use them? Do we need a new consensus mechanism? Well, yes and no. Our system is designed to work with BABE/GRANDPA and likely most other consensus stacks. However, extra block‑validity verification rules are possible with Substrate, so integration is not tricky.
+Now we have those beacons ready for collecting, but how do we use them? Do we need a new consensus mechanism? Well, yes and no. Our system is designed to work with BABE/GRANDPA — which is indeed what the Roko chain runs for block production and finality — and likely most other consensus stacks. However, extra block‑validity verification rules are possible with Substrate, so integration is not tricky. <!-- fact:CC-02 -->
 
 The whole idea is that when we produce a block, the timestamp written in it must be **proven**. Thanks to the beacons we no longer need after‑the‑fact attestations; we have something else: the time consensus that is currently happening as we produce the block.
 
@@ -163,7 +165,7 @@ Median canonical:     2024-09-28 10:17:36.791 UTC
 └─────────────┴──────────────────┴────────────────────┴──────────┴────────────────┘
 ```
 
-As the block is produced, there is an opportunity for slashing bad actors. As we collect fresh beacons, we detect if a validator failed to fall within the **tolerance window**. We can then simply include a slashing transaction with proof of drift. Slashing is not mandatory but exploratory at this stage. This leads us to the question of how time propagates in a network of nodes.
+As the block is produced, there is an opportunity for slashing bad actors. As we collect fresh beacons, we detect if a validator failed to fall within the **tolerance window**. We can then simply include a slashing transaction with proof of drift. Slashing is not mandatory but exploratory at this stage — and candor compels me to note that this remains true today: in the current runtime, time‑quality violations are detected but slashing enforcement is disabled. <!-- fact:CC-15 --> This leads us to the question of how time propagates in a network of nodes.
 
 ### Time Propagation
 
@@ -171,19 +173,19 @@ Blockchain relies on gossiping; controlling the communication patterns between n
 
 So let’s talk about **tolerance windows** and how we solve for gossiping inconsistency.
 
-The current solution Roko offers is a drift tolerance that can be configured by the protocol owner or by votes. At launch, our chain will probably feature a 2‑second drift tolerance for beacons, so pretty similar to the windows of tolerance of most blockchains, but this parameter can be tightened as the number of beacons and networking quality increase. We expect that with a sufficient number of validators producing time beacons we could reasonably reach a drift of 500 ms, which would mean that at any given time, any block producer would have enough fresh beacons in memory to prove that their block was produced with a sub‑second margin of error.
+The solution this design offered was a drift tolerance that could be configured by the protocol owner or by votes. We pencilled in a 2‑second drift tolerance for beacons, so pretty similar to the windows of tolerance of most blockchains, with the parameter tightening as the number of beacons and networking quality increased. We expected that with a sufficient number of validators producing time beacons we could reasonably reach a drift of 500 ms, which would mean that at any given time, any block producer would have enough fresh beacons in memory to prove that their block was produced with a sub‑second margin of error.
 
 ### A User with Time
 
 Finally, now that we’ve secured block timestamps and have all of those beacons firing, let’s talk about why we would bother with such a complex system.
 
-After integrating the Beacons pallet (your validators produce time beacons), then the Temporal pallet (your blocks use beacons to compute provable timestamps), it is time to integrate the **Temporal Transaction** pallet, which we simply call “transaction type 3” from time to time.
+In that design, after integrating the Beacons pallet (your validators produce time beacons), then the Temporal pallet (your blocks use beacons to compute provable timestamps), it was time to integrate the **Temporal Transaction** pallet, which we simply call “transaction type 3” from time to time.
 
 The idea behind this new kind of transaction is to add a proof of signing time directly into the transaction header. **But why?**
 
 ### Temporal Transactions
 
-Normal transactions compete for gas; temporal transactions compete for time. But first, we must find a way to prove the time of creation of a transaction in the same way we’re trying to prove the time of creation of a block. So we also have the wallet producing the transaction collecting those same beacons:
+Normal transactions compete for gas; temporal transactions carry a proof of time. But first, we must find a way to prove the time of creation of a transaction in the same way we’re trying to prove the time of creation of a block. So we also have the wallet producing the transaction collecting those same beacons:
 
 ```box:Temporal Transaction
 Address:   5G9v…XJwa
@@ -212,7 +214,7 @@ Validation Flow:
 
 Of course, storage of the time proof must be optimized; it’s not necessary to store the beacons in the transaction itself. But for testing purposes this is already an interesting setup.
 
-What we’re looking at here is a transaction with a timestamp. The proof of this timestamp through beacons is still a topic of R&D on our side, as is the optimization of gas usage. Yet for the sake of argument, let’s say that reusing the same system as we did for the blocks would perform in a similar way, thus enabling timestamped transactions and allowing the chain to organize itself differently. We call this **temporal ordering**.
+What we’re looking at here is a transaction with a timestamp. The proof of this timestamp through beacons remained a topic of R&D on our side, as did the optimization of gas usage — and this is exactly where the design later evolved the most (see the State of R&D below). Yet for the sake of argument, let’s say that reusing the same system as we did for the blocks would perform in a similar way, thus enabling timestamped transactions and allowing the chain to organize itself differently. We call this **temporal ordering**.
 
 ### Temporal Ordering
 
@@ -224,15 +226,17 @@ In a system like this, chain block height doesn’t matter and the order of exec
 
 As the tolerance window decreases, the exact time of signature starts to matter.
 
+Part of this is no longer imagination: the runtime that ships today enforces per‑block temporal ordering at finalization and maintains a monotonic transaction watermark. <!-- fact:CC-18 -->
+
 While provable time of signature and execution is a great feature for time‑attestation services, we’ll focus on the elephant in the room: MEV.
 
 ### MEV
 
-Yes, MEV resistance has been the purpose all along.
+Removing the block producer's ordering discretion has been the purpose all along.
 
-What we have at this point is a way to prevent back‑dating, and thus no miner nor front‑runner can do anything about the order in which your transaction is executed. As the block producer works on their block, they are working on a block that is created *after* your timestamp and are not able to include a transaction before it. It’s as simple as that. Moreover, if an observer looks at the mempool to try to extract value by executing a transaction before you, they won’t be able to back‑date it either. Or at least, that’s what we’re trying to build here.
+What we are building toward is a way to prevent back‑dating, so that no miner nor front‑runner can do anything about the order in which your transaction is executed. As the block producer works on their block, they are working on a block that is created *after* your timestamp and are not able to include a transaction before it. It’s as simple as that. Moreover, if an observer looks at the mempool to try to extract value by executing a transaction before you, they won’t be able to back‑date it either. Or at least, that’s what we’re trying to build here.
 
-Essentially, temporal transactions can’t be front‑run, removing many attack vectors that classic chains suffer from.
+Essentially, temporal transactions are designed for deterministic, censorship‑resistant ordering — removing many of the front‑running attack vectors that classic chains suffer from.
 
 ### The Roko Network Template
 
@@ -270,12 +274,12 @@ Essentially, temporal transactions can’t be front‑run, removing many attack 
 </table>
 ```
 
-We divided the Roko technology into three pallets:
+In that first design, we divided the Roko technology into three pallets:
 
 - **Beacons**  
   This pallet is responsible for teaching validators how to fire beacons. Installing and enabling it introduces the beacon to the gossiping network. It does not affect consensus or block production. Transactions remain ordered as per default. Beacons are fully configurable, with some parameters modifiable through community votes and some restricted to an admin role.
 
-  We are also currently working on a “sidecar” mode where other chains could integrate the Beacons pallet to receive Roko’s beacons directly in a cross‑chain capacity.
+  We also explored a “sidecar” mode where other chains could integrate the Beacons pallet to receive Roko’s beacons directly in a cross‑chain capacity.
 
 - **Time Blocks**  
   This pallet depends on Beacons, which must be enabled and operational. It wraps BABE to introduce the new behavior of beacon proof and timestamping. After installing it, the chain will require the right beacons to produce blocks. The minimum number of beacons to use per block is configurable, but further development aims to compute this number automatically to follow the standard path of BFT consensus.
@@ -284,13 +288,15 @@ We divided the Roko technology into three pallets:
   This pallet depends on both Beacons and Time Blocks and is responsible for introducing the new type of transactions. It enforces temporal ordering of transactions and verifies their time proofs.
 
 - **Frontier**  
-  This is the original Frontier pallet; however, we needed to fork it in order to introduce temporal ordering to the EVM environment. It is not required to use Frontier, but Roko, like many other chains, has the desire to be compatible with the Ethereum ecosystem and the wallets designed to work with it.
+  This is the original Frontier pallet; however, we run it from a fork in order to bring temporal ordering to the EVM environment — Ethereum‑submitted transactions receive canonical timestamps just like native ones, with no extra fields required from wallets. It is not required to use Frontier, but Roko, like many other chains, has the desire to be compatible with the Ethereum ecosystem and the wallets designed to work with it. <!-- fact:CC-01 --> <!-- fact:EVM-31 -->
 
 ### State of R&D
 
 We are confident that most of the solutions to build this product and a reusable set of pallets, as well as the underlying theory, have largely been figured out.
 
-We also know that a lot of questions still remain and we are actively working on proving that the Time Beacons system does indeed guarantee a safer timestamp value for blocks and transactions.
+So where did the beacon design land? The beacon‑driven time path itself was retired in favor of its leaner descendants. <!-- fact:CC-29 --> What runs today is a “PTP Squared” validator time mesh: validators continuously probe each other over the network, estimate clock offsets, score one another’s reliability, and converge on a shared network time. <!-- fact:CC-13 --> That mesh state reaches the runtime through a block inherent consumed by a timesync pallet, which stores per‑block and per‑validator time quality on‑chain. <!-- fact:CC-14 --> The temporal transaction survived in a simpler form too: every transaction receives a signed temporal receipt the moment it is admitted to the pool, and block import rejects blocks that omit a receipted transaction past its inclusion deadline — 15 seconds by default. <!-- fact:CC-17 --> Timestamps are nanosecond‑precision, and a fee‑priority queue assigns canonical timestamps, with higher‑fee transactions receiving earlier stamps. <!-- fact:CC-19 --> All of it is queryable through a dedicated temporal_* RPC namespace. <!-- fact:CC-20 -->
+
+We also know that a lot of questions still remain and we are actively working on proving that this time consensus system does indeed guarantee a safer timestamp value for blocks and transactions.
 
 Playing with time and time proofs is complex, and our research has shown that many of the things we take for granted in a “blockchain” need to be proven again. As the system becomes more reliant on time, failures could result in chain termination.
 
@@ -300,7 +306,7 @@ In a classic blockchain, the block producer doesn’t need much information apar
 
 In case of a failure in the message‑propagation system, a perfectly honest block producer could still skip a transaction.
 
-Another issue we are still facing is potential back‑dating of the beacons, allowing users to sign transactions with stale beacons in order to produce an earlier timestamp.
+Another issue we are still facing is potential back‑dating of time proofs, allowing users to sign transactions with stale proofs in order to produce an earlier timestamp.
 
 Our research shows that it is essentially very hard to prove the time of the signature without witnesses, so the time proof for temporal transactions could evolve to provide such witnesses and reject back‑dating.
 
@@ -314,9 +320,9 @@ Integrating with Roko Network can be done at multiple levels. Here we discuss th
 
 While some timestamping services built on blockchain already exist and use Bitcoin or Ethereum transaction data encoding to certify the date of some information, the latency and fees on those networks make them unsuitable for high‑speed, high‑throughput interaction. Roko Network aims at high‑speed block production with real‑time timestamping (included in temporal transactions) that can validate, within a few blocks, the validity of the proof, with both the original timestamp and the validation timestamp readily available within seconds.
 
-#### Integrating the Beacons Pallet
+#### Integrating the Time Beacons
 
-A chain could choose to integrate the Beacons pallet only, in a cross‑chain capacity, where Roko Network will serve the time beacons either by sharing the work of its validators or by deploying custom nodes to validate with time on another network.
+A chain could choose to integrate the time‑beacon layer only, in a cross‑chain capacity, where Roko Network would serve the time signal either by sharing the work of its validators or by deploying custom nodes to validate with time on another network. (In the current architecture, that layer is the validator time mesh and the timesync pallet.) <!-- fact:CC-13 -->
 
 #### Integrating Time Consensus
 

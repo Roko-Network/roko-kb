@@ -1,190 +1,45 @@
 # What is Temporal Blockchain?
 
-## A New Paradigm for Distributed Systems
+A temporal blockchain treats time as a **consensus input**, not metadata. On most chains, the block timestamp is a value the block producer asserts and other validators loosely sanity-check; nothing in consensus measures whether it is true, and nothing stops the producer from quietly reordering or dropping transactions. ROKO's design changes both: validators continuously measure time against each other, and transactions carry signed receipts that consensus enforces.
 
-Temporal blockchain represents a revolutionary advancement in distributed ledger technology by introducing **nanosecond-precision time** as a first-class primitive. Unlike traditional blockchains that rely solely on block sequence for ordering, ROKO Network uses hardware-attested timestamps to create an immutable temporal record.
+## Why time as a consensus input matters
 
-## The Problem with Traditional Blockchains
+Two concrete failure modes on conventional chains:
 
-### Limited Time Resolution
-- Most blockchains operate with **second or millisecond** precision
-- Block times range from seconds to minutes
-- Transaction ordering within blocks is often arbitrary
-- No guarantee of real-world time correlation
+1. **Ordering manipulation.** The block producer chooses transaction order. Private reordering is invisible and profitable.
+2. **Silent censorship.** A producer can simply omit your transaction, and no rule of the chain is violated.
 
-### MEV and Front-Running
-- Miners/validators can reorder transactions for profit
-- No temporal fairness in transaction inclusion
-- Time-sensitive operations are vulnerable to manipulation
+ROKO addresses both with mechanisms you can verify in the code, not with a vague "MEV-resistant" label:
 
-### Synchronization Challenges
-- Loose time synchronization between nodes
-- Clock drift affects consensus
-- No cryptographic proof of when events occurred
+- **Deterministic ordering fixed at receipt.** A timestamping queue assigns each transaction a canonical nanosecond timestamp when it enters the pool. The queue is fee-priority: higher-fee transactions receive earlier canonical timestamps under a transparent, protocol-level rule (the queue runs by default and can be disabled with `--no-fee-priority-queue`). The runtime then enforces per-block temporal ordering and maintains a monotonic transaction watermark. Fees still set priority — openly — but there is no discretionary reordering by the block producer. <!-- fact:CC-19,CC-18 -->
+- **Per-receipt inclusion enforcement.** Every transaction receives an ECDSA-signed temporal receipt at pool admission. A block that omits a receipted transaction past its inclusion deadline — 15 seconds by default — is rejected at block import. The 15-second figure is an *inclusion deadline*, not a latency claim: it is the window after which omission makes a block invalid. <!-- fact:CC-17 -->
 
-## The Temporal Blockchain Solution
+## PoAT mechanics, at overview level
 
-### Nanosecond Precision
-ROKO Network introduces **NanoMoment** - a u128 data type representing time with nanosecond precision:
+**Proof of Accurate Time (PoAT)** is a consensus *modifier* layered on Substrate's standard BABE (block production) + GRANDPA (finality). It is designed so that measured time quality influences block-production eligibility and rewards; today the mesh measures and records per-validator time quality on-chain, while consensus-consequence enforcement is being enabled in stages. <!-- fact:CC-02,PAL-29,CC-32,CC-14,CC-15 -->
 
-```rust
-pub struct NanoMoment(u128);
+The architecture has four layers: libp2p networking, the validator time mesh, the BABE+GRANDPA+PoAT blockchain layer, and applications on top. <!-- fact:DOC-01 -->
 
-impl NanoMoment {
-    pub fn now() -> Self {
-        // Hardware time card attestation
-        let timestamp = TimeCard::get_hardware_time();
-        NanoMoment(timestamp)
-    }
-}
-```
+### 1. The time mesh
 
-### Hardware Time Attestation
-Every transaction includes cryptographically signed timestamps from **OCP TAP 2.0** compliant hardware:
+Validators run "PTP Squared" — a native Rust peer-to-peer time-sync layer over the `/roko/timesync/1` libp2p protocol. It estimates clock offsets between peers using lucky-packet sampling, scores peer reputation with Welch's t-test, detects convergence, and selects time sources by path cost. The output is a single **mesh consensus time** backed by multi-validator agreement. <!-- fact:CC-13 -->
 
-```javascript
-{
-  "transaction": {
-    "from": "0xabc...",
-    "to": "0xdef...",
-    "value": 1000,
-    "timestamp": {
-      "nanoTime": "1704067200500000000",
-      "hardwareAttestation": "0x7f3a9b2c...",
-      "timeAuthority": "TimeRPC-Node-42"
-    }
-  }
-}
-```
+The PTP Squared algorithms are credited to Lasse Limkilde Johnsen (September 2021 Technical Preview). <!-- fact:DOC-27 -->
 
-### Deterministic Ordering
-Transactions are ordered by their **hardware timestamps**, not block inclusion:
+### 2. Time quality, on-chain
 
-1. **Temporal Watermarks**: Each transaction has an immutable timestamp
-2. **Validity Windows**: Transactions have expiration time
-3. **Guaranteed Sequencing**: Order determined by nanosecond timestamps
+Mesh state reaches the runtime through a block inherent consumed by a timesync pallet, which stores per-block and per-validator time quality on-chain as a fixed-point score (0–10,000), records health checkpoints every 100 blocks, and defines time-sync offences with slash fractions (persistent drift 1%, low reputation 1%, contradictory offsets 5%). <!-- fact:CC-14 -->
 
-## Key Components
+**Current status, disclosed:** offence *enforcement* is disabled in both compiled runtimes today — violations are detected and recorded, but do not slash. This is a deliberate maturation step, not a hidden gap. <!-- fact:CC-15 -->
 
-### 1. TimeRPC Protocol
-Provides cryptographically attested time services:
-- Dual-signature attestation
-- Network time synchronization
-- Temporal proof generation
+Each validator also self-classifies its physical time source — a Timebeat PTP daemon, chrony (NTP), or GNSS/PPS hardware with NIC hardware timestamping — reporting a measured root-distance-to-UTC in nanoseconds. GNSS/PPS hardware earns the Anchor tier; software-disciplined clocks land in Standard or Minimal. <!-- fact:CC-16 -->
 
-### 2. Hardware Time Cards
-OCP TAP 2.0 compliant hardware providing:
-- GPS/GNSS atomic clock sync
-- Sub-100ns accuracy
-- Tamper-resistant timestamps
+### 3. Receipts and the consensus time oracle
 
-### 3. Temporal Consensus
-Modified consensus incorporating time:
-- Validators must maintain synchronized clocks
-- Blocks include temporal range proofs
-- Fork resolution uses temporal precedence
+Beyond ordering and inclusion enforcement, the mesh consensus time is queryable by anyone: the node exposes a `temporal_*` JSON-RPC namespace (consensus time, per-transaction timestamps, mesh state, validator time quality, and more) on the standard RPC port, and smart contracts can read consensus time directly from a temporal precompile. <!-- fact:CC-20,CC-23 -->
 
-## Benefits of Temporal Blockchain
+Temporal timestamps are nanosecond-resolution `u128` values (NanoMoment). For what that resolution does and does not guarantee, read [Nanosecond Precision: Resolution vs. Accuracy](./nanosecond-precision.md). <!-- fact:CC-18 -->
 
-### 1. **Absolute Fairness**
-- First-seen, first-processed guarantee
-- No transaction reordering possible
-- MEV prevention at protocol level
+## What this does NOT change for builders
 
-### 2. **Regulatory Compliance**
-- Auditable timestamp trail
-- Meets financial market requirements
-- Provable event sequencing
-
-### 3. **New Use Cases**
-- High-frequency trading
-- Real-time gaming
-- IoT synchronization
-- Distributed databases
-
-### 4. **Enhanced Security**
-- Replay attack prevention
-- Time-bounded operations
-- Temporal access controls
-
-## Comparison with Traditional Blockchains
-
-Six differences that matter. Traditional chains measure time in seconds - ROKO in nanoseconds. Block sequence versus hardware timestamps. MEV bolted on at the app layer versus eliminated at the protocol. No time proof versus cryptographic attestation. Loose sync versus sub-100ns. Transactions that live forever versus time-bounded validity.
-
-```html
-<table class="spec-table">
-  <thead>
-    <tr><th>Feature</th><th>Traditional Blockchain</th><th>Temporal Blockchain</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Time Precision</strong></td><td>Seconds/Minutes</td><td>Nanoseconds</td></tr>
-    <tr><td><strong>Ordering</strong></td><td>Block sequence</td><td>Hardware timestamps</td></tr>
-    <tr><td><strong>MEV Protection</strong></td><td>Application layer</td><td>Protocol level</td></tr>
-    <tr><td><strong>Time Proof</strong></td><td>None</td><td>Cryptographic attestation</td></tr>
-    <tr><td><strong>Synchronization</strong></td><td>Loose (~seconds)</td><td>Tight (<100ns)</td></tr>
-    <tr><td><strong>Validity Period</strong></td><td>Indefinite</td><td>Time-bounded</td></tr>
-  </tbody>
-</table>
-```
-
-## Real-World Applications
-
-### Financial Markets
-```solidity
-contract TemporalOrderBook {
-    function placeLimitOrder(uint price, uint amount) {
-        Order memory order = Order({
-            timestamp: Time.nanoNow(),
-            price: price,
-            amount: amount,
-            trader: msg.sender
-        });
-        
-        // Orders processed in exact temporal sequence
-        orderBook.insertByTimestamp(order);
-    }
-}
-```
-
-### Gaming & Metaverse
-```javascript
-// Frame-perfect synchronization
-async function syncGameState() {
-    const timestamp = await roko.time.getNanoMoment();
-    
-    // All players see events at exact same nanosecond
-    gameEngine.scheduleEvent({
-        at: timestamp.add(100, 'milliseconds'),
-        action: 'spawn_boss',
-        guaranteed: true
-    });
-}
-```
-
-### IoT Coordination
-```python
-# Precise sensor data correlation
-def record_sensor_reading(value):
-    reading = {
-        'timestamp': roko.get_nano_time(),
-        'value': value,
-        'sensor_id': SENSOR_ID,
-        'attestation': roko.get_time_proof()
-    }
-    
-    # Guaranteed temporal ordering across all sensors
-    blockchain.submit(reading)
-```
-
-## Getting Started with Temporal Blockchain
-
-To begin building on ROKO's temporal blockchain:
-
-1. **Understand NanoMoments**: Learn about u128 timestamp representation
-2. **Set up TimeRPC**: Connect to time attestation services
-3. **Use Temporal SDKs**: Leverage time-aware smart contract patterns
-4. **Think Temporally**: Design applications with time as a first-class citizen
-
----
-
-> **Key Takeaway**: Temporal blockchain isn't just about adding timestamps—it's about making time a cryptographically verifiable, hardware-attested foundation for a new generation of decentralized applications.
+Ethereum tooling semantics are preserved. The EVM's `block.timestamp` remains the standard seconds-level value; nanosecond temporal data is additive, exposed through the `temporal_*` RPCs and the precompile rather than by changing the Ethereum JSON-RPC schema. Your existing contracts and wallets behave exactly as they do elsewhere — temporal features are opt-in. <!-- fact:EVM-25,EVM-31 -->

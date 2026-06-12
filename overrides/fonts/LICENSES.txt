@@ -1,0 +1,5 @@
+Self-hosted brand fonts — both licensed under the SIL Open Font License 1.1:
+- Rajdhani (Indian Type Foundry) — see OFL-Rajdhani.txt
+- JetBrains Mono (JetBrains) — https://github.com/JetBrains/JetBrainsMono/blob/master/OFL.txt
+HK Guise (body) and Aeonik (accent) are commercially licensed and intentionally
+NOT shipped; body text uses system-font fallbacks by design.

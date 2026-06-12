@@ -1,59 +1,46 @@
 # GitBook Page Hierarchy & Ordering Guide
 
-## Current Page Order & Hierarchy
-
-Here's the current page structure with visual hierarchy:
+Navigation is driven by `_manifest.json` files (root + per-directory). This guide mirrors them — when you add/remove/retitle a page, update the directory's `_manifest.json` AND this tree.
 
 ```
 📚 ROKO Network Documentation
 │
-├── 🏠 Welcome to ROKO (Homepage)
+├── 🏠 Welcome to ROKO (README.md)
 │
 ├── 📂 Getting Started
-│   ├── ⚡ Introduction
-│   ├── 🎯 What is Temporal Blockchain?
-│   └── ⏱️ Why Nanosecond Precision Matters
+│   ├── Introduction
+│   ├── What is a Temporal Blockchain?
+│   ├── Nanosecond Precision: Resolution vs Accuracy
+│   └── Join the Testnet
 │
 ├── 📂 Core Technology
-│   ├── 🔬 Overview
-│   ├── 📂 Temporal Infrastructure
-│   │   ├── OCP-TAP Compliance
-│   │   ├── IEEE 1588 PTP Implementation
-│   │   └── Hardware Timestamping
-│   ├── ⏰ Time Beacons
-│   ├── ⚙️ Consensus Mechanism (BABE/GRANDPA)
-│   ├── 📝 Temporal Transactions
-│   ├── 🛡️ MEV Prevention
-│   ├── 🔷 NanoMoment Architecture
-│   ├── 🌐 Network Architecture
-│   └── ✅ Validator Requirements
-│
-├── 📂 Technical Specifications
-│   ├── 📄 Whitepaper
-│   └── 📊 Architecture
+│   ├── Overview
+│   ├── Temporal Infrastructure (PTP Squared mesh)
+│   ├── OCP-TAP and Open Time Hardware
+│   ├── IEEE 1588 PTP
+│   ├── Hardware Timestamping
+│   ├── From Time Beacons to the Time Mesh (heritage → current architecture)
+│   ├── Consensus (BABE/GRANDPA + PoAT)
+│   ├── Temporal Transactions
+│   ├── Transaction Ordering & Censorship Resistance
+│   ├── NanoMoment
+│   ├── Network Architecture
+│   └── Validators
 │
 ├── 📂 Products & Solutions
-│   ├── 🔷 Project Nexus
-│   └── 🏭 Use Cases
-│
-├── 📂 Resources
-│   ├── 📚 Glossary
-│   ├── ❓ FAQ
-│   ├── 📑 Research Papers
-│   └── 🎨 Brand Assets
+│   └── Use Cases
 │
 ├── 📂 Articles
-│   └── 📰 Of Time and Stamps
+│   └── Of Time and Stamps
 │
-└── 📂 Archive
-    ├── 📜 Historical Documentation
-    ├── 📈 Development History
-    ├── 🎯 Original Vision
-    └── 🐍 Project Basilisk
+├── 📂 Resources
+│   ├── FAQ
+│   ├── Glossary
+│   └── Community
+│
+└── (end of public nav)
 ```
 
-## Notes
+Hidden from nav: `CLAUDE.md`, `PAGE_HIERARCHY_GUIDE.md` (root `_manifest.json` exclude), `_facts/` (registry), `.public/` (legal pages served separately), **`meetings/`, `archive/`, and `signals/`** (pulled from public nav 2026-06-11; signals retired with the launch-announcement removal — internal record stays in repo; counsel-supervised return only).
 
-- Full planned hierarchy is preserved in `.future-docs/PAGE_HIERARCHY_GUIDE.md`
-- As new sections are ready, promote them from `.future-docs/` to root
-- Core Technology now reflects the pallet-based architecture (Beacons, Time Blocks, Temporal Transactions)
+Removed by owner decision (2026-06-11): Project Rosé (`products/project-rose.md`) — excluded from the public KB; era materials live in the private archive.

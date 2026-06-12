@@ -15,17 +15,53 @@
     "validator-requirements"
   ],
   "sections": [
-    { "id": "index", "title": "Overview" },
-    { "id": "temporal-infrastructure", "title": "Temporal Infrastructure" },
-    { "id": "ocp-tap-compliance", "title": "OCP-TAP Compliance" },
-    { "id": "ieee-1588", "title": "IEEE 1588 PTP Implementation" },
-    { "id": "hardware-timestamping", "title": "Hardware Timestamping" },
-    { "id": "time-beacons", "title": "Time Beacons" },
-    { "id": "consensus", "title": "Consensus Mechanism" },
-    { "id": "temporal-transactions", "title": "Temporal Transactions" },
-    { "id": "mev-prevention", "title": "MEV Prevention" },
-    { "id": "nanomoment", "title": "NanoMoment Architecture" },
-    { "id": "network-architecture", "title": "Network Architecture" },
-    { "id": "validator-requirements", "title": "Validator Requirements" }
+    {
+      "id": "index",
+      "title": "Overview"
+    },
+    {
+      "id": "temporal-infrastructure",
+      "title": "Temporal Infrastructure"
+    },
+    {
+      "id": "ocp-tap-compliance",
+      "title": "OCP-TAP and Open Time Hardware"
+    },
+    {
+      "id": "ieee-1588",
+      "title": "IEEE 1588 PTP"
+    },
+    {
+      "id": "hardware-timestamping",
+      "title": "Hardware Timestamping"
+    },
+    {
+      "id": "time-beacons",
+      "title": "From Time Beacons to the Time Mesh"
+    },
+    {
+      "id": "consensus",
+      "title": "Consensus Mechanism"
+    },
+    {
+      "id": "temporal-transactions",
+      "title": "Temporal Transactions"
+    },
+    {
+      "id": "mev-prevention",
+      "title": "Transaction Ordering & Censorship Resistance"
+    },
+    {
+      "id": "nanomoment",
+      "title": "NanoMoment Architecture"
+    },
+    {
+      "id": "network-architecture",
+      "title": "Network Architecture"
+    },
+    {
+      "id": "validator-requirements",
+      "title": "Validators"
+    }
   ]
 }

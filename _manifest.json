@@ -2,19 +2,19 @@
   "title": "ROKO Network Documentation",
   "order": [
     "README",
-    "signals",
     "getting-started",
     "core-technology",
-    "technical",
     "products",
-    "meetings",
     "articles",
-    "resources",
-    "archive"
+    "resources"
   ],
   "exclude": [
     "CLAUDE",
-    "PAGE_HIERARCHY_GUIDE"
+    "PAGE_HIERARCHY_GUIDE",
+    "_facts",
+    "archive",
+    "meetings",
+    "signals"
   ],
   "sections": [
     {
