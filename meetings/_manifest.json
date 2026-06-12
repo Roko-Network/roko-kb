@@ -2,6 +2,12 @@
   "title": "Meetings",
   "summary": "Development meeting transcripts, summaries, and related assets",
   "order": [
+    "2026-06",
+    "2026-05",
+    "2026-04",
+    "2026-03",
+    "2026-02",
+    "2026-01",
     "2025-12",
     "2025-09",
     "2025-08",
@@ -14,6 +20,42 @@
     "2025-01"
   ],
   "sections": [
+    {
+      "id": "2026-06",
+      "title": "June 2026",
+      "summary": "Meeting logs from June 2026",
+      "collapsed": true
+    },
+    {
+      "id": "2026-05",
+      "title": "May 2026",
+      "summary": "Meeting logs from May 2026",
+      "collapsed": true
+    },
+    {
+      "id": "2026-04",
+      "title": "April 2026",
+      "summary": "Meeting logs from April 2026",
+      "collapsed": true
+    },
+    {
+      "id": "2026-03",
+      "title": "March 2026",
+      "summary": "Meeting logs from March 2026",
+      "collapsed": true
+    },
+    {
+      "id": "2026-02",
+      "title": "February 2026",
+      "summary": "Meeting logs from February 2026",
+      "collapsed": true
+    },
+    {
+      "id": "2026-01",
+      "title": "January 2026",
+      "summary": "Meeting logs from January 2026",
+      "collapsed": true
+    },
     {
       "id": "2025-12",
       "title": "December 2025",

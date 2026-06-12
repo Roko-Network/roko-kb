@@ -1,0 +1,26 @@
+{
+  "title": "February 2026 Meetings",
+  "summary": "Development meeting logs from February 2026",
+  "sections": [
+    {
+      "id": "2026-02-10",
+      "title": "February 10, 2026",
+      "file": "2026-02-10.md"
+    },
+    {
+      "id": "2026-02-12",
+      "title": "February 12, 2026",
+      "file": "2026-02-12.md"
+    },
+    {
+      "id": "2026-02-17",
+      "title": "February 17, 2026",
+      "file": "2026-02-17.md"
+    }
+  ],
+  "order": [
+    "2026-02-10",
+    "2026-02-12",
+    "2026-02-17"
+  ]
+}
