@@ -5,9 +5,10 @@
   "description": "ROKO Network knowledge base published with Pagenary.",
   "type": "module",
   "scripts": {
-    "build": "pagenary build:tenants roko-kb",
-    "build:docs": "pagenary build:tenants roko-kb",
-    "build:docs:incremental": "pagenary build:tenants roko-kb --incremental",
+    "build": "pagenary build:tenants roko-kb && npm run strip:fact-comments",
+    "build:docs": "pagenary build:tenants roko-kb && npm run strip:fact-comments",
+    "build:docs:incremental": "pagenary build:tenants roko-kb --incremental && npm run strip:fact-comments",
+    "strip:fact-comments": "node scripts/strip-fact-comments.mjs roko-kb",
     "validate:docs": "node scripts/validate-pagenary-output.mjs roko-kb",
     "validate:aiwg-index": "node scripts/validate-aiwg-fortemi-export.mjs /tmp/roko-project-aiwg-fortemi-index.json",
     "validate:migration": "node scripts/validate-migration.mjs",
