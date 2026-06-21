@@ -72,19 +72,35 @@ jobs:
           echo "Build verification passed"
           ls -lah dist/roko-kb/
 
-      - name: Check deploy target is configured
+      - name: Resolve deploy target
         run: |
           set -euo pipefail
+          # Strip any whitespace/newlines from the secret values. A trailing
+          # newline pasted into a secret makes ssh reject the host with
+          # "hostname contains invalid characters". Trim defensively, then
+          # re-export the clean values for the remaining steps.
+          h="$(printf '%s' "${DEPLOY_HOST:-}" | tr -d '[:space:]')"
+          p="$(printf '%s' "${DEPLOY_PORT:-}" | tr -d '[:space:]')"
+          u="$(printf '%s' "${DEPLOY_USER:-}" | tr -d '[:space:]')"
+          pa="$(printf '%s' "${DEPLOY_PATH:-}" | tr -d '[:space:]')"
           missing=()
-          [ -n "${DEPLOY_HOST:-}" ] || missing+=(DEPLOY_HOST)
-          [ -n "${DEPLOY_PORT:-}" ] || missing+=(DEPLOY_PORT)
-          [ -n "${DEPLOY_USER:-}" ] || missing+=(DEPLOY_USER)
-          [ -n "${DEPLOY_PATH:-}" ] || missing+=(DEPLOY_PATH)
+          [ -n "$h" ]  || missing+=(DEPLOY_HOST)
+          [ -n "$p" ]  || missing+=(DEPLOY_PORT)
+          [ -n "$u" ]  || missing+=(DEPLOY_USER)
+          [ -n "$pa" ] || missing+=(DEPLOY_PATH)
           if [ "${#missing[@]}" -ne 0 ]; then
             echo "::error::Missing deploy secret(s): ${missing[*]}"
             exit 1
           fi
-          echo "Deploy target: ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PORT} -> ${DEPLOY_PATH}"
+          # Ensure the deploy path ends with a single trailing slash.
+          case "$pa" in */) ;; *) pa="$pa/" ;; esac
+          {
+            echo "DEPLOY_HOST=$h"
+            echo "DEPLOY_PORT=$p"
+            echo "DEPLOY_USER=$u"
+            echo "DEPLOY_PATH=$pa"
+          } >> "$GITHUB_ENV"
+          echo "Resolved deploy target: ${u}@${h}:${p} -> ${pa}"
 
       - name: Install SSH tools
         run: apt-get update && apt-get install -y --no-install-recommends openssh-client rsync
