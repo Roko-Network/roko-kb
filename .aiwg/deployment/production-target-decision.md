@@ -20,7 +20,7 @@ on `integro-dev-004`.
 | Target host | `integro-dev-004` (66.94.104.191) — shared Caddy `static-server` origin, fronted by a Cloudflare tunnel for `docs.roko.network`. Rsync target `~/production-deploy/roko-docs/`, bind-mounted read-only to `/srv/roko-docs`. |
 | Public base path | Domain root (`/`) — `dist/roko-kb/` is served at `https://docs.roko.network/`. Pagenary output uses relative asset paths, so no path prefix is applied. |
 | Deployment trigger | Push to `main` (every docs change publishes) plus manual `workflow_dispatch`. No version tag is required. |
-| Deployment credential | Gitea repo secret `DEPLOY_SSH_KEY` — a dedicated SSH key (`deploy-roko-kb@ci`) whose public half is in the deploy host's `~/.ssh/authorized_keys`. Host/port/path/user are inlined in the workflow as infrastructure facts, not secrets. |
+| Deployment credential | Gitea repo secret `DEPLOY_SSH_KEY` — a dedicated SSH key (`deploy-roko-kb@ci`) whose public half is in the deploy host's `~/.ssh/authorized_keys`. The deploy target coordinates are also repo secrets (`DEPLOY_HOST`, `DEPLOY_PORT`, `DEPLOY_USER`, `DEPLOY_PATH`) so the host/path are not exposed in the public GitHub mirror. No npm/registry token is needed — all dependencies install anonymously from the public npm registry. |
 | Rollback method | Re-run a prior known-good commit via `workflow_dispatch`, or restore the last `roko-kb-pagenary-dist.tgz` artifact from `docs-build.yml` and rsync it to `~/production-deploy/roko-docs/`. Timestamped server-side backups of prior output exist under `~/production-deploy/roko-docs-backup-*`. |
 | Post-deploy smoke URL | `https://docs.roko.network/` (canonical). The deploy job also verifies `index.html` is present on the origin and references ROKO before reporting success. |
 
@@ -35,7 +35,7 @@ on `integro-dev-004`.
 - [x] Target host is selected (`integro-dev-004`, Caddy `/srv/roko-docs`).
 - [x] Public base path is selected (domain root) and matches `tenants.json` host routing.
 - [x] Deployment trigger is selected (push to `main` + `workflow_dispatch`).
-- [x] Required repo secret is defined (`DEPLOY_SSH_KEY`); maintainer adds the value in Gitea.
+- [x] Required repo secrets are defined (`DEPLOY_SSH_KEY`, `DEPLOY_HOST`, `DEPLOY_PORT`, `DEPLOY_USER`, `DEPLOY_PATH`); maintainer adds the values in Gitea.
 - [x] Rollback path is documented.
 - [x] Post-deploy smoke URL is documented (`https://docs.roko.network/`).
 - [ ] Gitea issue #4 is updated with the selected deployment path.
