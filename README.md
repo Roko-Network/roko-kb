@@ -36,3 +36,32 @@ We'd rather show you than tell you.
 **Built with Temporal Precision** ⏱️
 
 ROKO Network © 2026 | Documentation is provided as-is for informational purposes — nothing herein is investment, financial, legal, or tax advice.
+
+## Publishing
+
+This knowledge base is published with Pagenary.
+
+```bash
+npm install
+npm run build:docs
+npm run validate:release
+npm run serve
+```
+
+The tenant registry is `tenants.json`; the ROKO tenant is `roko-kb` and builds to
+`dist/roko-kb`. Site branding, SEO, Docs Map, theme picker, and export behavior
+live in `config.json`. Navigation starts in the root `_manifest.json` and is
+refined by the section `_manifest.json` files.
+
+Each successful tenant build should emit a Fortemi-backed static search index in
+`dist/roko-kb/search-index/`.
+
+The Gitea workflow in `.gitea/workflows/docs-build.yml` validates release gates
+through `npm run validate:release`. That command runs the generated-output
+checks for the Fortemi search index, Docs Map data, and representative search
+queries, then runs migration invariants for stale publishing guidance, dead root
+manifest entries, oversized migrated logo assets, and non-content records in
+the published search index. The workflow packages the validated `dist/roko-kb`
+output as `roko-kb-pagenary-dist.tgz` with a SHA-256 checksum. Publishing to a
+`pages` branch or another static host still requires confirming the target
+branch/domain and adding the required repo secret.

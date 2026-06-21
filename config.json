@@ -5,6 +5,17 @@
   "brandSub": "Network",
   "tagline": "The Temporal Layer for Web3",
   "copyright": "Roko Network",
+  "accentColor": "#6366F1",
+  "docsMap": {
+    "enabled": true,
+    "title": "Knowledge Map",
+    "renderer": "svg"
+  },
+  "themePicker": {
+    "enabled": true,
+    "themes": ["light", "dark"],
+    "default": "light"
+  },
   "export": {
     "logo": "embed",
     "logoPath": "favicon.png",

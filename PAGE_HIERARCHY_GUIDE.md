@@ -1,4 +1,4 @@
-# GitBook Page Hierarchy & Ordering Guide
+# Pagenary Page Hierarchy & Ordering Guide
 
 Navigation is driven by `_manifest.json` files (root + per-directory). This guide mirrors them — when you add/remove/retitle a page, update the directory's `_manifest.json` AND this tree.
 
@@ -44,3 +44,10 @@ Navigation is driven by `_manifest.json` files (root + per-directory). This guid
 Hidden from nav: `CLAUDE.md`, `PAGE_HIERARCHY_GUIDE.md` (root `_manifest.json` exclude), `_facts/` (registry), `.public/` (legal pages served separately), **`meetings/`, `archive/`, and `signals/`** (pulled from public nav 2026-06-11; signals retired with the launch-announcement removal — internal record stays in repo; counsel-supervised return only).
 
 Removed by owner decision (2026-06-11): Project Rosé (`products/project-rose.md`) — excluded from the public KB; era materials live in the private archive.
+
+- Full planned hierarchy is preserved in `.future-docs/PAGE_HIERARCHY_GUIDE.md`
+- As new sections are ready, promote them from `.future-docs/` to root
+- Pagenary publishing is driven by `tenants.json`, `config.json`, `_manifest.json`,
+  and the section `_manifest.json` files.
+- Pagenary emits a static Fortemi search index for each tenant at
+  `dist/roko-kb/search-index/` during a successful build.

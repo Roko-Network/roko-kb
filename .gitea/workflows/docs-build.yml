@@ -1,0 +1,43 @@
+name: Validate Pagenary docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: List Pagenary tenants
+        run: npm run list:tenants
+
+      - name: Build ROKO KB
+        run: npm run build:docs
+
+      - name: Verify release gates
+        run: npm run validate:release
+
+      - name: Package validated Pagenary output
+        run: |
+          tar -czf roko-kb-pagenary-dist.tgz -C dist roko-kb
+          sha256sum roko-kb-pagenary-dist.tgz > roko-kb-pagenary-dist.tgz.sha256
+
+      - name: Upload validated docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: roko-kb-pagenary-dist
+          path: |
+            roko-kb-pagenary-dist.tgz
+            roko-kb-pagenary-dist.tgz.sha256

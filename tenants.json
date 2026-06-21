@@ -1,0 +1,20 @@
+{
+  "$schema": "https://pagenary.io/schemas/tenants.schema.json",
+  "tenants": [
+    {
+      "id": "roko-kb",
+      "source": {
+        "type": "local",
+        "path": "."
+      },
+      "target": {
+        "type": "local",
+        "path": "./dist/roko-kb"
+      },
+      "domains": [
+        "docs.roko.network"
+      ],
+      "strictLinks": true
+    }
+  ]
+}

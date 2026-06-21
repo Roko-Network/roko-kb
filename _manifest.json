@@ -9,10 +9,19 @@
     "resources"
   ],
   "exclude": [
+    "AGENTS",
+    "AIWG",
     "CLAUDE",
     "PAGE_HIERARCHY_GUIDE",
     "_facts",
     "archive",
+    "config",
+    "dist",
+    "node_modules",
+    "package",
+    "package-lock",
+    "scripts",
+    "tenants",
     "meetings",
     "signals"
   ],

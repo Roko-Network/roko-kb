@@ -1,0 +1,22 @@
+{
+  "name": "roko-kb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ROKO Network knowledge base published with Pagenary.",
+  "type": "module",
+  "scripts": {
+    "build": "pagenary build:tenants roko-kb",
+    "build:docs": "pagenary build:tenants roko-kb",
+    "build:docs:incremental": "pagenary build:tenants roko-kb --incremental",
+    "validate:docs": "node scripts/validate-pagenary-output.mjs roko-kb",
+    "validate:aiwg-index": "node scripts/validate-aiwg-fortemi-export.mjs /tmp/roko-project-aiwg-fortemi-index.json",
+    "validate:migration": "node scripts/validate-migration.mjs",
+    "validate:release": "npm run validate:docs && npm run validate:migration",
+    "index:aiwg": "aiwg index build --force --verbose && aiwg index export --format fortemi --graph project --out /tmp/roko-project-aiwg-fortemi-index.json && npm run validate:aiwg-index",
+    "list:tenants": "pagenary tenants:list",
+    "serve": "pagenary serve"
+  },
+  "devDependencies": {
+    "@pagenary/publisher": "2026.6.13"
+  }
+}

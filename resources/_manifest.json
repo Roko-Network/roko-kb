@@ -3,10 +3,12 @@
   "order": [
     "faq",
     "glossary",
-    "community"
+    "community",
+    "publishing-and-search"
   ],
   "sections": [
     { "id": "community", "title": "Community" },
+    { "id": "publishing-and-search", "title": "Publishing and Search" },
     { "id": "glossary", "title": "Glossary" },
     { "id": "faq", "title": "FAQ" }
   ]

@@ -33,3 +33,7 @@ Temporary Items
 build/
 dist/
 *.log
+
+# Node/Pagenary local state
+node_modules/
+.cache/
