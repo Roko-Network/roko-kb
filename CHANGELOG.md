@@ -4,6 +4,22 @@ All notable changes to the ROKO Network documentation site are recorded here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.3] - 2026-06-21
+
+### Fixed
+- Regenerated `overrides/styles.css` from the current engine `src/styles.css`,
+  recovering ~576 lines of engine CSS the stale override was missing — most
+  visibly the article Fortemi **info button / source panel** (`.doc-fortemi-*`),
+  plus command-palette, `.nav-strip`, and `.sr-only` accessibility styles. All
+  ROKO customizations (brand fonts, palette, `html.light` theme, nav spacing,
+  links/headings/syntax) re-applied as a single appended layer.
+- Knowledge Map now follows the light/dark theme and renders its connector
+  lines (the engine's `.docs-map-*` block was entirely absent before; edges now
+  stroke a visible themed color).
+- Sidebar nav no longer stretches its items to fill a tall/portrait viewport
+  (`align-content: start`).
+- Titles (nav + headings) are no longer text-selectable (`user-select: none`).
+
 ## [0.2.2] - 2026-06-21
 
 ### Changed
@@ -48,6 +64,7 @@ project adheres to [Semantic Versioning](https://semver.org/).
   (`DEPLOY_HOST/PORT/USER/PATH`) and the SSH key are CI secrets so they stay
   out of the public mirror.
 
+[0.2.3]: https://git.integrolabs.net/roko/roko-kb/compare/v0.2.2...v0.2.3
 [0.2.2]: https://git.integrolabs.net/roko/roko-kb/compare/v0.2.1...v0.2.2
 [0.2.1]: https://git.integrolabs.net/roko/roko-kb/compare/v0.2.0...v0.2.1
 [0.2.0]: https://git.integrolabs.net/roko/roko-kb/compare/v0.1.0...v0.2.0
