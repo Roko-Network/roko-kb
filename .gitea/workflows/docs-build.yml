@@ -9,13 +9,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Run inside a node container so JS actions (checkout, upload-artifact) have
+    # node on PATH. Without this, the Gitea host runner intermittently fails
+    # with: exec: "node": executable file not found in $PATH.
+    container:
+      image: node:20@sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5  # node 20.20.2 (AIWG ci/digests.txt)
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
+      # node 20 is provided by the container image above; no setup-node needed
+      # (dropping it also removes the npm-cache-restore flakiness on this runner).
 
       - name: Install dependencies
         run: npm ci
@@ -31,6 +38,7 @@ jobs:
 
       - name: Package validated Pagenary output
         run: |
+          set -euo pipefail
           tar -czf roko-kb-pagenary-dist.tgz -C dist roko-kb
           sha256sum roko-kb-pagenary-dist.tgz > roko-kb-pagenary-dist.tgz.sha256
 
