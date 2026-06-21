@@ -1,0 +1,124 @@
+# Docs Deploy
+#
+# Builds the Pagenary `roko-kb` tenant, runs the release validation gates, and
+# deploys the static output to the shared Caddy origin host (integro-dev-004),
+# which fronts docs.roko.network via a Cloudflare tunnel.
+#
+# Mirrors the normalized static-docs auto-deploy pattern already used for
+# docs.aiwg.io and docs.pagenary.com (CI -> rsync over SSH -> per-site :ro Caddy
+# volume). Replaces the prior manual deploy (~/roko-docs/deploy.sh).
+#
+# Required repo secret:
+#   DEPLOY_SSH_KEY  - private SSH key whose public half is in the deploy
+#                     host's ~/.ssh/authorized_keys (suggested comment:
+#                     deploy-roko-kb@ci)
+#
+# Deploy target (host/port/path/user) is inlined below: these are
+# infrastructure facts, not credentials. The only secret is the SSH key.
+
+name: Docs Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: docs-deploy
+  cancel-in-progress: false
+
+# Deploy target — inline (not secrets). Caddy serves this path read-only at
+# /srv/roko-docs; the Cloudflare tunnel routes docs.roko.network to it.
+env:
+  DEPLOY_USER: roctinam
+  DEPLOY_HOST: 66.94.104.191
+  DEPLOY_PORT: '2424'
+  DEPLOY_PATH: /home/roctinam/production-deploy/roko-docs/
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy docs.roko.network
+    runs-on: ubuntu-latest
+    container:
+      image: node:20@sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5  # node 20.20.2 (AIWG ci/digests.txt)
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: List Pagenary tenants
+        run: npm run list:tenants
+
+      - name: Build ROKO KB
+        run: npm run build:docs
+
+      - name: Verify release gates
+        run: npm run validate:release
+
+      - name: Verify build output
+        run: |
+          set -euo pipefail
+          test -d dist/roko-kb            || { echo "::error::Missing dist/roko-kb"; exit 1; }
+          test -f dist/roko-kb/index.html || { echo "::error::Missing dist/roko-kb/index.html"; exit 1; }
+          echo "Build verification passed"
+          ls -lah dist/roko-kb/
+
+      - name: Install SSH tools
+        run: apt-get update && apt-get install -y --no-install-recommends openssh-client rsync
+
+      - name: Configure SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DEPLOY_SSH_KEY:-}" ]; then
+            echo "::error::DEPLOY_SSH_KEY secret is unset"
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          printf '%s\n' "${DEPLOY_SSH_KEY}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Deploy to integro-dev-004
+        run: |
+          set -euo pipefail
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${DEPLOY_PORT} -o StrictHostKeyChecking=accept-new" \
+            dist/roko-kb/ \
+            "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
+
+      - name: Verify deployment
+        run: |
+          set -euo pipefail
+          # Content verification — file-presence alone leaves a silent failure
+          # mode where rsync lands files in a path Caddy does not serve. Confirm
+          # index.html is present and references ROKO.
+          ssh -i ~/.ssh/deploy_key -p "${DEPLOY_PORT}" -o StrictHostKeyChecking=accept-new \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "test -f '${DEPLOY_PATH}index.html' || { echo '::error::Deploy failed: ${DEPLOY_PATH}index.html missing'; exit 1; }
+             grep -qi 'roko' '${DEPLOY_PATH}index.html' || { echo '::error::index.html present but does not reference ROKO — possible wrong content/path'; exit 1; }
+             echo 'Deploy verified: index.html present and references ROKO.'"
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
+
+      - name: Log deployment result
+        if: success()
+        env:
+          TRIGGER_EVENT: ${{ gitea.event_name }}
+          TRIGGER_REF: ${{ gitea.ref }}
+          TRIGGER_SHA: ${{ gitea.sha }}
+        run: |
+          set -euo pipefail
+          echo "Deployed docs.roko.network"
+          echo "Target: ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PORT} -> ${DEPLOY_PATH}"
+          echo "Trigger: ${TRIGGER_EVENT}"
+          echo "Ref: ${TRIGGER_REF}"
+          echo "Commit: ${TRIGGER_SHA}"

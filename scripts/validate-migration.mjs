@@ -176,13 +176,14 @@ function assertProductionDecisionRecord() {
   }
   const text = fs.readFileSync(filePath, "utf8");
   const requiredSnippets = [
-    "Pending maintainer decision",
+    "Decided",
     "Target host",
     "Public base path",
     "Deployment trigger",
     "Deployment credential",
     "Rollback method",
     "Post-deploy smoke URL",
+    "DEPLOY_SSH_KEY",
     "Gitea issue #4",
   ];
   const missing = requiredSnippets.filter((snippet) => !text.includes(snippet));
@@ -206,7 +207,7 @@ console.log(
       assets: "ok",
       publishedSearchScope: "ok",
       releaseConfig: "ok",
-      productionDecision: "pending",
+      productionDecision: "decided",
     },
     null,
     2,
