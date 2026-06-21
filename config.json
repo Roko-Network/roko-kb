@@ -12,7 +12,7 @@
     "renderer": "svg"
   },
   "themePicker": {
-    "enabled": true,
+    "enabled": false,
     "themes": ["light", "dark"],
     "default": "light"
   },

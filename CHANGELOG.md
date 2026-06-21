@@ -4,6 +4,13 @@ All notable changes to the ROKO Network documentation site are recorded here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-06-21
+
+### Fixed
+- Removed the redundant Pagenary theme-picker dropdown (`themePicker.enabled:
+  false` in `config.json`); theme switching is handled by the custom `☀ Theme`
+  button in the banner (`overrides/roko-theme.js`).
+
 ## [0.2.0] - 2026-06-21
 
 ### Added
@@ -34,5 +41,6 @@ project adheres to [Semantic Versioning](https://semver.org/).
   (`DEPLOY_HOST/PORT/USER/PATH`) and the SSH key are CI secrets so they stay
   out of the public mirror.
 
+[0.2.1]: https://git.integrolabs.net/roko/roko-kb/compare/v0.2.0...v0.2.1
 [0.2.0]: https://git.integrolabs.net/roko/roko-kb/compare/v0.1.0...v0.2.0
 [0.1.0]: https://git.integrolabs.net/roko/roko-kb/releases/tag/v0.1.0
