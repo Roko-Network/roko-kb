@@ -35,7 +35,7 @@ jobs:
           sha256sum roko-kb-pagenary-dist.tgz > roko-kb-pagenary-dist.tgz.sha256
 
       - name: Upload validated docs artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: roko-kb-pagenary-dist
           path: |
