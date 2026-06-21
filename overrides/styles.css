@@ -2027,7 +2027,12 @@ pre.highlighted code {
 html.light {
   color-scheme: light;
   --surface: #F4F6FA;
+  /* Restore the rgb companion that config-theme injection flips to 0,0,0 in
+     :root. Without it, every rgba(var(--surface-rgb), …) surface (sidebar,
+     topbar, modals) stays black in light mode. */
+  --surface-rgb: 244, 246, 250;
   --ink: #181818;
+  --ink-rgb: 24, 24, 24;
   --muted: #5A6170;
   --accent: #00D4AA;
   --grid-line: rgba(24, 24, 24, 0.10);
