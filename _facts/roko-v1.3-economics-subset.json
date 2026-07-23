@@ -1,0 +1,305 @@
+{
+  "schema": "roko.kb.economics_facts.v1",
+  "as_of": "2026-07-23",
+  "purpose": "Machine-readable ROKO v1.3 economics facts for simulation consumers.",
+  "source_registry": "_facts/facts.yaml",
+  "supporting_docs": [
+    "roko/token-lifecycle:docs/planning/roko-v1.3-simulation-backfill.md"
+  ],
+  "whitepaper": {
+    "title": "ROKO Network Whitepaper public-release draft v1.3",
+    "public_page": "https://roko.network/whitepaper/",
+    "public_pdf": "https://roko.network/whitepaper/roko-whitepaper-public-release-draft-v1.3.pdf"
+  },
+  "facts": [
+    {
+      "id": "economics.block_time.mainnet",
+      "category": "block_time",
+      "status": "current",
+      "value": 3,
+      "unit": "seconds",
+      "summary": "Mainnet runtime block time is compiled at 3 seconds.",
+      "simulation_use": "Canonical mainnet v1.3 scenarios should use 3-second blocks unless explicitly modeling testnet or historical calibration.",
+      "fact_ids": ["CC-04", "TOK-31", "PAL-17"],
+      "code_evidence": [
+        "runtime/mainnet/src/constants.rs:54",
+        "runtime/mainnet/src/constants.rs:54-59"
+      ],
+      "whitepaper_references": [
+        "Section 5: native L1 operating model",
+        "Section 7.2: reward and fee model"
+      ]
+    },
+    {
+      "id": "economics.block_time.testnet",
+      "category": "block_time",
+      "status": "current",
+      "value": 2,
+      "unit": "seconds",
+      "summary": "Current testnet runtime block time is 2 seconds.",
+      "simulation_use": "Use only for current testnet calibration; do not present as the mainnet assumption.",
+      "fact_ids": ["CC-05", "EVM-26", "TOK-31", "PAL-17"],
+      "code_evidence": [
+        "runtime/testnet/src/constants.rs:55-57",
+        "runtime/testnet/src/temporal_integration_tests.rs:106-114"
+      ],
+      "whitepaper_references": [
+        "Section 5: testnet versus mainnet transition context"
+      ]
+    },
+    {
+      "id": "economics.block_time.production_testnet_target",
+      "category": "block_time",
+      "status": "planned",
+      "value": 6,
+      "unit": "seconds",
+      "summary": "A 6-second production-testnet value is documented as a target, while code currently runs testnet at 2 seconds.",
+      "simulation_use": "Use as a sensitivity case or planned production-testnet scenario, not as current chain state.",
+      "fact_ids": ["CC-05", "EVM-26", "PAL-17"],
+      "code_evidence": [
+        "runtime/testnet/src/constants.rs:55-57"
+      ],
+      "whitepaper_references": [
+        "Section 5: testnet versus mainnet transition context"
+      ]
+    },
+    {
+      "id": "economics.fee_routing.substrate_runtime",
+      "category": "fee_routing",
+      "status": "current",
+      "value": {
+        "treasury_share": 0.2,
+        "block_author_share": 0.5,
+        "temporal_fee_pool_share": 0.3
+      },
+      "summary": "Substrate transaction fees and tips are split 20% Treasury, 50% block author, and 30% TemporalFeePool in both runtimes.",
+      "simulation_use": "Canonical non-EVM fee routing baseline for v1.3 simulations.",
+      "fact_ids": ["TOK-11", "EVM-32"],
+      "code_evidence": [
+        "runtime/mainnet/src/lib.rs:279-304",
+        "runtime/testnet/src/lib.rs:281-301"
+      ],
+      "whitepaper_references": [
+        "Section 7.2: runtime fee allocation",
+        "Table 1: economic flows"
+      ]
+    },
+    {
+      "id": "economics.temporal_fee_pool.distribution",
+      "category": "fee_routing",
+      "status": "current",
+      "value": {
+        "pool_share_of_fees": 0.3,
+        "distribution_basis": "TimestamperWeights",
+        "fallback": "current block author receives the pool when no weights exist"
+      },
+      "summary": "TemporalFeePool funds are periodically distributed to timestamping validators by recorded weights, with a block-author fallback.",
+      "simulation_use": "Model TemporalFeePool as a separate quality/timestamper incentive ledger, not as generic treasury revenue.",
+      "fact_ids": ["TOK-12"],
+      "code_evidence": [
+        "runtime/pallets/temporal-transactions/src/lib.rs:477-517"
+      ],
+      "whitepaper_references": [
+        "Section 7.2: TemporalFeePool and validator incentives",
+        "Table 1: economic flows"
+      ]
+    },
+    {
+      "id": "economics.evm_fee_pricing",
+      "category": "evm_fee_routing",
+      "status": "current",
+      "value": {
+        "pricing_model": "EIP-1559-style base fee",
+        "default_base_fee_per_gas": 1000000000,
+        "block_gas_limit": 75000000
+      },
+      "summary": "EVM gas pricing uses pallet-base-fee with a 1 gwei default base fee and a 75,000,000 block gas limit.",
+      "simulation_use": "EVM demand scenarios should model gas/base-fee behavior separately from Substrate extrinsic fees.",
+      "fact_ids": ["EVM-20", "TOK-13", "TOK-14"],
+      "code_evidence": [
+        "runtime/mainnet/src/lib.rs:549-569",
+        "runtime/mainnet/src/lib.rs:695-705",
+        "runtime/testnet/src/lib.rs:551-575"
+      ],
+      "whitepaper_references": [
+        "Section 5: EVM-compatible L1",
+        "Section 7.2: fee model"
+      ]
+    },
+    {
+      "id": "economics.evm_fee_routing.caveat",
+      "category": "evm_fee_routing",
+      "status": "current",
+      "value": {
+        "testnet": "EVMCurrencyAdapter<Balances, DealWithFees>",
+        "mainnet": "OnChargeTransaction = ()",
+        "simulation_caveat": "Mainnet EVM fees must not be assumed to follow the 20/50/30 DealWithFees split until implementation is changed or confirmed."
+      },
+      "summary": "EVM fee routing differs between runtimes: testnet routes through DealWithFees, while mainnet currently does not.",
+      "simulation_use": "Run EVM fee revenue as a caveated or sensitivity path, not as confirmed mainnet Treasury/TemporalFeePool revenue.",
+      "fact_ids": ["TOK-15"],
+      "code_evidence": [
+        "runtime/testnet/src/lib.rs:732",
+        "runtime/mainnet/src/lib.rs:717"
+      ],
+      "whitepaper_references": [
+        "Section 7.2: fee model",
+        "Table 1: economic flows"
+      ]
+    },
+    {
+      "id": "economics.pwroko.locking",
+      "category": "pwroko_mechanics",
+      "status": "current",
+      "value": {
+        "mint_ratio": "1 native ROKO locked : 1 pwROKO minted",
+        "transferability": "non-transferable",
+        "unlock_flow": "unlock_request then complete_unlock after cooloff"
+      },
+      "summary": "pwROKO is minted by reserving native ROKO 1:1, is non-transferable, and unlocks through a two-step cooldown flow.",
+      "simulation_use": "Enforce 1:1 backing and non-transferability as hard invariants in governance/staking scenarios.",
+      "fact_ids": ["CC-24", "PAL-06", "PAL-07", "PAL-12", "TOK-17", "TOK-18", "TOK-19"],
+      "code_evidence": [
+        "runtime/pallets/pwroko/src/lib.rs:299-338",
+        "runtime/pallets/pwroko/src/lib.rs:344-501"
+      ],
+      "whitepaper_references": [
+        "Section 7.2: pwROKO staking and governance",
+        "Section 5: native token lifecycle"
+      ]
+    },
+    {
+      "id": "economics.pwroko.staking_currency",
+      "category": "pwroko_mechanics",
+      "status": "current",
+      "value": "pwROKO",
+      "summary": "Staking is denominated in pwROKO in both testnet and mainnet runtimes.",
+      "simulation_use": "Governance power and staking exposure should be modeled through backed pwROKO, not transferable native ROKO balances.",
+      "fact_ids": ["CC-25", "PAL-09", "TOK-21", "PAL-35"],
+      "code_evidence": [
+        "runtime/mainnet/src/lib.rs:903",
+        "runtime/mainnet/src/lib.rs:919",
+        "runtime/testnet/src/lib.rs:938"
+      ],
+      "whitepaper_references": [
+        "Section 7.2: pwROKO staking and governance",
+        "Table 1: staking asset"
+      ]
+    },
+    {
+      "id": "economics.pwroko.reward_backing",
+      "category": "pwroko_mechanics",
+      "status": "current",
+      "value": {
+        "reward_asset": "native ROKO backing minted and reserved",
+        "pwroko_issuance": "equal pwROKO minted only with direct backing"
+      },
+      "summary": "Staking rewards are minted with direct native backing: the wrapper mints native ROKO, reserves it, records reward-locked backing, and mints equal pwROKO.",
+      "simulation_use": "Reward compounding must preserve full backing; do not model unbacked pwROKO issuance.",
+      "fact_ids": ["TOK-22", "TOK-32", "TOK-33"],
+      "code_evidence": [
+        "runtime/pallets/pwroko/src/reward_wrapper.rs:123-151",
+        "runtime/pallets/pwroko/src/helpers.rs:149-188",
+        "runtime/pallets/pwroko/src/lib.rs:522-564"
+      ],
+      "whitepaper_references": [
+        "Section 7.2: reward payment and pwROKO backing"
+      ]
+    },
+    {
+      "id": "economics.staking_inflation_curve",
+      "category": "staking_inflation",
+      "status": "current",
+      "value": {
+        "min_inflation": 0.025,
+        "max_inflation": 0.1,
+        "ideal_stake": 0.5,
+        "falloff": 0.05
+      },
+      "summary": "Staking inflation follows a Substrate reward curve bounded from 2.5% to 10%, with 50% ideal stake and 5% falloff.",
+      "simulation_use": "Use the curve as the canonical L1 reward model; fixed reward pools should be separate temporary incentive scenarios.",
+      "fact_ids": ["PAL-14", "TOK-23", "TOK-06"],
+      "code_evidence": [
+        "runtime/mainnet/src/lib.rs:867-876",
+        "runtime/mainnet/src/lib.rs:936",
+        "runtime/testnet/src/lib.rs:884-892"
+      ],
+      "whitepaper_references": [
+        "Section 7.2: reward model",
+        "Table 1: staking rewards"
+      ]
+    },
+    {
+      "id": "economics.legacy_erc20_migration.bridge_absent",
+      "category": "legacy_migration",
+      "status": "current",
+      "value": "no bridge or wrap mechanism exists in the node repo",
+      "summary": "The runtime repository does not currently include a bridge or wrap mechanism for the Ethereum ERC-20 ROKO contract.",
+      "simulation_use": "Treat legacy ERC-20 migration as a planned governance/product process until a bridge contract or pallet is added.",
+      "fact_ids": ["TOK-28"],
+      "code_evidence": [
+        "repo-wide grep for 6f222e04 across .rs/.md/.json/.ts/.js returns zero matches",
+        "no bridge mentions in docs/"
+      ],
+      "whitepaper_references": [
+        "Section 5: existing ROKO holder migration",
+        "Section 7.2: governance transition"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "contradiction.block_time.testnet_2s_vs_6s",
+      "category": "block_time",
+      "status_map": {
+        "current": "testnet runtime is 2 seconds",
+        "planned": "production-testnet target is 6 seconds",
+        "current_mainnet": "mainnet runtime is 3 seconds",
+        "stale": "unqualified 6-second testnet/mainnet simulation default"
+      },
+      "fact_ids": ["CC-04", "CC-05", "EVM-26", "PAL-17", "TOK-31"],
+      "simulation_resolution": "Run 3s as canonical mainnet, 2s for current testnet calibration, and 6s only as a planned-production-testnet sensitivity."
+    },
+    {
+      "id": "contradiction.staking_currency.native_vs_pwroko",
+      "category": "pwroko_mechanics",
+      "status_map": {
+        "current": "runtime stakes with pwROKO in both runtimes",
+        "stale": "README/network table claim that mainnet staking currency is native ROKO"
+      },
+      "fact_ids": ["PAL-35", "TOK-21"],
+      "simulation_resolution": "Model staking and governance power through backed pwROKO; native ROKO is the lock/backing asset."
+    },
+    {
+      "id": "contradiction.evm_fee_routing.testnet_vs_mainnet",
+      "category": "evm_fee_routing",
+      "status_map": {
+        "current_testnet": "EVM fees route through DealWithFees",
+        "current_mainnet": "EVM OnChargeTransaction is empty",
+        "planned_or_unresolved": "mainnet EVM fee routing must be verified before claiming 20/50/30 EVM fee distribution"
+      },
+      "fact_ids": ["TOK-15", "TOK-11"],
+      "simulation_resolution": "Split Substrate fee routing from EVM fee-routing assumptions; make mainnet EVM fee capture a caveated sensitivity until resolved."
+    },
+    {
+      "id": "contradiction.reward_pool_vs_inflation",
+      "category": "staking_inflation",
+      "status_map": {
+        "current": "runtime staking rewards follow the 2.5%-10% inflation curve",
+        "stale_or_scenario_only": "fixed pre-allocated reward pool as canonical L1 issuance"
+      },
+      "fact_ids": ["PAL-14", "TOK-23", "TOK-06"],
+      "simulation_resolution": "Use inflation as canonical L1 security issuance and reserve fixed pools for temporary treasury/incentive programs."
+    },
+    {
+      "id": "contradiction.legacy_bridge.absent_vs_planned",
+      "category": "legacy_migration",
+      "status_map": {
+        "current": "no ERC-20 bridge/wrap path exists in the node repo",
+        "planned": "migration requires a separate one-way bridge or governance process if adopted"
+      },
+      "fact_ids": ["TOK-28"],
+      "simulation_resolution": "Model holder migration as a planned adoption/cutover process until implementation evidence exists."
+    }
+  ]
+}

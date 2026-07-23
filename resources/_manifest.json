@@ -3,6 +3,7 @@
   "order": [
     "faq",
     "glossary",
+    "economics-facts",
     "community",
     "publishing-and-search"
   ],
@@ -10,6 +11,7 @@
     { "id": "community", "title": "Community" },
     { "id": "publishing-and-search", "title": "Publishing and Search" },
     { "id": "glossary", "title": "Glossary" },
+    { "id": "economics-facts", "title": "Economics Facts" },
     { "id": "faq", "title": "FAQ" }
   ]
 }
