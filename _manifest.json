@@ -2,6 +2,7 @@
   "title": "ROKO Network Documentation",
   "order": [
     "README",
+    "whitepaper",
     "getting-started",
     "core-technology",
     "products",
@@ -29,6 +30,11 @@
     {
       "id": "README",
       "title": "Welcome to ROKO"
+    },
+    {
+      "id": "whitepaper",
+      "title": "Whitepaper",
+      "summary": "Public Release Draft v1.3 of the ROKO Network whitepaper."
     }
   ]
 }
