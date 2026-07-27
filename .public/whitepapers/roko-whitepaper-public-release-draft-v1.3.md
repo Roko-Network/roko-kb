@@ -197,6 +197,8 @@ full participation rather than a courtesy. Time-quality offences (persistent dri
 offsets, low reputation) are defined with slash fractions and integrated with the standard offences
 machinery; enforcement is being enabled in stages as the mesh matures (Section 11.5).
 
+![Proof-of-Accurate-Time consensus loop: physical time sources feed the validator time mesh, on-chain time-quality state, consensus consequences, temporal receipts, and fee-funded accuracy.](roko-whitepaper-diagrams/poat-consensus-loop.svg)
+
 **3.4 Validator Time Sources and Tiers.** Validators do not all need laboratory-grade hardware —
 they need to be honest about what they have. Each validator self-classifies its time source,
 reporting a measured root distance to UTC in nanoseconds: **Anchor** tier (sub-microsecond root
@@ -229,6 +231,8 @@ the Unix epoch. One distinction the network states explicitly: nanosecond figure
 not an accuracy claim for any individual clock — accuracy is separately measured, and every
 consensus-time reading is published together with the network's own time-quality score and
 convergence state.
+
+![Temporal transaction lifecycle: ordinary EVM and Substrate transactions receive signed temporal receipts, deadline enforcement, deterministic fee-priority ordering, block-import validation, and auditable finality.](roko-whitepaper-diagrams/temporal-transaction-lifecycle.svg)
 
 **3.6 Anchoring Receipts and Independent Verification.** For external workloads that settle on
 ROKO (Section 8), the chain's temporal machinery is consumed through a second, settlement-grade
@@ -366,6 +370,8 @@ disclosed plainly — and authority sets for the time network rotate in epochs, 
 each epoch's set and keys published on-chain so that every temporal receipt remains verifiable
 against the authority configuration that produced it, including historically, after rotation.
 
+![Token migration and pwROKO backing model: existing ERC-20 $ROKO migrates through a reviewed one-way bridge or claim path into native ROKO, then native ROKO may be locked 1:1 into non-transferable pwROKO for staking and governance.](roko-whitepaper-diagrams/token-migration-and-pwroko-backing.svg)
+
 ## 6 Scaling and Network Expansion
 
 ROKO's scaling posture follows its demand profile. The dominant transaction classes — anchoring
@@ -391,6 +397,8 @@ receipts can clear in batches where counterparties permit.
 that must not degrade is time quality. Routing a dedicated share of all fee revenue to the
 TemporalFeePool (Section 7.3) ties network revenue growth directly to timestamper funding, so that
 scale improves rather than erodes the precision the network sells.
+
+![Network growth and fee governance: launch capacity, validator growth, capacity backfeed, and an adaptive fee curve give governance a path to lower fees when capacity is underused and raise fees when congestion makes processing scarce.](roko-whitepaper-diagrams/network-growth-fee-governance.svg)
 
 ## 7 The ROKO Economy: Coin, Tokens & Fees
 
@@ -467,8 +475,7 @@ with market buybacks, burn mechanisms at the staking layer, and early-unstake fe
 treasury — forming a sustainability loop in which product revenue, staking, and buy pressure
 reinforce one another.
 
-*Figure 1 (see PDF): fee sources → runtime fee split → block author 50% / TemporalFeePool
-(timestampers) 30% / Treasury 20%.*
+![Fee routing and TemporalFeePool flywheel: fee sources enter the runtime split, routing 50% to the block author, 30% to the TemporalFeePool for timestamping validators, and 20% to the Treasury, creating a usage-to-time-quality feedback loop.](roko-whitepaper-diagrams/fee-routing-and-temporal-flywheel.svg)
 
 **7.4 Participant Rewards at a Glance.** The reward mechanics above are distributed across the
 consensus, governance, and economic sections; Table 1 consolidates them into a single map of who
@@ -526,8 +533,7 @@ ecosystem-shaped rather than customer-shaped — coin demand and network revenue
 breadth of integrated-stack adoption across the open agentic ecosystem, not with any single
 account.
 
-*Figure 2 (see PDF): Execution (A2A sandbox) → Packaging (CAS, PROV-DM, Knowledge Shards, event
-outbox) → Custody + anchoring (CustodyCore) → ROKO L1 (PoAT, receipts, direct settlement).*
+![Traceable Work Settlement Layer: signed A2A execution, Fortemi content-addressed packaging and W3C PROV-DM lineage, CustodyCore anchoring and receipt verification, and ROKO L1 PoAT settlement.](roko-whitepaper-diagrams/twsl-settlement-stack.svg)
 
 **8.1 The Components of the TWSL.**
 
@@ -761,6 +767,8 @@ what lets two parties bill against the meter without trusting each other's logs.
 unifies the fee surfaces of Section 7.1: anchoring fees, metered-utilization fees, and settlement
 fees all draw demand from the same source — operations on packaged data — and all scale with
 ecosystem activity rather than with speculation.
+
+![Unified metering and billing pipeline: creation, utilization, and sharing events flow through the atomic event outbox into PoAT-attested usage claims, aggregation, and native ROKO settlement.](roko-whitepaper-diagrams/unified-metering-pipeline.svg)
 
 ## 11 Future Works
 
