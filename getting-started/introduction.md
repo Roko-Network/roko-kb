@@ -37,7 +37,7 @@ If you build anything where *when* matters — auctions, trading and settlement,
 
 - **[What is Temporal Blockchain?](./temporal-blockchain.md)** — the concept: why time as a consensus input matters, and how PoAT works (mesh, time quality, receipts).
 - **[Nanosecond Precision: Resolution vs. Accuracy](./nanosecond-precision.md)** — what nanosecond-resolution timestamps do and don't guarantee. We draw this line explicitly.
-- **[Join the Testnet](./join-testnet.md)** — MetaMask config (Chain ID 442), how to request testnet ROKO, where the explorer will live, deploying a contract, and running a node.
+- **[Join the Testnet](./join-testnet.md)** — Current testnet connection (Chain ID 52370), how to request testnet ROKO, explorer access, deploying a contract, and running a node.
 - **[What You Can Build](../products/use-cases.md)** — applications where consensus-grade time is the unlock.
 - **Core Technology** — deeper pages on consensus, temporal transactions, and network architecture.
 

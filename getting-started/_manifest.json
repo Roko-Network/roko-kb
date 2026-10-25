@@ -4,12 +4,29 @@
     "introduction",
     "temporal-blockchain",
     "nanosecond-precision",
-    "join-testnet"
+    "join-testnet",
+    "validator-wallet"
   ],
   "sections": [
-    { "id": "introduction", "title": "Introduction" },
-    { "id": "temporal-blockchain", "title": "What is Temporal Blockchain?" },
-    { "id": "nanosecond-precision", "title": "Nanosecond Precision: Resolution vs. Accuracy" },
-    { "id": "join-testnet", "title": "Join the Testnet" }
+    {
+      "id": "introduction",
+      "title": "Introduction"
+    },
+    {
+      "id": "temporal-blockchain",
+      "title": "What is Temporal Blockchain?"
+    },
+    {
+      "id": "nanosecond-precision",
+      "title": "Nanosecond Precision: Resolution vs. Accuracy"
+    },
+    {
+      "id": "join-testnet",
+      "title": "Join the Testnet"
+    },
+    {
+      "id": "validator-wallet",
+      "title": "Validator Wallet: ROKO, pwROKO and Enrollment"
+    }
   ]
 }
