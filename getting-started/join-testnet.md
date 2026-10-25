@@ -1,6 +1,8 @@
 # Join the Testnet
 
-This page gets you from zero to a deployed contract on the ROKO testnet, and points node operators at the right entry points. One caveat up front: the endpoints below are the current **testnet-v2 infrastructure** — subject to change or reset as the network evolves. <!-- fact:OPS-12 -->
+This page gets you from zero to a deployed contract on the ROKO testnet, and points node operators at the right entry points. One caveat up front: the endpoints below are the current **testnet infrastructure** — subject to change or reset as the network evolves.
+
+> **Validator enrollment:** start with the [local node-wallet guide](validator-wallet.md). Connecting MetaMask or importing pwROKO does not enroll a validator. Browser-wallet enrollment remains unverified or known-failing; the node-wallet path is the supported starting point.
 
 > **Testnet on-ramp.** Faucet grants and explorer access are currently handled by the team. The deterministic path is Discord: join [discord.gg/roko](https://discord.gg/roko) and post your address, and someone will fund you and point you at the explorer. <!-- fact:OPS-27,TOK-29 -->
 
@@ -11,15 +13,13 @@ Add the ROKO testnet as a custom network:
 | Field | Value |
 |---|---|
 | Network name | ROKO Testnet |
-| RPC URL | `https://roko-testnetv2.ntfork.com` |
-| Chain ID | `442` |
+| RPC URL | `https://rpc.roko.network` |
+| Chain ID | `52370` |
 | Currency symbol | `ROKO` (18 decimals) |
 
-For WebSocket tooling (polkadot.js, an ethers `WebSocketProvider`), use `wss://roko-testnetv2.ntfork.com` — the same host serves both transports. <!-- fact:OPS-12 -->
+The current testnet uses chain ID **52370**, native ROKO with 18 decimals, and Ethereum-style 20-byte (`0x...`) accounts. The previous chain ID 442 and testnet-v2 host in older examples are historical configuration, not the current network. Before signing, verify the connected network and public account. The [wallet guide](validator-wallet.md) records the current genesis and network values.
 
-Chain ID 442 is set at genesis for all testnet chain specs; the native token is ROKO with 18 decimals and Ethereum-style (`0x...`, 20-byte) accounts — there is no address translation between the Substrate and EVM layers. <!-- fact:CC-06,CC-08,EVM-21 -->
-
-The documented live endpoints are `wss://roko-testnetv2.ntfork.com` (HTTPS on the same host); a self-hosted node serves the same APIs at `http://<host>:9944`. <!-- fact:OPS-12,EVM-28 -->
+The node-wallet procedure uses the validator's loopback WebSocket RPC at `ws://127.0.0.1:9944`; do not publish or forward it for wallet enrollment.
 
 A mainnet chain ID is not yet assigned — if something claims to be "ROKO mainnet," it isn't ours. <!-- fact:EVM-04 -->
 
@@ -29,7 +29,7 @@ Testnet ROKO is distributed through a faucet in the network's admin service: def
 
 ## 3. Watch your transactions
 
-A Blockscout-based block explorer (with a Substrate sidecar API) runs against the testnet; its public endpoint has not been published yet. <!-- fact:OPS-14 -->
+Use [explorer.roko.network](https://explorer.roko.network) to inspect the account and transaction hash. Native runtime enrollment also needs the finalized-state checks in the [wallet guide](validator-wallet.md); an EVM explorer receipt alone does not prove validator activation.
 
 For temporal data the explorer doesn't show, query the node directly — `temporal_getTransactionTimestamp` accepts either a Substrate extrinsic hash or a native Ethereum transaction hash. <!-- fact:EVM-10 -->
 
@@ -41,8 +41,8 @@ Standard Ethereum tooling works unmodified — the Ethereum RPC surface (`eth_*`
 # Hardhat example: hardhat.config.js network entry
 networks: {
   rokoTestnet: {
-    url: "https://roko-testnetv2.ntfork.com",
-    chainId: 442,
+    url: "https://rpc.roko.network",
+    chainId: 52370,
     accounts: [process.env.PRIVATE_KEY],
   }
 }
@@ -97,7 +97,7 @@ contract Stamper {
 Calling `stampNow()` stores the nanosecond consensus time read straight from the precompile. To confirm the node agrees, query the same value over RPC: <!-- fact:EVM-07 -->
 
 ```bash
-curl -s -X POST https://roko-testnetv2.ntfork.com \
+curl -s -X POST https://rpc.roko.network \
   -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"temporal_getConsensusTime","params":[]}'
 # → {"jsonrpc":"2.0","id":1,"result":{"consensusTimeNs":"...","timeQuality":...,...}}
@@ -121,7 +121,7 @@ A single/local node must run with `--timesync-no-enforce` (there are no mesh pee
 
 **From Docker** — images are published at `ghcr.io/roko-network/roko-node` (e.g. `testnet-main-amd64`, `testnet-main-arm64`); `docker-compose.prod.yml` runs a single node from them (review its flags before exposing it — it ships with development-grade RPC settings). <!-- fact:OPS-18,OPS-19 -->
 
-**As a validator** — the repo ships `docker/docker-compose.validator.yml` for joining the testnet-v2 network as a validator node. Be aware that *validator registration is currently operator-gated*: activating a new validator requires the testnet sudo key, so coordinate with the team — you cannot self-register today. <!-- fact:OPS-27 -->
+**As a validator** — follow the [local node-wallet enrollment guide](validator-wallet.md) and its linked node-readiness procedure. Ordinary-user node-wallet enrollment has been reported successful; locking, bonding, session registration and validator intent are distinct steps. Candidate registration is followed by separate activation, election and finalized-authorship checks. Do not substitute browser-wallet connection or an EVM token balance for this procedure.
 
 Validator time-source hardware (GNSS/PPS for Anchor tier, chrony for Standard) is covered in the validator docs; testnet validators without timing hardware can run `--timesync-time-source mock-anchor`. <!-- fact:CC-16,OPS-25 -->
 
